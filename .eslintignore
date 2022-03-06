@@ -1,0 +1,5 @@
+**/*.css
+*.svg
+**/images
+node_modules
+build
