@@ -8,8 +8,8 @@ const Footer = () => (
     <div className='flex flex-row justify-between pb-[28px] mt-[80px] border-b-[1px] border-color-border'>
       <img src={FooterLogo} alt='lukim-logo' className='h-[50px]' />
       <div className='flex flex-row gap-[12px]'>
-        <AppButton />
-        <AppButton android />
+        <AppButton bgGrey />
+        <AppButton android bgGrey />
       </div>
     </div>
     <p className='mt-[28px] mb-[50px] font-inter font-[400] text-color-lt-grey text-center'>

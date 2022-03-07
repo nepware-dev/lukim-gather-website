@@ -4,12 +4,15 @@ import androidIcon from '@images/android.svg';
 
 interface Props {
   android?: boolean;
+  bgGrey?: boolean;
 }
 
-const AppButton: React.FC<Props> = ({android = false}) => (
+const AppButton: React.FC<Props> = ({android = false, bgGrey = false}) => (
   <button
     type='button'
-    className='w-[193px] h-[68px] rounded-xl flex items-center justify-center shadow-[0_5px_10px_rgba(0,0,0,0.05)] bg-color-white'
+    className={`w-[193px] h-[68px] rounded-xl flex items-center justify-center shadow-[0_5px_10px_rgba(0,0,0,0.05)] ${
+      bgGrey ? 'bg-color-bg' : 'bg-color-white'
+    }`}
   >
     <img
       src={android ? androidIcon : appleIcon}
