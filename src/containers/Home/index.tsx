@@ -26,11 +26,11 @@ const Home = () => {
   return (
     <main>
       <div className='bg-color-bg w-[100%]'>
-        <div className='max-w-[1440px] mx-auto px-[5vw] pb-[320px] relative'>
+        <div className='max-w-[1440px] mx-auto px-[5vw] lg:pb-[320px] lg:relative'>
           <Navbar />
-          <div className='py-[120px] flex flex-row'>
-            <div className='w-[50%]'>
-              <h1 className='font-sans font-[700] leading-[68px] text-[64px] text-color-blue'>
+          <div className='py-[70px] flex flex-col gap-[50px] lg:py-[120px] lg:flex-row lg:gap-[20px]'>
+            <div className='lg:w-[50%]'>
+              <h1 className='font-sans font-[700] leading-[58px] text-[42px] text-color-blue sm:leading-[68px] sm:text-[64px]'>
                 The Lukim Gather Mobile Data Application
               </h1>
               <p className='font-inter font-[400] text-[18px] text-color-text leading-[26px] my-[28px]'>
@@ -43,12 +43,12 @@ const Home = () => {
               <p className='font-inter font-[600] text-[18px] leading-[26px]'>
                 Coming to app stores in August 2022
               </p>
-              <div className='flex flex-row gap-[12px] mt-[28px]'>
+              <div className='flex flex-col gap-[12px] mt-[28px] justify-center items-center sm:flex-row lg:justify-start'>
                 <AppButton />
                 <AppButton android />
               </div>
             </div>
-            <div className='flex align-center justify-center w-[50%]'>
+            <div className='flex align-center justify-center lg:w-[50%]'>
               <img
                 src={HeroImage}
                 alt='lukim-mobile-app'
@@ -57,15 +57,15 @@ const Home = () => {
             </div>
           </div>
           <div>
-            <h2 className='font-sans font-[700] text-[48px] text-color-blue text-center leading-[62.5px] mb-[56px]'>
+            <h2 className='font-sans font-[700] text-[38px] text-color-blue text-center leading-[62.5px] mb-[56px] sm:text-[48px]'>
               Background
             </h2>
-            <div className='flex flex-row justify-around'>
+            <div className='flex flex-col items-center gap-[40px] lg:flex-row lg:justify-around lg:items-start lg:gap-[20px]'>
               <div>
                 <img
                   src={BgArt}
                   alt='lukim-mobile-app'
-                  className='max-h-[375px] max-w-[375px]'
+                  className='max-h-[250px] max-w-[250px] sm:max-h-[375px] sm:max-w-[375px]'
                 />
               </div>
               <div className='max-w-[604px]'>
@@ -112,11 +112,11 @@ const Home = () => {
               </div>
             </div>
           </div>
-          <div className='absolute -bottom-[136px] left-0 right-0 px-[5vw]'>
+          <div className='px-[5vw] py-[50px] lg:py-[0] lg:absolute lg:-bottom-[136px] lg:left-0 lg:right-0'>
             <h2 className='font-sans font-[700] text-[32px] text-color-blue leading-[42px] mb-[64px]'>
               The app is designed to serve
             </h2>
-            <div className='flex flex-row justify-center gap-[50px]'>
+            <div className='flex flex-row flex-wrap justify-center gap-[50px] lg:flex-nowrap'>
               <Card img={members} text='Local community members' />
               <Card
                 img={membersAlt}
@@ -127,7 +127,7 @@ const Home = () => {
           </div>
         </div>
       </div>
-      <div className='max-w-[1440px] mx-auto px-[5vw] pt-[200px]'>
+      <div className='max-w-[1440px] mx-auto px-[5vw] pt-[80px] lg:pt-[200px]'>
         <div>
           <p className='max-w-[930px] mx-auto font-inter font-[400] text-[18px] text-color-text leading-[32px]'>
             It enables local communities to report both threats and perceived
@@ -137,31 +137,31 @@ const Home = () => {
             greater protection from the negative impacts of climate change and
             other environmental threats.
           </p>
-          <div className='h-[420px] flex flex-row items-center bg-color-blue rounded-3xl px-[5%] mt-[104px]'>
-            <div className='w-[50%] flex flex-col gap-[20px]'>
-              <h2 className='max-w-[320px] font-sans font-[700] text-[48px] text-color-green leading-[52px]'>
+          <div className='lg:h-[420px] flex flex-col lg:flex-row items-center bg-color-blue rounded-3xl px-[5%] mt-[104px] pt-[50px] lg:pt-[0] gap-[40px] lg:gap-[20px]'>
+            <div className='lg:w-[50%] flex flex-col gap-[20px]'>
+              <h2 className='max-w-[320px] font-sans font-[700] text-[40px] sm:text-[48px] text-color-green leading-[44px] sm:leading-[52px]'>
                 Want to keep updated?
               </h2>
               <p className='font-inter font-[400] text-[18px] text-color-white leading-[32px]'>
                 Sign up for updates on Lukim Gather
               </p>
-              <div className='h-[50px] mt-[10px] rounded-xl'>
+              <div className='flex flex-col sm:flex-row gap-[20px] sm:gap-[0] mt-[10px] rounded-xl'>
                 <input
                   type='email'
                   value={email}
                   placeholder='Email Address'
                   onChange={handleChange}
-                  className='h-[50px] pl-[20px] pr-[5px] font-inter rounded-l-xl'
+                  className='h-[50px] pl-[20px] pr-[5px] font-inter rounded-l-xl rounded-r-xl sm:rounded-r-none'
                 />
                 <button
                   type='button'
-                  className='h-full px-[25px] bg-color-green text-color-white font-inter rounded-r-xl'
+                  className='h-[50px] px-[25px] bg-color-green text-color-white font-inter rounded-r-xl rounded-l-xl sm:rounded-l-none'
                 >
                   Sign up
                 </button>
               </div>
             </div>
-            <div className='w-[50%] flex justify-center'>
+            <div className='lg:w-[50%] flex justify-center'>
               <img src={mobile} alt='' className='max-h-[420px]' />
             </div>
           </div>
