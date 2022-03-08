@@ -10,7 +10,7 @@ interface Props {
 const AppButton: React.FC<Props> = ({android = false, bgGrey = false}) => (
   <button
     type='button'
-    className={`w-[193px] h-[68px] rounded-xl flex items-center justify-center shadow-[0_5px_10px_rgba(0,0,0,0.05)] ${
+    className={`w-[160px] h-[58px] sm:w-[193px] rounded-xl flex items-center justify-center shadow-[0_5px_10px_rgba(0,0,0,0.05)] ${
       bgGrey ? 'bg-color-bg' : 'bg-color-white'
     }`}
   >

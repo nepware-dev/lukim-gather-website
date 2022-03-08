@@ -43,7 +43,7 @@ const Home = () => {
               <p className='font-inter font-[600] text-[16px] leading-[24px] sm:text-[18px] sm:leading-[26px]'>
                 Coming to app stores in August 2022
               </p>
-              <div className='flex flex-col gap-[12px] mt-[28px] justify-center items-center sm:flex-row lg:justify-start'>
+              <div className='flex flex-row gap-[12px] mt-[28px] justify-start items-center'>
                 <AppButton />
                 <AppButton android />
               </div>
@@ -57,7 +57,7 @@ const Home = () => {
             </div>
           </div>
           <div>
-            <h2 className='font-sans font-[700] text-[36px] leading-[44px] text-color-blue text-center mb-[56px] sm:text-[48px] sm:leading-[62px]'>
+            <h2 className='font-sans font-[700] text-[36px] leading-[44px] text-color-blue mt-[50px] mb-[56px] lg:mt-[0] lg:text-center sm:text-[48px] sm:leading-[62px]'>
               Background
             </h2>
             <div className='flex flex-col items-center gap-[40px] lg:flex-row lg:justify-around lg:items-start lg:gap-[20px]'>
