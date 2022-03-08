@@ -28,19 +28,19 @@ const Home = () => {
       <div className='bg-color-bg w-[100%]'>
         <div className='max-w-[1440px] mx-auto px-[5vw] lg:pb-[320px] lg:relative'>
           <Navbar />
-          <div className='py-[70px] flex flex-col gap-[50px] lg:py-[120px] lg:flex-row lg:gap-[20px]'>
+          <div className='py-[20px] flex flex-col gap-[50px] sm:py-[50px] lg:py-[120px] lg:flex-row lg:gap-[20px]'>
             <div className='lg:w-[50%]'>
-              <h1 className='font-sans font-[700] leading-[58px] text-[42px] text-color-blue sm:leading-[68px] sm:text-[64px]'>
+              <h1 className='font-sans font-[700] leading-[44px] text-[36px] text-color-blue sm:leading-[68px] sm:text-[64px]'>
                 The Lukim Gather Mobile Data Application
               </h1>
-              <p className='font-inter font-[400] text-[18px] text-color-text leading-[26px] my-[28px]'>
+              <p className='font-inter font-[400] text-[16px] leading-[24px] text-color-text my-[28px] sm:text-[18px] sm:leading-[26px]'>
                 How do we ensure that community data from Papua New Guinea’s
                 protected areas is reported and heard?
               </p>
-              <p className='font-inter font-[600] text-[18px] leading-[26px]'>
+              <p className='font-inter font-[600] text-[16px] leading-[24px] sm:text-[18px] sm:leading-[26px]'>
                 Pilot phase in May 2022
               </p>
-              <p className='font-inter font-[600] text-[18px] leading-[26px]'>
+              <p className='font-inter font-[600] text-[16px] leading-[24px] sm:text-[18px] sm:leading-[26px]'>
                 Coming to app stores in August 2022
               </p>
               <div className='flex flex-col gap-[12px] mt-[28px] justify-center items-center sm:flex-row lg:justify-start'>
@@ -48,7 +48,7 @@ const Home = () => {
                 <AppButton android />
               </div>
             </div>
-            <div className='flex align-center justify-center lg:w-[50%]'>
+            <div className='hidden sm:flex sm:align-center sm:justify-center lg:w-[50%]'>
               <img
                 src={HeroImage}
                 alt='lukim-mobile-app'
@@ -57,7 +57,7 @@ const Home = () => {
             </div>
           </div>
           <div>
-            <h2 className='font-sans font-[700] text-[38px] text-color-blue text-center leading-[62.5px] mb-[56px] sm:text-[48px]'>
+            <h2 className='font-sans font-[700] text-[36px] leading-[44px] text-color-blue text-center mb-[56px] sm:text-[48px] sm:leading-[62px]'>
               Background
             </h2>
             <div className='flex flex-col items-center gap-[40px] lg:flex-row lg:justify-around lg:items-start lg:gap-[20px]'>
@@ -69,7 +69,7 @@ const Home = () => {
                 />
               </div>
               <div className='max-w-[604px]'>
-                <p className='font-inter font-[400] text-[18px] text-color-text leading-[32px]'>
+                <p className='font-inter font-[400] text-[16px] leading-[24px] text-color-text sm:text-[18px] sm:leading-[32px]'>
                   As part of the UNDP
                   <a
                     href='https://www.png-nrmhub.org'
@@ -90,7 +90,7 @@ const Home = () => {
                   challenges that prevent the effective tracking and management
                   of natural resources within the region.
                 </p>
-                <p className='font-inter font-[400] text-[18px] text-color-text leading-[32px] mt-[30px] mb-[25px]'>
+                <p className='font-inter font-[400] text-[16px] leading-[24px] text-color-text mt-[30px] mb-[25px] sm:text-[18px] sm:leading-[32px]'>
                   Because it is able to function offline and out of range of
                   phone signal, the Lukim Gather app enables communities in
                   remote protected areas to:
@@ -129,7 +129,7 @@ const Home = () => {
       </div>
       <div className='max-w-[1440px] mx-auto px-[5vw] pt-[80px] lg:pt-[200px]'>
         <div>
-          <p className='max-w-[930px] mx-auto font-inter font-[400] text-[18px] text-color-text leading-[32px]'>
+          <p className='max-w-[930px] mx-auto font-inter font-[400] text-[16px] leading-[24px] text-color-text sm:text-[18px] sm:leading-[32px]'>
             It enables local communities to report both threats and perceived
             benefits and values that occur within and around protected areas. It
             does this by empowering users to collect and share local data,
@@ -139,10 +139,10 @@ const Home = () => {
           </p>
           <div className='lg:h-[420px] flex flex-col lg:flex-row items-center bg-color-blue rounded-3xl px-[5%] mt-[104px] pt-[50px] lg:pt-[0] gap-[40px] lg:gap-[20px]'>
             <div className='lg:w-[50%] flex flex-col gap-[20px]'>
-              <h2 className='max-w-[320px] font-sans font-[700] text-[40px] sm:text-[48px] text-color-green leading-[44px] sm:leading-[52px]'>
+              <h2 className='max-w-[320px] font-sans font-[700] text-[36px] leading-[44px] text-color-green sm:text-[48px] sm:leading-[52px]'>
                 Want to keep updated?
               </h2>
-              <p className='font-inter font-[400] text-[18px] text-color-white leading-[32px]'>
+              <p className='font-inter font-[400] text-[16px] leading-[24px] text-color-white sm:text-[18px] sm:leading-[32px]'>
                 Sign up for updates on Lukim Gather
               </p>
               <div className='flex flex-col sm:flex-row gap-[20px] sm:gap-[0] mt-[10px] rounded-xl'>
