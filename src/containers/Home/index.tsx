@@ -72,7 +72,7 @@ const Home = () => {
                 <p className='font-inter font-[400] text-[16px] leading-[24px] text-color-text sm:text-[18px] sm:leading-[32px]'>
                   As part of the UNDP
                   <a
-                    href='https://www.png-nrmhub.org'
+                    href='http://www.png-nrmhub.org/'
                     target='_blank'
                     rel='noreferrer'
                   >
@@ -81,14 +81,15 @@ const Home = () => {
                       Papua New Guinea’s Natural Resource Hub
                     </span>
                   </a>
-                  , the second phase of Lukim Gather is under development.
-                  Supporting the collection of conservation and biodiversity
-                  data, the Lukim Gather App improves biodiversity and
-                  management effectiveness monitoring in PNG protected areas.
-                  This innovative mobile technology is helping to overcome many
-                  of the geographical, infrastructural, and technological
-                  challenges that prevent the effective tracking and management
-                  of natural resources within the region.
+                  , the second phase of the Lukim Gather mobile data collection
+                  application is currently being developed. Supporting the
+                  collection of geo-located conservation and biodiversity data,
+                  including threats and benefits, Lukim Gather App improves
+                  biodiversity and management effectiveness monitoring in PNG
+                  protected areas. This innovative mobile technology is helping
+                  to overcome many of the geographical, infrastructural, and
+                  technological challenges that prevent the effective tracking
+                  and management of natural resources within the region.
                 </p>
                 <p className='font-inter font-[400] text-[16px] leading-[24px] text-color-text mt-[30px] mb-[25px] sm:text-[18px] sm:leading-[32px]'>
                   Because it is able to function offline and out of range of
@@ -118,10 +119,7 @@ const Home = () => {
             </h2>
             <div className='flex flex-row flex-wrap justify-center gap-[50px] lg:flex-nowrap'>
               <Card img={members} text='Local community members' />
-              <Card
-                img={membersAlt}
-                text='Community members of protected areas'
-              />
+              <Card img={membersAlt} text='Protected area managers' />
               <Card img={civilSociety} text='Civil society organizations ' />
             </div>
           </div>
