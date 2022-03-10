@@ -5,14 +5,17 @@ import androidIcon from '@images/android.svg';
 interface Props {
   android?: boolean;
   bgGrey?: boolean;
+  boxShadow?: boolean;
 }
 
-const AppButton: React.FC<Props> = ({android = false, bgGrey = false}) => (
+const AppButton: React.FC<Props> = ({android = false, bgGrey = false, boxShadow = false}) => (
   <button
     type='button'
-    className={`w-[160px] h-[58px] sm:w-[193px] rounded-xl flex items-center justify-center shadow-[0_5px_10px_rgba(0,0,0,0.05)] ${
+    className={`w-[160px] h-[58px] sm:w-[193px] rounded-xl flex items-center justify-center  ${
       bgGrey ? 'bg-color-bg' : 'bg-color-white'
-    }`}
+    }
+    ${boxShadow ? 'shadow-[0_5px_10px_rgba(0,0,0,0.05)]' : ''}
+    `}
   >
     <img
       src={android ? androidIcon : appleIcon}
