@@ -4,7 +4,8 @@
     "paths": {
       "@images/*": ["./src/assets/images/*"],
       "@components/*": ["./src/components/*"],
-      "@containers/*": ["./src/containers/*"]
+      "@containers/*": ["./src/containers/*"],
+      "@hooks/*": ["./src/hooks/*"]
     }
   }
 }
