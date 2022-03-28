@@ -1,4 +1,7 @@
-import React, {BrowserRouter, Route, Routes} from 'react-router-dom';
+import React, {
+  BrowserRouter, Route, Routes,
+} from 'react-router-dom';
+
 import Home from '@containers/Home';
 
 function App() {

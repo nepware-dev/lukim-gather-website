@@ -10,6 +10,7 @@ module.exports = function override(config) {
       '@images': resolve('src/assets/images'),
       '@components': resolve('src/components'),
       '@containers': resolve('src/containers'),
+      '@hooks': resolve('src/hooks'),
     },
   };
 
