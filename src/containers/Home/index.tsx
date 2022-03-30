@@ -32,14 +32,14 @@ const Home = () => {
               <h1 className='font-sans font-[700] leading-[44px] text-[36px] text-color-blue sm:leading-[68px] sm:text-[64px]'>
                 The Lukim Gather Mobile Data Application
               </h1>
-              <p className='font-inter font-[400] text-[16px] leading-[24px] text-color-text my-[28px] sm:text-[18px] sm:leading-[26px]'>
+              <p className='font-inter font-[400] text-[16px] leading-[24px] text-color-blue-alt my-[28px] sm:text-[18px] sm:leading-[26px]'>
                 How do we ensure that community data from Papua New Guinea’s
                 protected areas is reported and heard?
               </p>
-              <p className='font-inter font-[600] text-[16px] leading-[24px] sm:text-[18px] sm:leading-[26px]'>
+              <p className='font-inter font-[600] text-[16px] text-color-blue-alt leading-[24px] sm:text-[18px] sm:leading-[26px]'>
                 Pilot phase in May 2022
               </p>
-              <p className='font-inter font-[600] text-[16px] leading-[24px] sm:text-[18px] sm:leading-[26px]'>
+              <p className='font-inter font-[600] text-[16px] text-color-blue-alt leading-[24px] sm:text-[18px] sm:leading-[26px]'>
                 Coming to app stores in August 2022
               </p>
               <div className='flex flex-row gap-[12px] mt-[28px] justify-start items-center'>
@@ -136,7 +136,7 @@ const Home = () => {
           </p>
           <div className='lg:h-[420px] flex flex-col lg:flex-row items-center bg-color-blue rounded-3xl px-[5%] mt-[104px] pt-[50px] lg:pt-[0] gap-[40px] lg:gap-[20px]'>
             <div className='lg:w-[50%] flex flex-col gap-[20px]'>
-              <h2 className='max-w-[320px] font-sans font-[700] text-[36px] leading-[44px] text-color-green sm:text-[48px] sm:leading-[52px]'>
+              <h2 className='max-w-[320px] font-sans font-[700] text-[36px] leading-[44px] text-color-green-alt sm:text-[48px] sm:leading-[52px]'>
                 Want to keep updated?
               </h2>
               <p className='font-inter font-[400] text-[16px] leading-[24px] text-color-white sm:text-[18px] sm:leading-[32px]'>
