@@ -47,7 +47,7 @@ const DashboardLayout = ({children}: {children: ReactNode}) => {
                     pathname !== '/surveys' && 'hidden'
                   }`}
                 >
-                  4
+                  -
                 </span>
               </div>
             </Link>
