@@ -113,7 +113,7 @@ const Home = () => {
             </div>
           </div>
           <div className='px-[5vw] py-[50px] lg:py-[0] lg:absolute lg:-bottom-[136px] lg:left-0 lg:right-0'>
-            <h2 className='font-sans font-[700] text-[32px] text-color-blue leading-[42px] mb-[64px]'>
+            <h2 className='font-sans font-[700] text-[32px] text-color-text leading-[42px] mb-[64px]'>
               The app is designed to serve
             </h2>
             <div className='flex flex-row flex-wrap justify-center gap-[50px] lg:flex-nowrap'>
