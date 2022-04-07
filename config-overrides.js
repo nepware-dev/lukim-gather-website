@@ -11,6 +11,8 @@ module.exports = function override(config) {
       '@components': resolve('src/components'),
       '@containers': resolve('src/containers'),
       '@hooks': resolve('src/hooks'),
+      '@routes': resolve('src/routes'),
+      '@store': resolve('src/store'),
     },
   };
 
