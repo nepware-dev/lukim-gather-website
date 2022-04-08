@@ -1,18 +1,27 @@
-import React, {BrowserRouter, Route, Routes} from 'react-router-dom';
+import React, {BrowserRouter} from 'react-router-dom';
+import {ApolloProvider, ApolloClient, InMemoryCache} from '@apollo/client';
+import {Provider} from 'react-redux';
+import {PersistGate} from 'redux-persist/integration/react';
 
-import Home from '@containers/Home';
-import Dashboard from '@containers/Dashboard';
-import Surveys from '@containers/Surveys';
+import {store, persistor} from './store';
+import Routes from './routes';
+
+const client = new ApolloClient({
+  cache: new InMemoryCache(),
+  uri: process.env.REACT_APP_API_BASE_URL,
+});
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path='/' element={<Home />} />
-        <Route path='/dashboard' element={<Dashboard />} />
-        <Route path='/surveys' element={<Surveys />} />
-      </Routes>
-    </BrowserRouter>
+    <ApolloProvider client={client}>
+      <Provider store={store}>
+        <PersistGate loading={null} persistor={persistor}>
+          <BrowserRouter>
+            <Routes />
+          </BrowserRouter>
+        </PersistGate>
+      </Provider>
+    </ApolloProvider>
   );
 }
 

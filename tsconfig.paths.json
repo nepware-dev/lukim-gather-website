@@ -5,7 +5,9 @@
       "@images/*": ["./src/assets/images/*"],
       "@components/*": ["./src/components/*"],
       "@containers/*": ["./src/containers/*"],
-      "@hooks/*": ["./src/hooks/*"]
+      "@hooks/*": ["./src/hooks/*"],
+      "@routes/*": ["./src/routes/*"],
+      "@store/*": ["./src/store/*"],
     }
   }
 }
