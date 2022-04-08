@@ -3,6 +3,9 @@ import {RiArrowLeftSLine, RiArrowRightSLine} from 'react-icons/ri';
 
 interface Props {
   text: string;
+  className?: string;
+  textClassName?: string;
+  onClick(): void;
 }
 
 interface NumBtnProps {
@@ -18,9 +21,17 @@ interface ArrowBtnProps {
   onClick(): void;
 }
 
-const Button: React.FC<Props> = ({text}) => (
-  <button type='button' className='h-[49px] px-5 bg-color-green-alt rounded-lg'>
-    <p className='font-semibold font-inter text-color-white text-base'>
+const Button: React.FC<Props> = ({
+  text, className, textClassName, onClick,
+}) => (
+  <button
+    type='button'
+    onClick={onClick}
+    className={`h-[49px] px-5 bg-color-green-alt rounded-lg ${className}`}
+  >
+    <p
+      className={`font-semibold font-inter text-color-white text-base ${textClassName}`}
+    >
       {text}
     </p>
   </button>
