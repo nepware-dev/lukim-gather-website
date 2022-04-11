@@ -38,7 +38,7 @@ const SurveyTable: React.FC<Props> = ({data}) => (
         {data.map((item) => {
           const status = item?.status.toLowerCase();
           return (
-            <tr className='h-[56px] border-t border-[#CCDCE8]'>
+            <tr key={item.id} className='h-[56px] border-t border-[#CCDCE8]'>
               <td>
                 <p className='pl-[20px] text-[#282F3E] font-inter font-[500] text-[16px]'>
                   {item.survey}
