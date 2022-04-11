@@ -1,11 +1,14 @@
 import React, {useCallback} from 'react';
 import {RiArrowLeftSLine, RiArrowRightSLine} from 'react-icons/ri';
 
+import Loader from '@components/Loader';
+
 interface Props {
   text: string;
   className?: string;
   textClassName?: string;
   onClick(): void;
+  loading?: boolean;
 }
 
 interface NumBtnProps {
@@ -22,18 +25,20 @@ interface ArrowBtnProps {
 }
 
 const Button: React.FC<Props> = ({
-  text, className, textClassName, onClick,
+  text, className, textClassName, onClick, loading,
 }) => (
   <button
     type='button'
     onClick={onClick}
     className={`h-[49px] px-5 bg-color-green-alt rounded-lg ${className}`}
   >
-    <p
-      className={`font-semibold font-inter text-color-white text-base ${textClassName}`}
-    >
-      {text}
-    </p>
+    {loading ? (
+      <Loader />
+    ) : (
+      <p className={`font-semibold font-inter text-color-white text-base ${textClassName} ${loading && 'opacity-50 cursor-not-allowed'}`}>
+        {text}
+      </p>
+    )}
   </button>
 );
 
