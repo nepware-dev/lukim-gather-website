@@ -3,6 +3,7 @@ import {HiOutlineX} from 'react-icons/hi';
 
 import Button from '@components/Button';
 import {Data} from '@components/SurveyTable';
+import Map from '@components/Map';
 
 import tree from '@images/category-tree.png';
 import jungle from '@images/jungle.png';
@@ -121,8 +122,8 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails}) => {
               Kikori, Papua New Guinea
             </p>
           </div>
-          <div className='h-[229px] bg-color-blue mt-[8px] rounded-lg flex items-center justify-center'>
-            Map
+          <div className='h-[229px] mt-[8px] rounded-lg'>
+            <Map center={[144.24, -7.41]} />
           </div>
           <div className='flex justify-between gap-[16px] my-[52px]'>
             <Button text='Accept' className='w-[100%]' onClick={hideDetails} />
