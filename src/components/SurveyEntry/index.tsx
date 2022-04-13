@@ -2,14 +2,13 @@ import React, {useCallback, useState} from 'react';
 import {HiOutlineX} from 'react-icons/hi';
 
 import Button from '@components/Button';
-import {Data} from '@components/SurveyTable';
 import Map from '@components/Map';
+import {SurveyDataType} from '@components/SurveyTable';
 
 import tree from '@images/category-tree.png';
-import jungle from '@images/jungle.png';
 
 interface Props {
-  data: Data;
+  data: SurveyDataType;
   setShowDetails(value: boolean): void;
 }
 
@@ -21,9 +20,9 @@ const Title = ({text}: {text: string}) => (
   </div>
 );
 
-const Feel = () => (
+const Feel = ({sentiment}: {sentiment: string}) => (
   <div className='flex items-center justify-center h-[56px] w-[67px] bg-[#F0F3F6] border border-[#B3CBDC] rounded-lg'>
-    <p className='text-[24px]'>🙂</p>
+    <p className='text-[24px]'>{sentiment}</p>
   </div>
 );
 
@@ -58,72 +57,67 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails}) => {
             <HiOutlineX size={14} />
           </div>
           <div className='flex items-center justify-between mt-[35px] mb-[12px]'>
-            <h2 className='font-inter font-[600] text-[24px]'>{data.survey}</h2>
+            <h2 className='font-inter font-[600] text-[24px]'>{data?.title}</h2>
             <p
               className={`max-w-fit px-[12px] py-[4px] rounded-full uppercase font-inter font-[600] text-[14px] ${
-                data.status === 'Pending' && 'bg-[#FFF3E2] text-[#F79009]'
+                data.status.toLowerCase() === 'pending'
+                && 'bg-[#FFF3E2] text-[#F79009]'
               } ${
-                data.status === 'Declined' && 'bg-[#FFEFEE] text-[#F04438]'
-              } ${data.status === 'Approved' && 'bg-[#E7F5EF] text-[#12B76A]'}`}
+                data.status.toLowerCase() === 'declined'
+                && 'bg-[#FFEFEE] text-[#F04438]'
+              } ${
+                data.status.toLowerCase() === 'approved'
+                && 'bg-[#E7F5EF] text-[#12B76A]'
+              }`}
             >
               {data.status}
             </p>
           </div>
           <p className='font-inter font-[400] text-[16px] text-[#585D69]'>
-            {data.date}
+            {data.createdAt.slice(0, 10)}
           </p>
           <Title text='category' />
           <div className='flex items-center gap-[10px]'>
             <img src={tree} alt='category' className='h-[20px]' />
             <p className='font-inter font-[500] text-[16px] leading-[19.36px]'>
-              {data.category}
+              {data.category.title}
             </p>
           </div>
           <Title text='photos' />
-          <div className='flex gap-[12px] overflow-x-scroll'>
-            <img
-              src={jungle}
-              alt=''
-              className='h-[143px] w-[187px] rounded-lg'
-            />
-            <img
-              src={jungle}
-              alt=''
-              className='h-[143px] w-[187px] rounded-lg'
-            />
-            <img
-              src={jungle}
-              alt=''
-              className='h-[143px] w-[187px] rounded-lg'
-            />
-            <img
-              src={jungle}
-              alt=''
-              className='h-[143px] w-[187px] rounded-lg'
-            />
+          <div
+            className={`flex gap-[12px] ${
+              data.attachment.length > 3 && 'overflow-x-scroll'
+            }`}
+          >
+            {data.attachment.length
+              ? data.attachment.map((item: {media: string}) => (
+                <img
+                  key={item.media}
+                  src={item.media}
+                  alt=''
+                  className='h-[143px] w-[187px] rounded-lg'
+                />
+              ))
+              : 'No Photos Found'}
           </div>
           <Title text='feels' />
           <div>
-            <Feel />
+            <Feel sentiment={data.sentiment || '-'} />
           </div>
           <Title text='Description' />
           <div>
             <p className='font-inter font-[400] text-[16px] text-[#282F3E] leading-[24px]'>
-              The forest is a complex ecosystem consisting mainly of trees that
-              buffer the earth and support a myriad of life forms. The trees
-              help create a special environment which, in turn, affects the
-              kinds of animals and plants that can exist in the forest. Trees
-              are an important component of the environment.
+              {data.description || 'No Description Found'}
             </p>
           </div>
           <Title text='Location' />
           <div>
             <p className='font-inter font-[400] text-[16px] text-[#282F3E] leading-[24px]'>
-              Kikori, Papua New Guinea
+              -
             </p>
           </div>
           <div className='h-[229px] mt-[8px] rounded-lg'>
-            <Map center={[144.24, -7.41]} />
+            <Map center={data?.location?.coordinates || [0, 0]} />
           </div>
           <div className='flex justify-between gap-[16px] my-[52px]'>
             <Button text='Accept' className='w-[100%]' onClick={hideDetails} />
