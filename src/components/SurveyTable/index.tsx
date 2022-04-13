@@ -1,21 +1,26 @@
 import React, {useCallback, useState} from 'react';
 import SurveyEntry from '@components/SurveyEntry';
 
-export type Data = {
-  id: number;
-  survey: string;
-  category: string;
-  categoryImg: string;
-  date: string;
+import tree from '@images/category-tree.png';
+
+export type SurveyDataType = {
+  id: number | string;
+  title: string;
+  description: string;
+  attachment: {media: string}[];
+  category: {title: string};
+  createdAt: string;
+  location: {type: string; coordinates: [number, number]};
+  sentiment: string;
   status: string;
 };
 
 interface Props {
-  data: Data[];
+  data: SurveyDataType[];
 }
 
 interface ItemProps {
-  item: Data;
+  item: SurveyDataType;
   index: number;
   setIndex(i: number): void;
   setShowDetails(value: boolean): void;
@@ -38,28 +43,33 @@ const SurveyItem: React.FC<ItemProps> = ({
     <tr className='h-[56px] border-t border-[#CCDCE8]'>
       <td>
         <p className='pl-[20px] text-[#282F3E] font-inter font-[500] text-[16px]'>
-          {item.survey}
+          {item.title}
         </p>
       </td>
       <td>
         <div className='flex items-center gap-[9px]'>
-          <img src={item.categoryImg} alt='category' className='h-[18px]' />
+          <img src={tree} alt='category' className='h-[18px]' />
           <p className='text-[#282F3E] font-inter font-[400] text-[16px]'>
-            {item.category}
+            {item.category.title}
           </p>
         </div>
       </td>
       <td>
         <p className='text-[#282F3E] font-inter font-[400] text-[16px]'>
-          {item.date}
+          {item.createdAt.slice(0, 10)}
         </p>
       </td>
       <td>
         <p
           className={`max-w-fit px-[12px] py-[4px] rounded-full uppercase font-inter font-[500] text-[12px] ${
-            item.status === 'Pending' && 'bg-[#FFF3E2] text-[#F79009]'
-          } ${item.status === 'Declined' && 'bg-[#FFEFEE] text-[#F04438]'} ${
-            item.status === 'Approved' && 'bg-[#E7F5EF] text-[#12B76A]'
+            item.status.toLowerCase() === 'pending'
+            && 'bg-[#FFF3E2] text-[#F79009]'
+          } ${
+            item.status.toLowerCase() === 'declined'
+            && 'bg-[#FFEFEE] text-[#F04438]'
+          } ${
+            item.status.toLowerCase() === 'approved'
+            && 'bg-[#E7F5EF] text-[#12B76A]'
           }`}
         >
           {item.status}
@@ -102,14 +112,23 @@ const SurveyTable: React.FC<Props> = ({data}) => {
             </tr>
           </thead>
           <tbody>
-            {data.map((item, index) => (
-              <SurveyItem
-                item={item}
-                index={index}
-                setIndex={setActiveIndex}
-                setShowDetails={setShowDetails}
-              />
-            ))}
+            {data.length ? (
+              data.map((item: SurveyDataType, index: number) => (
+                <SurveyItem
+                  key={item.id}
+                  item={item}
+                  index={index}
+                  setIndex={setActiveIndex}
+                  setShowDetails={setShowDetails}
+                />
+              ))
+            ) : (
+              <tr>
+                <td>
+                  <p className='p-[20px] text-[#282F3E] font-inter font-[400] text-[16px]'>No Survey Found</p>
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>

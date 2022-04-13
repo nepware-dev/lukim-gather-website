@@ -1,33 +1,59 @@
 import React, {useCallback, useEffect, useState} from 'react';
+import {gql, useQuery} from '@apollo/client';
 import {BsCalendar4Event} from 'react-icons/bs';
 import {RiArrowDownSLine} from 'react-icons/ri';
+
 import DashboardHeader from '@components/DashboardHeader';
 import DashboardLayout from '@components/DashboardLayout';
-
-import SurveyTable, {Data} from '@components/SurveyTable';
+import SurveyTable, {SurveyDataType} from '@components/SurveyTable';
 import SurveyTab from '@components/SurveyTab';
 import Pagination from '@components/Pagination';
 import Dropdown from '@components/Dropdown';
 
-import data from '../../data/mockData.js';
+const GET_SURVEY_DATA = gql`
+  query {
+    enviromentalSurveys {
+      id
+      title
+      description
+      attachment {
+        media
+      }
+      category {
+        title
+      }
+      createdAt
+      location {
+        type
+        coordinates
+      }
+      sentiment
+      status
+    }
+  }
+`;
 
 const Surveys = () => {
+  const {data} = useQuery(GET_SURVEY_DATA);
   const [status, setStatus] = useState<string>('All');
-  const [surveyData, setSurveyData] = useState<Data[]>(data);
+  const [surveyData, setSurveyData] = useState<SurveyDataType[]>([]);
   const [activePage, setActivePage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(0);
   const [rows, setRows] = useState<number>(10);
 
   useEffect(() => {
+    if (!data) return;
     if (status === 'All') {
-      const slicedData = data.slice(
+      const slicedData = data.enviromentalSurveys.slice(
         rows * activePage - rows,
         rows * activePage,
       );
       setSurveyData(slicedData);
-      setTotalPages(Math.ceil(data.length / rows));
+      setTotalPages(Math.ceil(data.enviromentalSurveys.length / rows));
     } else {
-      const filterData = data.filter((item) => item.status === status);
+      const filterData = data.enviromentalSurveys.filter(
+        (item: {status: string}) => item.status === status,
+      );
       const slicedData = filterData.slice(
         rows * activePage - rows,
         rows * activePage,
@@ -35,7 +61,7 @@ const Surveys = () => {
       setSurveyData(slicedData);
       setTotalPages(Math.ceil(filterData.length / rows));
     }
-  }, [activePage, rows, status]);
+  }, [activePage, data, rows, status]);
 
   const handleTab = useCallback((text: string) => {
     setStatus(text);
