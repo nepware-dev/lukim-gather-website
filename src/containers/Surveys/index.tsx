@@ -52,7 +52,7 @@ const Surveys = () => {
       setTotalPages(Math.ceil(data.enviromentalSurveys.length / rows));
     } else {
       const filterData = data.enviromentalSurveys.filter(
-        (item: {status: string}) => item.status === status,
+        (item: {status: string}) => item.status.toLowerCase() === status.toLowerCase(),
       );
       const slicedData = filterData.slice(
         rows * activePage - rows,
