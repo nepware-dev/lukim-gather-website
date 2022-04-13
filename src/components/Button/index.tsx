@@ -30,7 +30,7 @@ const Button: React.FC<Props> = ({
   <button
     type='button'
     onClick={onClick}
-    className={`h-[49px] px-5 bg-color-green-alt rounded-lg ${className}`}
+    className={`w-[100%] h-[49px] px-5 bg-color-green-alt rounded-lg ${className}`}
   >
     {loading ? (
       <Loader />
