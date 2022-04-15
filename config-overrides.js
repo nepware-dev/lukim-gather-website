@@ -13,6 +13,7 @@ module.exports = function override(config) {
       '@hooks': resolve('src/hooks'),
       '@routes': resolve('src/routes'),
       '@store': resolve('src/store'),
+      '@utils': resolve('src/utils'),
     },
   };
 

@@ -4,6 +4,7 @@ import {HiOutlineX} from 'react-icons/hi';
 import Button from '@components/Button';
 import Map from '@components/Map';
 import {SurveyDataType} from '@components/SurveyTable';
+import {formatDate} from '@utils/formatDate';
 
 import tree from '@images/category-tree.png';
 
@@ -74,7 +75,7 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails}) => {
             </p>
           </div>
           <p className='font-inter font-[400] text-[16px] text-[#585D69]'>
-            {data.createdAt.slice(0, 10)}
+            {formatDate(data.createdAt)}
           </p>
           <Title text='category' />
           <div className='flex items-center gap-[10px]'>

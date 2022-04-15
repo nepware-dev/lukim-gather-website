@@ -1,5 +1,6 @@
 import React, {useCallback, useState} from 'react';
 import SurveyEntry from '@components/SurveyEntry';
+import {formatDate} from '@utils/formatDate';
 
 import tree from '@images/category-tree.png';
 
@@ -56,7 +57,7 @@ const SurveyItem: React.FC<ItemProps> = ({
       </td>
       <td>
         <p className='text-[#282F3E] font-inter font-[400] text-[16px]'>
-          {item.createdAt.slice(0, 10)}
+          {formatDate(item.createdAt)}
         </p>
       </td>
       <td>
@@ -125,7 +126,9 @@ const SurveyTable: React.FC<Props> = ({data}) => {
             ) : (
               <tr>
                 <td>
-                  <p className='p-[20px] text-[#282F3E] font-inter font-[400] text-[16px]'>No Survey Found</p>
+                  <p className='p-[20px] text-[#282F3E] font-inter font-[400] text-[16px]'>
+                    No Survey Found
+                  </p>
                 </td>
               </tr>
             )}
