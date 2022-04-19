@@ -8,6 +8,7 @@ import Home from '@containers/Home';
 import Dashboard from '@containers/Dashboard';
 import Surveys from '@containers/Surveys';
 import Login from '@containers/Login';
+import AccountSettings from '@containers/AccountSettings';
 
 interface Props {
   isAuthenticated: boolean;
@@ -26,6 +27,7 @@ const AppRoutes = () => {
       <Route path='/' element={<PrivateRoute isAuthenticated={isAuthenticated} />}>
         <Route path='/dashboard' element={<Dashboard />} />
         <Route path='/surveys' element={<Surveys />} />
+        <Route path='/account-settings' element={<AccountSettings />} />
       </Route>
     </Routes>
   );

@@ -40,7 +40,7 @@ const Dropdown: React.FC<Props> = ({renderLabel, children}) => {
     <div className='relative'>
       <div onClick={handleClick}>{renderLabel()}</div>
       {open && (
-        <div className='absolute top-[50px] rounded-lg shadow-[0_4px_42px_rgba(79,114,205,0.15)]'>
+        <div className='absolute top-[50px] right-0 rounded-lg shadow-[0_4px_42px_rgba(79,114,205,0.15)]'>
           {children}
         </div>
       )}

@@ -9,6 +9,7 @@ interface Props {
   textClassName?: string;
   onClick(): void;
   loading?: boolean;
+  disabled?: boolean;
 }
 
 interface NumBtnProps {
@@ -25,17 +26,29 @@ interface ArrowBtnProps {
 }
 
 const Button: React.FC<Props> = ({
-  text, className, textClassName, onClick, loading,
+  text,
+  className,
+  textClassName,
+  onClick,
+  loading,
+  disabled,
 }) => (
   <button
     type='button'
     onClick={onClick}
-    className={`w-[100%] h-[49px] px-5 bg-color-green-alt rounded-lg ${className}`}
+    disabled={disabled || false}
+    className={`w-[100%] h-[49px] px-5 bg-color-green-alt rounded-lg ${
+      disabled && 'cursor-not-allowed opacity-80'
+    } ${className}`}
   >
     {loading ? (
       <Loader />
     ) : (
-      <p className={`font-semibold font-inter text-color-white text-base ${textClassName} ${loading && 'opacity-50 cursor-not-allowed'}`}>
+      <p
+        className={`font-semibold font-inter text-color-white text-base ${textClassName} ${
+          loading && 'opacity-50 cursor-not-allowed'
+        }`}
+      >
         {text}
       </p>
     )}
