@@ -14,6 +14,7 @@ module.exports = function override(config) {
       '@routes': resolve('src/routes'),
       '@store': resolve('src/store'),
       '@utils': resolve('src/utils'),
+      '@services': resolve('src/services'),
     },
   };
 

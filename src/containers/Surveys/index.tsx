@@ -124,7 +124,7 @@ const Surveys = () => {
 
   return (
     <DashboardLayout>
-      <DashboardHeader title='Surveys' name='Andrew30' />
+      <DashboardHeader title='Surveys' />
       <div className='px-[20px] mt-[24px] mb-[150px]'>
         <div className='flex justify-between'>
           <div>

@@ -1,18 +1,26 @@
 import React, {useCallback} from 'react';
+import {useSelector} from 'react-redux';
 import {useNavigate} from 'react-router-dom';
 import {AiOutlineSetting} from 'react-icons/ai';
 import {FiLogOut} from 'react-icons/fi';
 import {BsArrowLeftShort} from 'react-icons/bs';
 
+import {rootState} from '@store/rootReducer';
+import {dispatchLogout} from '@services/dispatch';
+
 import Dropdown from '@components/Dropdown';
 
 interface Props {
   title?: string;
-  name: string;
 }
 
-const DashboardHeader: React.FC<Props> = ({title, name}) => {
+const DashboardHeader: React.FC<Props> = ({title}) => {
   const navigate = useNavigate();
+  const {
+    auth: {
+      user: {firstName},
+    },
+  } = useSelector((state: rootState) => state);
 
   const handleGoBack = useCallback(() => {
     navigate(-1);
@@ -22,16 +30,22 @@ const DashboardHeader: React.FC<Props> = ({title, name}) => {
     navigate('/account-settings');
   }, [navigate]);
 
+  const handleLogout = useCallback(() => {
+    dispatchLogout();
+  }, []);
+
   const renderLabel = useCallback(
     () => (
       <div className='h-[44px] flex items-center gap-[8px] rounded-lg px-[12px] bg-[#F0F6EA] cursor-pointer'>
         <div className='w-[28px] h-[28px] flex items-center justify-center rounded-full bg-[#6AA12A]'>
-          <p className='text-color-white uppercase'>{name[0]}</p>
+          <p className='text-color-white uppercase'>{firstName[0]}</p>
         </div>
-        <p className='font-inter font-[400] text-[16px] capitalize'>{name}</p>
+        <p className='font-inter font-[400] text-[16px] capitalize'>
+          {firstName}
+        </p>
       </div>
     ),
-    [name],
+    [firstName],
   );
 
   return (
@@ -64,7 +78,10 @@ const DashboardHeader: React.FC<Props> = ({title, name}) => {
             </p>
           </div>
           <div className='h-[1px] bg-[#E7E8EA] my-[4px]' />
-          <div className='flex items-center gap-[12px] p-[10px] rounded-lg hover:bg-[#F0F3F6] cursor-pointer'>
+          <div
+            className='flex items-center gap-[12px] p-[10px] rounded-lg hover:bg-[#F0F3F6] cursor-pointer'
+            onClick={handleLogout}
+          >
             <FiLogOut size={20} color='#888C94' />
             <p className='font-inter font-[400] text-[16px] text-[#282F3E]'>
               Logout
