@@ -42,7 +42,7 @@ const AccountSettings = () => {
 
   return (
     <DashboardLayout>
-      <DashboardHeader name='Andrew30' />
+      <DashboardHeader />
       <div className='px-[20px] mt-[24px]'>
         <h2 className='font-inter font-[600] text-[24px] text-[#101828] mb-[34px]'>
           Account Settings

@@ -5,7 +5,7 @@ import DashboardLayout from '@components/DashboardLayout';
 
 const Dashboard = () => (
   <DashboardLayout>
-    <DashboardHeader title='Dashboard' name='Andrew30' />
+    <DashboardHeader title='Dashboard' />
     <div className='flex flex-wrap justify-center gap-[20px] px-[20px] my-[24px]'>
       <DashboardCard />
       <DashboardCard />

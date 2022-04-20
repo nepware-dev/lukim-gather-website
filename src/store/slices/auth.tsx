@@ -1,11 +1,11 @@
 /* eslint-disable no-param-reassign */
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 
-import {AuthState} from '../types/auth';
+import {AuthState, UserType} from '../types/auth';
 
 const initialState: AuthState = {
   isAuthenticated: false,
-  user: {},
+  user: {firstName: '', lastName: '', email: ''},
   token: null,
   refreshToken: null,
   idToken: null,
@@ -18,7 +18,7 @@ const authSlice = createSlice({
     setLogin: (state) => {
       state.isAuthenticated = true;
     },
-    setUser: (state, {payload}: PayloadAction<object>) => {
+    setUser: (state, {payload}: PayloadAction<UserType>) => {
       state.user = payload;
     },
     setToken: (state, {payload}: PayloadAction<string>) => {

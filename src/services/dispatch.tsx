@@ -1,3 +1,4 @@
+import {UserType} from '@store/types/auth';
 import {store} from '../store';
 
 import {
@@ -10,7 +11,7 @@ import {
 
 const {dispatch} = store;
 
-export const dispatchLogin = async (accessToken: string, refreshToken: string, user: object) => {
+export const dispatchLogin = async (accessToken: string, refreshToken: string, user: UserType) => {
   dispatch(setToken(accessToken));
   setRefreshToken(refreshToken);
   dispatch(setUser(user));
