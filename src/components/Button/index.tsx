@@ -37,7 +37,7 @@ const Button: React.FC<Props> = ({
     type='button'
     onClick={onClick}
     disabled={disabled || false}
-    className={`w-[100%] h-[49px] px-5 bg-color-green-alt rounded-lg ${
+    className={`w-[100%] h-[49px] px-5 bg-[#EC6D25] rounded-lg ${
       disabled && 'cursor-not-allowed opacity-80'
     } ${className}`}
   >
