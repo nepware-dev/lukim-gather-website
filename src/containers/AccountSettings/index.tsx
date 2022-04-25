@@ -47,8 +47,8 @@ const AccountSettings = () => {
         <h2 className='font-inter font-[600] text-[24px] text-[#101828] mb-[34px]'>
           Account Settings
         </h2>
-        <div className='flex gap-[30px] h-[calc(100vh-178px)]'>
-          <div className='flex flex-col gap-[20px] border-r border-[#E7E8EA]'>
+        <div className='flex flex-col md:flex-row gap-[30px] h-[calc(100vh-178px)]'>
+          <div className='flex md:flex-col gap-[20px] border-r border-[#E7E8EA]'>
             <AccountTab
               text='Email'
               isActive={activeTab === 'Email'}
@@ -60,13 +60,14 @@ const AccountSettings = () => {
               onClick={handleTab}
             />
           </div>
-          <div>
+          <div className='w-fit'>
             {activeTab === 'Email' ? (
               <InputField
                 title='Email'
                 placeholder='john@example.com'
                 value={email}
                 onChange={handleEmail}
+                inputClassname='w-[calc(100vw-40px)] md:w-[350px] lg:w-[409px] max-w-[409px]'
               />
             ) : (
               <div className='flex flex-col gap-[24px]'>
@@ -76,6 +77,7 @@ const AccountSettings = () => {
                   placeholder='Enter your current password'
                   value={currentPassword}
                   onChange={handleCurrentPassword}
+                  inputClassname='w-[calc(100vw-40px)] md:w-[350px] lg:w-[409px] max-w-[409px]'
                 />
                 <InputField
                   password
@@ -83,6 +85,7 @@ const AccountSettings = () => {
                   placeholder='Enter your new password'
                   value={newPassword}
                   onChange={handleNewPassword}
+                  inputClassname='w-[calc(100vw-40px)] md:w-[350px] lg:w-[409px] max-w-[409px]'
                 />
                 <Button
                   text='Save Changes'
