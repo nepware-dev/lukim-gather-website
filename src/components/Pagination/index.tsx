@@ -17,7 +17,7 @@ const Pagination: React.FC<Props> = ({page, totalPages, handlePagination}) => {
   }, [handlePagination, page]);
 
   return (
-    <div className='flex gap-[35px] w-full pt-[17px] pb-[14px] px-[32px]'>
+    <div className='flex gap-[35px] w-full pt-[17px] pb-[14px]'>
       <div>
         <ArrowBtn
           btnType='previous'

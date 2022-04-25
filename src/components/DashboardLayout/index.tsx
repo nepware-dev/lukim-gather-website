@@ -1,8 +1,10 @@
-import React, {ReactNode} from 'react';
+import React, {ReactNode, useCallback, useState} from 'react';
 import {Link, useLocation} from 'react-router-dom';
 import {BsFillGridFill} from 'react-icons/bs';
 import {FiFileText} from 'react-icons/fi';
+import {HiMenuAlt1, HiOutlineX} from 'react-icons/hi';
 
+import UserDropdown from '@components/UserDropdown';
 import logo from '@images/lukim-nav-logo.png';
 
 const styles = {
@@ -14,16 +16,43 @@ const styles = {
 
 const DashboardLayout = ({children}: {children: ReactNode}) => {
   const {pathname} = useLocation();
+  const [showSideBar, setShowSideBar] = useState<boolean>(false);
+
+  const handleIconToggle = useCallback(() => {
+    setShowSideBar(!showSideBar);
+  }, [showSideBar]);
+
+  const MobileHeader = useCallback(
+    () => (
+      <div className='md:hidden w-full p-4 flex items-center justify-between border-b border-[#CEDCEC]'>
+        <img src={logo} alt='lukim-logo' className='h-[60px]' />
+        <div className='cursor-pointer'>
+          {showSideBar ? (
+            <HiOutlineX size={25} onClick={handleIconToggle} />
+          ) : (
+            <HiMenuAlt1 size={25} onClick={handleIconToggle} />
+          )}
+        </div>
+      </div>
+    ),
+    [handleIconToggle, showSideBar],
+  );
+
   return (
-    <div>
-      <div className='flex'>
-        <div className='w-[236px] min-h-[100vh] px-[20px] bg-[#F2F5F9] border-r border-[#CCDCE8]'>
-          <Link to='/'>
-            <div className='mt-[24px] mb-[85px]'>
+    <div className='overflow-x-hidden'>
+      <MobileHeader />
+      <div
+        className={`flex md:-translate-x-0 ease-in-out duration-300 ${
+          showSideBar ? '-translate-x-0' : '-translate-x-[235px]'
+        }`}
+      >
+        <div className='min-w-[236px] min-h-[100vh] px-[20px] bg-[#F2F5F9] border-r border-[#CCDCE8]'>
+          <Link to='/' className='hidden md:inline-block'>
+            <div className='mt-[24px]'>
               <img src={logo} alt='lukim-logo' className='h-[60px]' />
             </div>
           </Link>
-          <div>
+          <div className='flex flex-col mt-[85px]'>
             <Link to='/dashboard'>
               <div
                 className={`${styles.itemWrapper} ${
@@ -51,9 +80,12 @@ const DashboardLayout = ({children}: {children: ReactNode}) => {
                 </span>
               </div>
             </Link>
+            <div className='md:hidden mt-[20px]'>
+              <UserDropdown />
+            </div>
           </div>
         </div>
-        <div className='w-[100%]'>{children}</div>
+        <div className='w-screen'>{children}</div>
       </div>
     </div>
   );

@@ -18,7 +18,7 @@ const AccountTab: React.FC<Props> = ({
     <button
       type='button'
       onClick={handleClick}
-      className={`w-[105px] border-r-[2.8px] font-inter font-[500] text-[16px] text-left ${
+      className={`md:w-[105px] border-b-[2.8px] md:border-b-0 md:border-r-[2.8px] font-inter font-[500] text-[16px] text-left ${
         isActive ? 'border-[#6AA12A] text-[#6AA12A]' : 'border-transparent text-[#70747E]'
       } ${className}`}
     >

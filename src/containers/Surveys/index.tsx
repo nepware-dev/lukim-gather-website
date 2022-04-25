@@ -126,8 +126,11 @@ const Surveys = () => {
     <DashboardLayout>
       <DashboardHeader title='Surveys' />
       <div className='px-[20px] mt-[24px] mb-[150px]'>
-        <div className='flex justify-between'>
-          <div>
+        <h2 className='md:hidden mb-[20px] font-inter font-[600] text-[24px] text-[#101828]'>
+          Surveys
+        </h2>
+        <div className='flex flex-wrap gap-4 justify-between'>
+          <div className='min-w-[275px]'>
             <SurveyTab
               text='All'
               className={`rounded-l-lg ${
@@ -159,8 +162,10 @@ const Surveys = () => {
             <p className='ml-[10px]'>Jan 1, 2022 - Feb 2, 2022</p>
           </div>
         </div>
-        <SurveyTable data={surveyData} />
-        <div className='w-[100%] flex items-center justify-between mt-[24px]'>
+        <div className='md:max-w-[calc(100vw-276px)] overflow-x-scroll'>
+          <SurveyTable data={surveyData} />
+        </div>
+        <div className='w-[100%] flex flex-wrap gap-4 items-center justify-between mt-[24px]'>
           <div className='flex gap-[12px] items-center'>
             <p className='font-inter font-[500] text-[14px] text-[#282F3E]'>
               Show

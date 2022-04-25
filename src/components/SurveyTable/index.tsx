@@ -94,7 +94,7 @@ const SurveyTable: React.FC<Props> = ({data}) => {
   const [showDetails, setShowDetails] = useState<boolean>(false);
   return (
     <>
-      <div className='mt-[16px] border border-[#CCDCE8] rounded'>
+      <div className='mt-[16px] border border-[#CCDCE8] rounded min-w-[1024px]'>
         <table className='table-auto w-[100%] border-collapse'>
           <thead>
             <tr className='h-[41px] border-b border-[#CCDCE8]'>

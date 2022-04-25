@@ -3,9 +3,10 @@ import React, {useCallback, useEffect, useState} from 'react';
 interface Props {
   renderLabel(): React.ReactNode;
   children: React.ReactChild;
+  alignRight?: boolean;
 }
 
-const Dropdown: React.FC<Props> = ({renderLabel, children}) => {
+const Dropdown: React.FC<Props> = ({renderLabel, children, alignRight}) => {
   const [open, setOpen] = useState<boolean>(false);
 
   const hideDropDown = useCallback(() => {
@@ -40,7 +41,11 @@ const Dropdown: React.FC<Props> = ({renderLabel, children}) => {
     <div className='relative'>
       <div onClick={handleClick}>{renderLabel()}</div>
       {open && (
-        <div className='absolute top-[50px] right-0 rounded-lg shadow-[0_4px_42px_rgba(79,114,205,0.15)]'>
+        <div
+          className={`absolute top-[50px] rounded-lg shadow-[0_4px_42px_rgba(79,114,205,0.15)] ${
+            alignRight ? 'right-0' : 'left-0'
+          }`}
+        >
           {children}
         </div>
       )}

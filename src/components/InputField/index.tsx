@@ -6,6 +6,7 @@ interface Props {
   value: string;
   placeholder: string;
   password?: boolean;
+  inputClassname?: string;
   onChange(e: React.ChangeEvent<HTMLInputElement>): void;
 }
 
@@ -14,6 +15,7 @@ const InputField: React.FC<Props> = ({
   value,
   placeholder,
   password,
+  inputClassname,
   onChange,
 }) => {
   const [type, setType] = useState<string>('password');
@@ -31,15 +33,15 @@ const InputField: React.FC<Props> = ({
       <p className='text-color-text-grey font-inter font-medium text-base mb-2'>
         {title}
       </p>
-      <div className='relative'>
+      <div className='w-fit relative'>
         <input
           type={password ? type : 'text'}
           value={value}
           placeholder={placeholder}
           onChange={onChange}
-          className={`w-[409px] rounded-lg pl-3 py-4 border border-[#CCDCE8] font-inter font-normal text-base appearance-none ${
+          className={`rounded-lg pl-3 py-4 border border-[#CCDCE8] font-inter font-normal text-base appearance-none ${
             password ? 'pr-12' : 'pr-4'
-          }`}
+          } ${inputClassname}`}
         />
         <div
           className={`absolute top-[32%] right-[20px] cursor-pointer ${
