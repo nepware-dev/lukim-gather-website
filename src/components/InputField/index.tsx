@@ -1,5 +1,6 @@
 import React, {useCallback, useState} from 'react';
 import {AiOutlineEye, AiOutlineEyeInvisible} from 'react-icons/ai';
+import cs from '@utils/cs';
 
 interface Props {
   title: string;
@@ -9,6 +10,14 @@ interface Props {
   inputClassname?: string;
   onChange(e: React.ChangeEvent<HTMLInputElement>): void;
 }
+
+const classes = {
+  title: 'text-color-text-grey font-inter font-medium text-base mb-2',
+  inputWrapper: 'w-[100%] relative',
+  input: 'w-[100%] rounded-lg pl-3 py-4 border border-[#CCDCE8] font-inter font-normal text-base appearance-none',
+  iconWrapper: 'absolute top-[32%] right-[20px] cursor-pointer',
+  hidden: 'hidden',
+};
 
 const InputField: React.FC<Props> = ({
   title,
@@ -30,24 +39,21 @@ const InputField: React.FC<Props> = ({
 
   return (
     <div>
-      <p className='text-color-text-grey font-inter font-medium text-base mb-2'>
-        {title}
-      </p>
-      <div className='w-fit relative'>
+      <p className={classes.title}>{title}</p>
+      <div className={classes.inputWrapper}>
         <input
           type={password ? type : 'text'}
           value={value}
           placeholder={placeholder}
           onChange={onChange}
-          className={`rounded-lg pl-3 py-4 border border-[#CCDCE8] font-inter font-normal text-base appearance-none ${
-            password ? 'pr-12' : 'pr-4'
-          } ${inputClassname}`}
+          className={cs(
+            classes.input,
+            ['pr-12', !!password],
+            ['pr-4', !password],
+            inputClassname,
+          )}
         />
-        <div
-          className={`absolute top-[32%] right-[20px] cursor-pointer ${
-            !password && 'hidden'
-          }`}
-        >
+        <div className={cs(classes.iconWrapper, [classes.hidden, !password])}>
           {type === 'password' ? (
             <AiOutlineEyeInvisible
               size={22}

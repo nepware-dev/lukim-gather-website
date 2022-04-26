@@ -4,14 +4,30 @@ import {BsFillGridFill} from 'react-icons/bs';
 import {FiFileText} from 'react-icons/fi';
 import {HiMenuAlt1, HiOutlineX} from 'react-icons/hi';
 
+import cs from '@utils/cs';
 import UserDropdown from '@components/UserDropdown';
+
 import logo from '@images/lukim-nav-logo.png';
 
-const styles = {
-  itemWrapper:
-    'flex items-center py-[10px] px-[8px] mb-[15px] rounded-lg gap-[15px]',
-  active: 'bg-color-white text-[#00518B]',
-  inactive: 'text-[#404653]',
+const classes = {
+  mainContainer: 'overflow-x-hidden',
+  container: 'flex md:-translate-x-0 ease-in-out duration-300',
+  showSideBar: '-translate-x-0',
+  hideSideBar: '-translate-x-[235px]',
+  sideBar: 'min-w-[236px] min-h-[100vh] px-[20px] bg-[#F2F5F9] border-r border-[#CCDCE8]',
+  logoWrapper: 'hidden md:inline-block pt-[24px]',
+  logo: 'h-[60px]',
+  linksWrapper: 'flex flex-col mt-[85px]',
+  link: 'flex items-center py-[10px] px-[8px] mb-[15px] rounded-lg gap-[15px]',
+  activeLink: 'bg-color-white text-[#00518B]',
+  inactiveLink: 'text-[#404653]',
+  linkText: 'font-inter font-[600] text-[16px]',
+  count: 'w-[24px] h-[19px] flex items-center justify-center ml-auto text-[12px] font-[400] font-inter bg-[#E6EEF3] rounded-full',
+  mobileHeader: 'md:hidden w-full p-4 flex items-center justify-between border-b border-[#CEDCEC]',
+  userDropdown: 'md:hidden mt-[20px]',
+  child: 'w-screen',
+  hidden: 'hidden',
+  cursor: 'cursor-pointer',
 };
 
 const DashboardLayout = ({children}: {children: ReactNode}) => {
@@ -24,9 +40,9 @@ const DashboardLayout = ({children}: {children: ReactNode}) => {
 
   const MobileHeader = useCallback(
     () => (
-      <div className='md:hidden w-full p-4 flex items-center justify-between border-b border-[#CEDCEC]'>
-        <img src={logo} alt='lukim-logo' className='h-[60px]' />
-        <div className='cursor-pointer'>
+      <div className={classes.mobileHeader}>
+        <img src={logo} alt='lukim-logo' className={classes.logo} />
+        <div className={classes.cursor}>
           {showSideBar ? (
             <HiOutlineX size={25} onClick={handleIconToggle} />
           ) : (
@@ -39,53 +55,58 @@ const DashboardLayout = ({children}: {children: ReactNode}) => {
   );
 
   return (
-    <div className='overflow-x-hidden'>
+    <div className={classes.mainContainer}>
       <MobileHeader />
       <div
-        className={`flex md:-translate-x-0 ease-in-out duration-300 ${
-          showSideBar ? '-translate-x-0' : '-translate-x-[235px]'
-        }`}
+        className={cs(
+          classes.container,
+          [classes.showSideBar, showSideBar],
+          [classes.hideSideBar, !showSideBar],
+        )}
       >
-        <div className='min-w-[236px] min-h-[100vh] px-[20px] bg-[#F2F5F9] border-r border-[#CCDCE8]'>
-          <Link to='/' className='hidden md:inline-block'>
-            <div className='mt-[24px]'>
-              <img src={logo} alt='lukim-logo' className='h-[60px]' />
+        <div className={classes.sideBar}>
+          <Link to='/' className={classes.logoWrapper}>
+            <div>
+              <img src={logo} alt='lukim-logo' className={classes.logo} />
             </div>
           </Link>
-          <div className='flex flex-col mt-[85px]'>
-            <Link to='/dashboard'>
-              <div
-                className={`${styles.itemWrapper} ${
-                  pathname === '/dashboard' ? styles.active : styles.inactive
-                }`}
-              >
-                <BsFillGridFill size={20} />
-                <p className='font-inter font-[600] text-[16px]'>Dashboard</p>
-              </div>
+          <div className={classes.linksWrapper}>
+            <Link
+              to='/dashboard'
+              className={cs(
+                classes.link,
+                [classes.activeLink, pathname === '/dashboard'],
+                [classes.inactiveLink, pathname !== '/dashboard'],
+              )}
+            >
+              <BsFillGridFill size={20} />
+              <p className={classes.linkText}>Dashboard</p>
             </Link>
-            <Link to='/surveys'>
-              <div
-                className={`${styles.itemWrapper} ${
-                  pathname === '/surveys' ? styles.active : styles.inactive
-                }`}
+            <Link
+              to='/surveys'
+              className={cs(
+                classes.link,
+                [classes.activeLink, pathname === '/surveys'],
+                [classes.inactiveLink, pathname !== '/surveys'],
+              )}
+            >
+              <FiFileText size={20} />
+              <p className={classes.linkText}>Surveys</p>
+              <span
+                className={cs(classes.count, [
+                  classes.hidden,
+                  pathname !== '/surveys',
+                ])}
               >
-                <FiFileText size={20} />
-                <p className='font-inter font-[600] text-[16px]'>Surveys</p>
-                <span
-                  className={`w-[24px] h-[19px] flex items-center justify-center ml-auto text-[12px] font-[400] font-inter bg-[#E6EEF3] rounded-full ${
-                    pathname !== '/surveys' && 'hidden'
-                  }`}
-                >
-                  -
-                </span>
-              </div>
+                -
+              </span>
             </Link>
-            <div className='md:hidden mt-[20px]'>
+            <div className={classes.userDropdown}>
               <UserDropdown />
             </div>
           </div>
         </div>
-        <div className='w-screen'>{children}</div>
+        <div className={classes.child}>{children}</div>
       </div>
     </div>
   );

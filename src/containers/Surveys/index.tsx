@@ -3,6 +3,8 @@ import {gql, useQuery} from '@apollo/client';
 import {BsCalendar4Event} from 'react-icons/bs';
 import {RiArrowDownSLine} from 'react-icons/ri';
 
+import cs from '@utils/cs';
+
 import DashboardHeader from '@components/DashboardHeader';
 import DashboardLayout from '@components/DashboardLayout';
 import SurveyTable, {SurveyDataType} from '@components/SurveyTable';
@@ -10,9 +12,24 @@ import SurveyTab from '@components/SurveyTab';
 import Pagination from '@components/Pagination';
 import Dropdown from '@components/Dropdown';
 
+const classes = {
+  container: 'px-[20px] mt-[24px] mb-[150px]',
+  title: 'md:hidden mb-[20px] font-inter font-[600] text-[24px] text-[#101828]',
+  header: 'flex flex-wrap gap-4 justify-between',
+  tabs: 'min-w-[275px]',
+  datePicker: 'flex items-center gap-[10px] h-[42px] px-[14px] border border-[#CCDCE8] rounded-lg font-inter font-[500] text-[14px] text-[#585D69]',
+  surveyTable: 'md:max-w-[calc(100vw-276px)] overflow-x-scroll',
+  footer: 'w-[100%] flex flex-wrap gap-4 items-center justify-between mt-[24px]',
+  dropdownWrapper: 'flex gap-[12px] items-center',
+  show: 'font-inter font-[500] text-[14px] text-[#282F3E]',
+  dropdownLabel: 'flex items-center gap-[15px] h-[42px] px-[14px] border border-[#CCDCE8] rounded-lg font-inter font-[500] text-[14px] text-[#585D69] cursor-pointer',
+  dropdownItems: 'flex-col py-[8px] px-[14px] font-inter font-[500] border border-[#CCDCE8] text-[14px] rounded-lg',
+  dropdownItem: 'cursor-pointer p-[10px] rounded-lg',
+};
+
 const GET_SURVEY_DATA = gql`
   query {
-    enviromentalSurveys {
+    happeningSurveys {
       id
       title
       description
@@ -44,14 +61,14 @@ const Surveys = () => {
   useEffect(() => {
     if (!data) return;
     if (status === 'All') {
-      const slicedData = data.enviromentalSurveys.slice(
+      const slicedData = data.happeningSurveys.slice(
         rows * activePage - rows,
         rows * activePage,
       );
       setSurveyData(slicedData);
-      setTotalPages(Math.ceil(data.enviromentalSurveys.length / rows));
+      setTotalPages(Math.ceil(data.happeningSurveys.length / rows));
     } else {
-      const filterData = data.enviromentalSurveys.filter(
+      const filterData = data.happeningSurveys.filter(
         (item: {status: string}) => item.status.toLowerCase() === status.toLowerCase(),
       );
       const slicedData = filterData.slice(
@@ -84,10 +101,7 @@ const Surveys = () => {
 
   const renderLabel = useCallback(
     () => (
-      <div
-        className={`${'flex items-center gap-[15px] h-[42px] px-[14px] border border-[#CCDCE8] '} 
-        ${'rounded-lg font-inter font-[500] text-[14px] text-[#585D69] cursor-pointer'}`}
-      >
+      <div className={classes.dropdownLabel}>
         <p>{`${rows} rows`}</p>
         <RiArrowDownSLine size={20} color='#585D69' />
       </div>
@@ -97,23 +111,19 @@ const Surveys = () => {
 
   const DropdownItem = useCallback(
     () => (
-      <div
-        className={`${'flex-col py-[8px] px-[14px] font-inter font-[500]'} 
-          ${'border border-[#CCDCE8] text-[14px] rounded-lg'}`}
-      >
+      <div className={classes.dropdownItems}>
         <div
-          className={`mb-[5px] cursor-pointer p-[10px] rounded-lg ${
-            rows === 5 && 'bg-[#F2F5F9]'
-          }`}
           onClick={handle5rows}
+          className={cs(classes.dropdownItem, 'mb-[5px]', [
+            'bg-[#F2F5F9]',
+            rows === 5,
+          ])}
         >
           5 rows
         </div>
         <div
-          className={`cursor-pointer p-[10px] rounded-lg ${
-            rows === 10 && 'bg-[#F2F5F9]'
-          }`}
           onClick={handle10rows}
+          className={cs(classes.dropdownItem, ['bg-[#F2F5F9]', rows === 10])}
         >
           10 rows
         </div>
@@ -125,51 +135,49 @@ const Surveys = () => {
   return (
     <DashboardLayout>
       <DashboardHeader title='Surveys' />
-      <div className='px-[20px] mt-[24px] mb-[150px]'>
-        <h2 className='md:hidden mb-[20px] font-inter font-[600] text-[24px] text-[#101828]'>
-          Surveys
-        </h2>
-        <div className='flex flex-wrap gap-4 justify-between'>
-          <div className='min-w-[275px]'>
+      <div className={classes.container}>
+        <h2 className={classes.title}>Surveys</h2>
+        <div className={classes.header}>
+          <div className={classes.tabs}>
             <SurveyTab
               text='All'
-              className={`rounded-l-lg ${
-                status === 'Approved' && 'border-r-0'
-              }`}
               onClick={handleTab}
               isActive={status === 'All'}
+              className={cs('rounded-l-lg', [
+                'border-r-0',
+                status === 'Approved',
+              ])}
             />
             <SurveyTab
               text='Approved'
-              className={`${status === 'Approved' ? 'border-x' : 'border-x-0'}`}
               onClick={handleTab}
               isActive={status === 'Approved'}
+              className={cs(
+                ['border-x', status === 'Approved'],
+                ['border-x-0', status !== 'Approved'],
+              )}
             />
             <SurveyTab
               text='Pending'
-              className={`rounded-r-lg ${
-                status === 'Approved' && 'border-l-0'
-              }`}
               onClick={handleTab}
               isActive={status === 'Pending'}
+              className={cs('rounded-r-lg', [
+                'border-l-0',
+                status === 'Approved',
+              ])}
             />
           </div>
-          <div
-            className={`${'flex items-center h-[42px] px-[14px] border border-[#CCDCE8]'} 
-            ${'rounded-lg font-inter font-[500] text-[14px] text-[#585D69]'}`}
-          >
+          <div className={classes.datePicker}>
             <BsCalendar4Event size={18} color='#585D69' />
-            <p className='ml-[10px]'>Jan 1, 2022 - Feb 2, 2022</p>
+            <p>Jan 1, 2022 - Feb 2, 2022</p>
           </div>
         </div>
-        <div className='md:max-w-[calc(100vw-276px)] overflow-x-scroll'>
+        <div className={classes.surveyTable}>
           <SurveyTable data={surveyData} />
         </div>
-        <div className='w-[100%] flex flex-wrap gap-4 items-center justify-between mt-[24px]'>
-          <div className='flex gap-[12px] items-center'>
-            <p className='font-inter font-[500] text-[14px] text-[#282F3E]'>
-              Show
-            </p>
+        <div className={classes.footer}>
+          <div className={classes.dropdownWrapper}>
+            <p className={classes.show}>Show</p>
             <Dropdown renderLabel={renderLabel}>
               <DropdownItem />
             </Dropdown>
