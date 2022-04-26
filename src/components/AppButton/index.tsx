@@ -1,4 +1,7 @@
 import React from 'react';
+
+import cs from '@utils/cs';
+
 import appleIcon from '@images/apple.svg';
 import androidIcon from '@images/android.svg';
 
@@ -8,23 +11,37 @@ interface Props {
   boxShadow?: boolean;
 }
 
-const AppButton: React.FC<Props> = ({android = false, bgGrey = false, boxShadow = false}) => (
+const classes = {
+  container: 'w-[160px] h-[58px] sm:w-[193px] rounded-xl flex items-center justify-center',
+  boxShadow: 'shadow-[0_5px_10px_rgba(0,0,0,0.05)]',
+  image: 'w-[32px]',
+  textWrapper: 'flex flex-col items-start ml-[16px]',
+  text: 'font-inter font-[400] text-color-lt-grey',
+  storeText: 'font-inter font-[500] text-color-black',
+};
+
+const AppButton: React.FC<Props> = ({
+  android = false,
+  bgGrey = false,
+  boxShadow = false,
+}) => (
   <button
     type='button'
-    className={`w-[160px] h-[58px] sm:w-[193px] rounded-xl flex items-center justify-center  ${
-      bgGrey ? 'bg-color-bg' : 'bg-color-white'
-    }
-    ${boxShadow ? 'shadow-[0_5px_10px_rgba(0,0,0,0.05)]' : ''}
-    `}
+    className={cs(
+      classes.container,
+      [classes.boxShadow, boxShadow],
+      ['bg-color-bg', bgGrey],
+      ['bg-color-white', !bgGrey],
+    )}
   >
     <img
       src={android ? androidIcon : appleIcon}
       alt='apple-icon'
-      className='w-[32px]'
+      className={classes.image}
     />
-    <div className='flex flex-col items-start ml-[16px]'>
-      <p className='font-inter font-[400] text-color-lt-grey'>Soon on</p>
-      <p className='font-inter font-[500] text-color-black'>
+    <div className={classes.textWrapper}>
+      <p className={classes.text}>Soon on</p>
+      <p className={classes.storeText}>
         {android ? 'Play Store' : 'App Store'}
       </p>
     </div>

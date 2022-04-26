@@ -1,10 +1,18 @@
 import React, {useCallback, useEffect, useState} from 'react';
+import cs from '@utils/cs';
 
 interface Props {
   renderLabel(): React.ReactNode;
   children: React.ReactChild;
   alignRight?: boolean;
 }
+
+const classes = {
+  container: 'relative',
+  alignRight: 'right-0',
+  alignLeft: 'left-0',
+  itemContainer: 'absolute top-[50px] rounded-lg shadow-[0_4px_42px_rgba(79,114,205,0.15)]',
+};
 
 const Dropdown: React.FC<Props> = ({renderLabel, children, alignRight}) => {
   const [open, setOpen] = useState<boolean>(false);
@@ -38,13 +46,15 @@ const Dropdown: React.FC<Props> = ({renderLabel, children, alignRight}) => {
   }, [hideDropDown, open, showDropDown]);
 
   return (
-    <div className='relative'>
+    <div className={classes.container}>
       <div onClick={handleClick}>{renderLabel()}</div>
       {open && (
         <div
-          className={`absolute top-[50px] rounded-lg shadow-[0_4px_42px_rgba(79,114,205,0.15)] ${
-            alignRight ? 'right-0' : 'left-0'
-          }`}
+          className={cs(
+            classes.itemContainer,
+            [classes.alignRight, !!alignRight],
+            [classes.alignLeft, !alignRight],
+          )}
         >
           {children}
         </div>

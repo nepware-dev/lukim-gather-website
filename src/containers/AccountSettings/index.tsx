@@ -6,6 +6,15 @@ import AccountTab from '@components/AccountTab';
 import InputField from '@components/InputField';
 import Button from '@components/Button';
 
+const classes = {
+  container: 'px-[20px] mt-[24px]',
+  title: 'font-inter font-[600] text-[24px] text-[#101828] mb-[34px]',
+  contentWrapper: 'flex flex-col md:flex-row gap-[30px] h-[calc(100vh-178px)]',
+  tabsWrapper: 'flex md:flex-col gap-[20px] border-r border-[#E7E8EA]',
+  input: 'w-[calc(100vw-40px)] md:w-[350px] lg:w-[409px] max-w-[409px]',
+  inputsWrapper: 'flex flex-col gap-[24px]',
+};
+
 const AccountSettings = () => {
   const [activeTab, setActiveTab] = useState<string>('Email');
   const [email, setEmail] = useState<string>('');
@@ -43,12 +52,10 @@ const AccountSettings = () => {
   return (
     <DashboardLayout>
       <DashboardHeader />
-      <div className='px-[20px] mt-[24px]'>
-        <h2 className='font-inter font-[600] text-[24px] text-[#101828] mb-[34px]'>
-          Account Settings
-        </h2>
-        <div className='flex flex-col md:flex-row gap-[30px] h-[calc(100vh-178px)]'>
-          <div className='flex md:flex-col gap-[20px] border-r border-[#E7E8EA]'>
+      <div className={classes.container}>
+        <h2 className={classes.title}>Account Settings</h2>
+        <div className={classes.contentWrapper}>
+          <div className={classes.tabsWrapper}>
             <AccountTab
               text='Email'
               isActive={activeTab === 'Email'}
@@ -67,17 +74,17 @@ const AccountSettings = () => {
                 placeholder='john@example.com'
                 value={email}
                 onChange={handleEmail}
-                inputClassname='w-[calc(100vw-40px)] md:w-[350px] lg:w-[409px] max-w-[409px]'
+                inputClassname={classes.input}
               />
             ) : (
-              <div className='flex flex-col gap-[24px]'>
+              <div className={classes.inputsWrapper}>
                 <InputField
                   password
                   title='Current password'
                   placeholder='Enter your current password'
                   value={currentPassword}
                   onChange={handleCurrentPassword}
-                  inputClassname='w-[calc(100vw-40px)] md:w-[350px] lg:w-[409px] max-w-[409px]'
+                  inputClassname={classes.input}
                 />
                 <InputField
                   password
@@ -85,7 +92,7 @@ const AccountSettings = () => {
                   placeholder='Enter your new password'
                   value={newPassword}
                   onChange={handleNewPassword}
-                  inputClassname='w-[calc(100vw-40px)] md:w-[350px] lg:w-[409px] max-w-[409px]'
+                  inputClassname={classes.input}
                 />
                 <Button
                   text='Save Changes'

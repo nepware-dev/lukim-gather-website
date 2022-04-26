@@ -5,6 +5,19 @@ import Navbar from '@components/Navbar';
 import InputField from '@components/InputField';
 import Button from '@components/Button';
 
+const classes = {
+  mainContainer: 'bg-color-bg w-[100%] min-h-[100vh]',
+  container: 'max-w-[1440px] mx-auto px-[5vw]',
+  contentContainer: 'flex items-center justify-center pt-32',
+  contentWrapper: 'max-w-[473px] px-[32px] py-[42px] rounded-3xl bg-[#fff]',
+  title: 'font-inter font-semibold text-[32px] text-[#101828] mb-4',
+  info: 'font-inter font-normal text-base text-[#585D69] mb-8',
+  button: 'mt-[28px] mb-[32px]',
+  wrapper: 'flex gap-[8px]',
+  goBack: 'font-inter font-normal text-base text-[#585D69]',
+  logIn: 'font-inter font-semibold text-base text-[#00518B]',
+};
+
 const ResetPassword = () => {
   const [newPassword, setNewPassword] = useState<string>('');
 
@@ -20,15 +33,15 @@ const ResetPassword = () => {
   }, []);
 
   return (
-    <div className='bg-color-bg w-[100%] min-h-[100vh]'>
-      <div className='max-w-[1440px] mx-auto px-[5vw]'>
+    <div className={classes.mainContainer}>
+      <div className={classes.container}>
         <Navbar />
-        <div className='flex items-center justify-center pt-32'>
-          <div className='max-w-[473px] px-[32px] py-[42px] rounded-3xl bg-[#fff]'>
-            <h2 className='font-inter font-semibold text-[32px] text-[#101828] mb-4'>
+        <div className={classes.contentContainer}>
+          <div className={classes.contentWrapper}>
+            <h2 className={classes.title}>
               Reset Password
             </h2>
-            <p className='font-inter font-normal text-base text-[#585D69] mb-8'>
+            <p className={classes.info}>
               Enter the new password for your Lukim Gather account.
             </p>
             <InputField
@@ -40,15 +53,15 @@ const ResetPassword = () => {
             />
             <Button
               text='Save new password'
-              className='mt-[28px] mb-[32px]'
+              className={classes.button}
               onClick={handleSaveNewPassword}
             />
-            <div className='flex gap-[8px]'>
-              <p className='font-inter font-normal text-base text-[#585D69]'>
+            <div className={classes.wrapper}>
+              <p className={classes.goBack}>
                 Go back to
               </p>
               <Link to='/login'>
-                <span className='font-inter font-semibold text-base text-[#00518B]'>
+                <span className={classes.logIn}>
                   Log in
                 </span>
               </Link>
