@@ -1,5 +1,6 @@
 **/*.css
 *.svg
 **/images
+**/icons
 node_modules
 build

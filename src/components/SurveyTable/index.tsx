@@ -1,6 +1,8 @@
 import React, {useCallback, useState} from 'react';
-import SurveyEntry from '@components/SurveyEntry';
+
 import {formatDate} from '@utils/formatDate';
+import useCategoryIcon from '@hooks/useCategoryIcon';
+import SurveyEntry from '@components/SurveyEntry';
 
 import tree from '@images/category-tree.png';
 
@@ -9,7 +11,7 @@ export type SurveyDataType = {
   title: string;
   description: string;
   attachment: {media: string}[];
-  category: {title: string};
+  category: {id: string | number; title: string};
   createdAt: string;
   location: {type: string; coordinates: [number, number]};
   sentiment: string;
@@ -35,6 +37,7 @@ const SurveyItem: React.FC<ItemProps> = ({
   setIndex,
   setShowDetails,
 }) => {
+  const [categoryIcon] = useCategoryIcon(item?.category?.id);
   const handleClick = useCallback(() => {
     setIndex(index);
     setShowDetails(true);
@@ -49,7 +52,7 @@ const SurveyItem: React.FC<ItemProps> = ({
       </td>
       <td>
         <div className='flex items-center gap-[9px]'>
-          <img src={tree} alt='category' className='h-[18px]' />
+          <img src={categoryIcon || tree} alt='category' className='h-[18px]' />
           <p className='text-[#282F3E] font-inter font-[400] text-[16px]'>
             {item.category.title}
           </p>
@@ -66,7 +69,7 @@ const SurveyItem: React.FC<ItemProps> = ({
             item.status.toLowerCase() === 'pending'
             && 'bg-[#FFF3E2] text-[#F79009]'
           } ${
-            item.status.toLowerCase() === 'declined'
+            item.status.toLowerCase() === 'rejected'
             && 'bg-[#FFEFEE] text-[#F04438]'
           } ${
             item.status.toLowerCase() === 'approved'
