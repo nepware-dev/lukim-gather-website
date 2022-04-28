@@ -27,7 +27,7 @@ const classes = {
   dropdownItem: 'cursor-pointer p-[10px] rounded-lg',
 };
 
-const GET_SURVEY_DATA = gql`
+export const GET_SURVEY_DATA = gql`
   query {
     happeningSurveys {
       id
@@ -37,6 +37,7 @@ const GET_SURVEY_DATA = gql`
         media
       }
       category {
+        id
         title
       }
       createdAt

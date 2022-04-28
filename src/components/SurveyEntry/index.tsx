@@ -1,10 +1,14 @@
 import React, {useCallback, useState} from 'react';
+import {gql, useMutation} from '@apollo/client';
 import {HiOutlineX} from 'react-icons/hi';
+
+import {formatDate} from '@utils/formatDate';
+import useCategoryIcon from '@hooks/useCategoryIcon';
 
 import Button from '@components/Button';
 import Map from '@components/Map';
 import {SurveyDataType} from '@components/SurveyTable';
-import {formatDate} from '@utils/formatDate';
+import {GET_SURVEY_DATA} from '@containers/Surveys';
 
 import tree from '@images/category-tree.png';
 
@@ -27,7 +31,24 @@ const Feel = ({sentiment}: {sentiment: string}) => (
   </div>
 );
 
+const UPDATE_SURVEY_STATUS = gql`
+  mutation UpdateHappeningSurvey(
+    $data: UpdateHappeningSurveyInput!
+    $id: UUID!
+  ) {
+    updateHappeningSurvey(data: $data, id: $id) {
+      ok
+      result {
+        status
+      }
+      errors
+    }
+  }
+`;
+
 const SurveyEntry: React.FC<Props> = ({data, setShowDetails}) => {
+  const [updateHappeningSurvey] = useMutation(UPDATE_SURVEY_STATUS, {refetchQueries: [GET_SURVEY_DATA, 'happeningSurveys']});
+  const [categoryIcon] = useCategoryIcon(data?.category?.id);
   const [showDeclineModal, setShowDeclineModal] = useState<boolean>(false);
 
   const handleShowDeclineModal = useCallback(() => {
@@ -38,14 +59,20 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails}) => {
     setShowDeclineModal(false);
   }, []);
 
-  const handleDecline = useCallback(() => {
-    setShowDeclineModal(false);
-    setShowDetails(false);
-  }, [setShowDetails]);
-
   const hideDetails = useCallback(() => {
     setShowDetails(false);
   }, [setShowDetails]);
+
+  const handleAccept = useCallback(async () => {
+    await updateHappeningSurvey({variables: {data: {status: 'APPROVED'}, id: data.id}});
+    setShowDetails(false);
+  }, [data.id, setShowDetails, updateHappeningSurvey]);
+
+  const handleDecline = useCallback(async () => {
+    await updateHappeningSurvey({variables: {data: {status: 'REJECTED'}, id: data.id}});
+    setShowDeclineModal(false);
+    setShowDetails(false);
+  }, [data.id, setShowDetails, updateHappeningSurvey]);
 
   return (
     <div>
@@ -64,7 +91,7 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails}) => {
                 data.status.toLowerCase() === 'pending'
                 && 'bg-[#FFF3E2] text-[#F79009]'
               } ${
-                data.status.toLowerCase() === 'declined'
+                data.status.toLowerCase() === 'rejected'
                 && 'bg-[#FFEFEE] text-[#F04438]'
               } ${
                 data.status.toLowerCase() === 'approved'
@@ -79,7 +106,7 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails}) => {
           </p>
           <Title text='category' />
           <div className='flex items-center gap-[10px]'>
-            <img src={tree} alt='category' className='h-[20px]' />
+            <img src={categoryIcon || tree} alt='category' className='h-[20px]' />
             <p className='font-inter font-[500] text-[16px] leading-[19.36px]'>
               {data.category.title}
             </p>
@@ -121,7 +148,7 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails}) => {
             <Map center={data?.location?.coordinates || [0, 0]} />
           </div>
           <div className='flex justify-between gap-[16px] my-[52px]'>
-            <Button text='Accept' className='w-[100%]' onClick={hideDetails} />
+            <Button text='Accept' className='w-[100%]' onClick={handleAccept} />
             <Button
               text='Decline'
               className='w-[100%] bg-[#E7E8EA]'
