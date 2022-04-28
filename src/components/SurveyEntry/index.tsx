@@ -2,6 +2,7 @@ import React, {useCallback, useState} from 'react';
 import {gql, useMutation} from '@apollo/client';
 import {HiOutlineX} from 'react-icons/hi';
 
+import cs from '@utils/cs';
 import {formatDate} from '@utils/formatDate';
 import useCategoryIcon from '@hooks/useCategoryIcon';
 
@@ -17,17 +18,56 @@ interface Props {
   setShowDetails(value: boolean): void;
 }
 
+const classes = {
+  titleWrapper: 'h-[32px] mt-[32px] mb-[12px] flex items-center bg-[#E6EEF3] px-[10px] rounded',
+  titleText: 'font-inter font-[400] text-[14px] text-[#585D69] uppercase',
+  feelWrapper: 'flex items-center justify-center h-[56px] w-[67px] bg-[#F0F3F6] border border-[#B3CBDC] rounded-lg',
+  feel: 'text-[24px]',
+  detailsContainer: 'flex justify-end fixed top-0 bottom-0 left-0 right-0 bg-[#10182880] overflow-y-scroll z-10',
+  detailsModal: 'h-fit w-[625px] bg-[#fff] pt-[28px] px-[18px]',
+  iconWrapper: 'flex items-center justify-center h-[24px] w-[24px] bg-[#E7E8EA] rounded-full cursor-pointer',
+  header: 'flex items-center justify-between mt-[35px] mb-[12px]',
+  headerTitle: 'font-inter font-[600] text-[24px]',
+  status: 'max-w-fit px-[12px] py-[4px] rounded-full uppercase font-inter font-[600] text-[14px]',
+  pending: 'bg-[#FFF3E2] text-[#F79009]',
+  rejected: 'bg-[#FFEFEE] text-[#F04438]',
+  approved: 'bg-[#E7F5EF] text-[#12B76A]',
+  date: 'font-inter font-[400] text-[16px] text-[#585D69]',
+  categoryWrapper: 'flex items-center gap-[10px]',
+  categoryImg: 'h-[20px]',
+  categoryTitle: 'font-inter font-[500] text-[16px] leading-[19.36px]',
+  photosWrapper: 'flex gap-[12px] overflow-x-auto max-w-[calc(100vw-40px)]',
+  photo: 'h-[143px] w-[187px] rounded-lg',
+  info: 'font-inter font-[400] text-[16px] text-[#282F3E] leading-[24px]',
+  mapWrapper: 'h-[229px] mt-[8px] rounded-lg',
+  buttons: 'flex justify-between gap-[16px] my-[52px]',
+  acceptBtn: 'w-[100%]',
+  declineBtn: 'w-[100%] bg-[#E7E8EA]',
+  declineBtnText: 'text-[#F04438]',
+  declineModalOverlay: 'flex justify-center items-center fixed top-0 bottom-0 left-0 right-0 bg-[#10182880] z-20',
+  declineModal: 'w-[629px] bg-[#fff] rounded-2xl',
+  declineHeader: 'flex items-center justify-between gap-3 min-h-[80px] px-[20px] bg-[#E7ECF2] rounded-t-2xl',
+  declineHeaderText: 'font-inter font-[600] text-[24px] text-[#101828]',
+  closeIcon: 'flex items-center justify-center min-h-[24px] min-w-[24px] bg-[#fff] rounded-full cursor-pointer',
+  declineContent: 'px-[20px] mt-[20px] mb-[32px]',
+  declineText: 'font-inter font-[500] text-[16px] text-[#404653] mb-[8px]',
+  textarea: 'w-[100%] p-[10px] font-inter font-[500] text-[16px] border border-[#CCDCE8] rounded-lg',
+  declineButtons: 'flex justify-end gap-[8px] mt-[20px]',
+  cancelBtn: 'bg-[#E7E8EA]',
+  cancelBtnText: 'text-[#404653]',
+  yesDeclineBtn: 'bg-[#F04438]',
+  yesDeclineBtnText: 'text-[#fff]',
+};
+
 const Title = ({text}: {text: string}) => (
-  <div className='h-[32px] mt-[32px] mb-[12px] flex items-center bg-[#E6EEF3] px-[10px] rounded'>
-    <h3 className='font-inter font-[400] text-[14px] text-[#585D69] uppercase'>
-      {text}
-    </h3>
+  <div className={classes.titleWrapper}>
+    <h3 className={classes.titleText}>{text}</h3>
   </div>
 );
 
 const Feel = ({sentiment}: {sentiment: string}) => (
-  <div className='flex items-center justify-center h-[56px] w-[67px] bg-[#F0F3F6] border border-[#B3CBDC] rounded-lg'>
-    <p className='text-[24px]'>{sentiment}</p>
+  <div className={classes.feelWrapper}>
+    <p className={classes.feel}>{sentiment}</p>
   </div>
 );
 
@@ -47,7 +87,9 @@ const UPDATE_SURVEY_STATUS = gql`
 `;
 
 const SurveyEntry: React.FC<Props> = ({data, setShowDetails}) => {
-  const [updateHappeningSurvey] = useMutation(UPDATE_SURVEY_STATUS, {refetchQueries: [GET_SURVEY_DATA, 'happeningSurveys']});
+  const [updateHappeningSurvey] = useMutation(UPDATE_SURVEY_STATUS, {
+    refetchQueries: [GET_SURVEY_DATA, 'happeningSurveys'],
+  });
   const [categoryIcon] = useCategoryIcon(data?.category?.id);
   const [showDeclineModal, setShowDeclineModal] = useState<boolean>(false);
 
@@ -64,66 +106,59 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails}) => {
   }, [setShowDetails]);
 
   const handleAccept = useCallback(async () => {
-    await updateHappeningSurvey({variables: {data: {status: 'APPROVED'}, id: data.id}});
+    await updateHappeningSurvey({
+      variables: {data: {status: 'APPROVED'}, id: data.id},
+    });
     setShowDetails(false);
   }, [data.id, setShowDetails, updateHappeningSurvey]);
 
   const handleDecline = useCallback(async () => {
-    await updateHappeningSurvey({variables: {data: {status: 'REJECTED'}, id: data.id}});
+    await updateHappeningSurvey({
+      variables: {data: {status: 'REJECTED'}, id: data.id},
+    });
     setShowDeclineModal(false);
     setShowDetails(false);
   }, [data.id, setShowDetails, updateHappeningSurvey]);
 
   return (
     <div>
-      <div className='flex justify-end fixed top-0 bottom-0 left-0 right-0 bg-[#10182880] overflow-y-scroll z-10'>
-        <div className='h-fit w-[625px] bg-[#fff] pt-[28px] px-[18px]'>
-          <div
-            className='flex items-center justify-center h-[24px] w-[24px] bg-[#E7E8EA] rounded-full cursor-pointer'
-            onClick={hideDetails}
-          >
+      <div className={classes.detailsContainer}>
+        <div className={classes.detailsModal}>
+          <div className={classes.iconWrapper} onClick={hideDetails}>
             <HiOutlineX size={14} />
           </div>
-          <div className='flex items-center justify-between mt-[35px] mb-[12px]'>
-            <h2 className='font-inter font-[600] text-[24px]'>{data?.title}</h2>
+          <div className={classes.header}>
+            <h2 className={classes.headerTitle}>{data?.title}</h2>
             <p
-              className={`max-w-fit px-[12px] py-[4px] rounded-full uppercase font-inter font-[600] text-[14px] ${
-                data.status.toLowerCase() === 'pending'
-                && 'bg-[#FFF3E2] text-[#F79009]'
-              } ${
-                data.status.toLowerCase() === 'rejected'
-                && 'bg-[#FFEFEE] text-[#F04438]'
-              } ${
-                data.status.toLowerCase() === 'approved'
-                && 'bg-[#E7F5EF] text-[#12B76A]'
-              }`}
+              className={cs(
+                classes.status,
+                [classes.pending, data.status.toLowerCase() === 'pending'],
+                [classes.rejected, data.status.toLowerCase() === 'rejected'],
+                [classes.approved, data.status.toLowerCase() === 'approved'],
+              )}
             >
               {data.status}
             </p>
           </div>
-          <p className='font-inter font-[400] text-[16px] text-[#585D69]'>
-            {formatDate(data.createdAt)}
-          </p>
+          <p className={classes.date}>{formatDate(data.createdAt)}</p>
           <Title text='category' />
-          <div className='flex items-center gap-[10px]'>
-            <img src={categoryIcon || tree} alt='category' className='h-[20px]' />
-            <p className='font-inter font-[500] text-[16px] leading-[19.36px]'>
-              {data.category.title}
-            </p>
+          <div className={classes.categoryWrapper}>
+            <img
+              src={categoryIcon || tree}
+              alt='category'
+              className={classes.categoryImg}
+            />
+            <p className={classes.categoryTitle}>{data.category.title}</p>
           </div>
           <Title text='photos' />
-          <div
-            className={`flex gap-[12px] ${
-              data.attachment.length > 3 && 'overflow-x-scroll'
-            }`}
-          >
+          <div className={classes.photosWrapper}>
             {data.attachment.length
               ? data.attachment.map((item: {media: string}) => (
                 <img
                   key={item.media}
                   src={item.media}
                   alt=''
-                  className='h-[143px] w-[187px] rounded-lg'
+                  className={classes.photo}
                 />
               ))
               : 'No Photos Found'}
@@ -134,64 +169,64 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails}) => {
           </div>
           <Title text='Description' />
           <div>
-            <p className='font-inter font-[400] text-[16px] text-[#282F3E] leading-[24px]'>
+            <p className={classes.info}>
               {data.description || 'No Description Found'}
             </p>
           </div>
           <Title text='Location' />
           <div>
-            <p className='font-inter font-[400] text-[16px] text-[#282F3E] leading-[24px]'>
-              -
-            </p>
+            <p className={classes.info}>-</p>
           </div>
-          <div className='h-[229px] mt-[8px] rounded-lg'>
+          <div className={classes.mapWrapper}>
             <Map center={data?.location?.coordinates || [0, 0]} />
           </div>
-          <div className='flex justify-between gap-[16px] my-[52px]'>
-            <Button text='Accept' className='w-[100%]' onClick={handleAccept} />
+          <div className={classes.buttons}>
+            <Button
+              text='Accept'
+              className={classes.acceptBtn}
+              onClick={handleAccept}
+            />
             <Button
               text='Decline'
-              className='w-[100%] bg-[#E7E8EA]'
-              textClassName='text-[#F04438]'
+              className={classes.declineBtn}
+              textClassName={classes.declineBtnText}
               onClick={handleShowDeclineModal}
             />
           </div>
         </div>
       </div>
       <div
-        className={`${
-          !showDeclineModal && 'hidden'
-        } flex justify-center items-center fixed top-0 bottom-0 left-0 right-0 bg-[#10182880] z-20`}
+        className={cs(classes.declineModalOverlay, [
+          'hidden',
+          !showDeclineModal,
+        ])}
       >
-        <div className='w-[629px] bg-[#fff] rounded-2xl'>
-          <div className='flex items-center justify-between h-[80px] px-[20px] bg-[#E7ECF2] rounded-t-2xl'>
-            <p className='font-inter font-[600] text-[24px] text-[#101828]'>
+        <div className={classes.declineModal}>
+          <div className={classes.declineHeader}>
+            <p className={classes.declineHeaderText}>
               Are you sure you want to decline the entry?
             </p>
-            <div
-              className='flex items-center justify-center h-[24px] w-[24px] bg-[#fff] rounded-full cursor-pointer'
-              onClick={handleHideDeclineModal}
-            >
+            <div className={classes.closeIcon} onClick={handleHideDeclineModal}>
               <HiOutlineX size={14} />
             </div>
           </div>
-          <div className='px-[20px] mt-[20px] mb-[32px]'>
-            <p className='font-inter font-[500] text-[16px] text-[#404653] mb-[8px]'>
+          <div className={classes.declineContent}>
+            <p className={classes.declineText}>
               Reasons why it is declined (optional)
             </p>
-            <textarea className='w-[100%] p-[10px] font-inter font-[500] text-[16px] border border-[#CCDCE8] rounded-lg' />
-            <div className='flex justify-end gap-[8px] mt-[20px]'>
+            <textarea className={classes.textarea} />
+            <div className={classes.declineButtons}>
               <Button
                 text='Cancel'
                 onClick={handleHideDeclineModal}
-                className='bg-[#E7E8EA]'
-                textClassName='text-[#404653]'
+                className={classes.cancelBtn}
+                textClassName={classes.cancelBtnText}
               />
               <Button
                 text='Yes, decline'
                 onClick={handleDecline}
-                className='bg-[#F04438]'
-                textClassName='text-[#fff]'
+                className={classes.yesDeclineBtn}
+                textClassName={classes.yesDeclineBtnText}
               />
             </div>
           </div>
