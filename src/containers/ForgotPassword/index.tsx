@@ -14,13 +14,13 @@ const classes = {
   contentContainer: 'flex items-center justify-center pt-32',
   contentWrapper: 'max-w-[473px] px-[32px] py-[42px] rounded-3xl bg-[#fff]',
   header: 'flex items-center gap-[21px] mb-4',
-  title: 'font-inter font-semibold text-[32px] text-[#101828]',
-  info: 'font-inter font-normal text-base text-[#585D69] mb-8',
+  title: 'font-interSemibold text-[32px] text-[#101828]',
+  info: 'font-inter text-base text-[#585D69] mb-8',
   button: 'mt-[28px] mb-[32px]',
-  email: 'font-semibold text-[#101828]',
+  email: 'font-interSemibold text-[#101828]',
   textWrapper: 'flex gap-[8px]',
-  text: 'font-inter font-normal text-base text-[#585D69]',
-  sendAgain: 'font-inter font-semibold text-base text-[#00518B]',
+  text: 'font-inter text-base text-[#585D69]',
+  sendAgain: 'font-interSemibold text-base text-[#00518B]',
   cursor: 'cursor-pointer',
 };
 

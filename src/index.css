@@ -2,6 +2,26 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: 'DMSans';
+  src: url('./assets/fonts/DMSans-Bold.ttf');
+}
+
+@font-face {
+  font-family: 'Inter-normal';
+  src: url('./assets/fonts/Inter-Regular.ttf');
+}
+
+@font-face {
+  font-family: 'Inter-medium';
+  src: url('./assets/fonts/Inter-Medium.ttf');
+}
+
+@font-face {
+  font-family: 'Inter-semibold';
+  src: url('./assets/fonts/Inter-SemiBold.ttf');
+}
+
 ::-ms-reveal {
-    display: none;
+  display: none;
 }

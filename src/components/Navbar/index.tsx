@@ -1,10 +1,10 @@
 import React from 'react';
+import {useNavigate} from 'react-router-dom';
 import {RootStateOrAny, useSelector} from 'react-redux';
 
 import Button from '@components/Button';
 
 import NavLogo from '@images/lukim-nav-logo.png';
-import {useNavigate} from 'react-router-dom';
 
 const Navbar = () => {
   const navigate = useNavigate();

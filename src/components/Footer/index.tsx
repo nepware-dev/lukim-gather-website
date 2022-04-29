@@ -7,7 +7,7 @@ const classes = {
   container: 'flex flex-col md:flex-row gap-[40px] md:gap-[0] items-center justify-between pb-[28px] mt-[80px] border-b-[1px] border-color-border',
   logo: 'h-[66px]',
   buttons: 'flex flex-row gap-[12px]',
-  text: 'mt-[28px] mb-[50px] font-inter font-[400] text-color-lt-grey text-center',
+  text: 'mt-[28px] mb-[50px] font-inter text-color-lt-grey text-center',
 };
 
 const Footer = () => (
