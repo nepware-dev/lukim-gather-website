@@ -11,6 +11,7 @@ import SurveyTable, {SurveyDataType} from '@components/SurveyTable';
 import SurveyTab from '@components/SurveyTab';
 import Pagination from '@components/Pagination';
 import Dropdown from '@components/Dropdown';
+import SurveyEntry from '@components/SurveyEntry';
 
 const classes = {
   container: 'px-[20px] mt-[24px] mb-[150px]',
@@ -18,7 +19,7 @@ const classes = {
   header: 'flex flex-wrap gap-4 justify-between',
   tabs: 'min-w-[275px]',
   datePicker: 'flex items-center gap-[10px] h-[42px] px-[14px] border border-[#CCDCE8] rounded-lg font-inter font-[500] text-[14px] text-[#585D69]',
-  surveyTable: 'md:max-w-[calc(100vw-276px)] overflow-x-scroll',
+  surveyTable: 'md:max-w-[calc(100vw-276px)] overflow-x-auto',
   footer: 'w-[100%] flex flex-wrap gap-4 items-center justify-between mt-[24px]',
   dropdownWrapper: 'flex gap-[12px] items-center',
   show: 'font-inter font-[500] text-[14px] text-[#282F3E]',
@@ -58,6 +59,8 @@ const Surveys = () => {
   const [activePage, setActivePage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(0);
   const [rows, setRows] = useState<number>(10);
+  const [activeIndex, setActiveIndex] = useState<number>(0);
+  const [showDetails, setShowDetails] = useState<boolean>(false);
 
   useEffect(() => {
     if (!data) return;
@@ -134,65 +137,74 @@ const Surveys = () => {
   );
 
   return (
-    <DashboardLayout>
-      <DashboardHeader title='Surveys' />
-      <div className={classes.container}>
-        <h2 className={classes.title}>Surveys</h2>
-        <div className={classes.header}>
-          <div className={classes.tabs}>
-            <SurveyTab
-              text='All'
-              onClick={handleTab}
-              isActive={status === 'All'}
-              className={cs('rounded-l-lg', [
-                'border-r-0',
-                status === 'Approved',
-              ])}
-            />
-            <SurveyTab
-              text='Approved'
-              onClick={handleTab}
-              isActive={status === 'Approved'}
-              className={cs(
-                ['border-x', status === 'Approved'],
-                ['border-x-0', status !== 'Approved'],
-              )}
-            />
-            <SurveyTab
-              text='Pending'
-              onClick={handleTab}
-              isActive={status === 'Pending'}
-              className={cs('rounded-r-lg', [
-                'border-l-0',
-                status === 'Approved',
-              ])}
+    <>
+      <DashboardLayout>
+        <DashboardHeader title='Surveys' />
+        <div className={classes.container}>
+          <h2 className={classes.title}>Surveys</h2>
+          <div className={classes.header}>
+            <div className={classes.tabs}>
+              <SurveyTab
+                text='All'
+                onClick={handleTab}
+                isActive={status === 'All'}
+                className={cs('rounded-l-lg', [
+                  'border-r-0',
+                  status === 'Approved',
+                ])}
+              />
+              <SurveyTab
+                text='Approved'
+                onClick={handleTab}
+                isActive={status === 'Approved'}
+                className={cs(
+                  ['border-x', status === 'Approved'],
+                  ['border-x-0', status !== 'Approved'],
+                )}
+              />
+              <SurveyTab
+                text='Pending'
+                onClick={handleTab}
+                isActive={status === 'Pending'}
+                className={cs('rounded-r-lg', [
+                  'border-l-0',
+                  status === 'Approved',
+                ])}
+              />
+            </div>
+            <div className={classes.datePicker}>
+              <BsCalendar4Event size={18} color='#585D69' />
+              <p>Jan 1, 2022 - Feb 2, 2022</p>
+            </div>
+          </div>
+          <div className={classes.surveyTable}>
+            <SurveyTable
+              data={surveyData}
+              setActiveIndex={setActiveIndex}
+              setShowDetails={setShowDetails}
             />
           </div>
-          <div className={classes.datePicker}>
-            <BsCalendar4Event size={18} color='#585D69' />
-            <p>Jan 1, 2022 - Feb 2, 2022</p>
+          <div className={classes.footer}>
+            <div className={classes.dropdownWrapper}>
+              <p className={classes.show}>Show</p>
+              <Dropdown renderLabel={renderLabel}>
+                <DropdownItem />
+              </Dropdown>
+            </div>
+            <div>
+              <Pagination
+                page={activePage}
+                totalPages={totalPages}
+                handlePagination={handlePage}
+              />
+            </div>
           </div>
         </div>
-        <div className={classes.surveyTable}>
-          <SurveyTable data={surveyData} />
-        </div>
-        <div className={classes.footer}>
-          <div className={classes.dropdownWrapper}>
-            <p className={classes.show}>Show</p>
-            <Dropdown renderLabel={renderLabel}>
-              <DropdownItem />
-            </Dropdown>
-          </div>
-          <div>
-            <Pagination
-              page={activePage}
-              totalPages={totalPages}
-              handlePagination={handlePage}
-            />
-          </div>
-        </div>
-      </div>
-    </DashboardLayout>
+      </DashboardLayout>
+      {showDetails && (
+        <SurveyEntry data={surveyData[activeIndex]} setShowDetails={setShowDetails} />
+      )}
+    </>
   );
 };
 
