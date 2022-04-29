@@ -12,9 +12,9 @@ interface Props {
 }
 
 const classes = {
-  title: 'text-color-text-grey font-inter font-medium text-base mb-2',
+  title: 'text-color-text-grey font-interMedium text-base mb-2',
   inputWrapper: 'w-[100%] relative',
-  input: 'w-[100%] rounded-lg pl-3 py-4 border border-[#CCDCE8] font-inter font-normal text-base appearance-none',
+  input: 'w-[100%] rounded-lg pl-3 py-4 border border-[#CCDCE8] font-inter text-base appearance-none',
   iconWrapper: 'absolute top-[32%] right-[20px] cursor-pointer',
   hidden: 'hidden',
 };

@@ -2,5 +2,6 @@
 *.svg
 **/images
 **/icons
+**/fonts
 node_modules
 build

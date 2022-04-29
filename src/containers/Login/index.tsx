@@ -52,26 +52,26 @@ const Login = () => {
   return (
     <main className='bg-color-bg w-[100%] h-screen grid'>
       <div className='place-self-center bg-color-white px-8 py-10 w-fit rounded-3xl w-96'>
-        <h2 className='text-[#101828] text-center font-inter font-semibold text-[32px] mb-4'>Welcome back</h2>
-        <p className='text-[#585D69] text-center font-inter font-normal text-base mb-10'>Please enter your details.</p>
-        <p className='text-color-text-grey font-inter font-medium text-base mb-2'>Username</p>
+        <h2 className='text-[#101828] text-center font-interSemibold text-[32px] mb-4'>Welcome back</h2>
+        <p className='text-[#585D69] text-center font-inter text-base mb-10'>Please enter your details.</p>
+        <p className='text-color-text-grey font-interMedium text-base mb-2'>Username</p>
         <input
           type='text'
           value={username}
           placeholder='Enter your username'
           onChange={handleUsernameChange}
-          className='w-[100%] rounded-lg p-2 border border-color-border font-inter font-regular text-base'
+          className='w-[100%] rounded-lg p-2 border border-color-border font-inter text-base'
         />
-        <p className='text-color-text-grey font-inter font-medium text-base mt-5 mb-2'>Password</p>
+        <p className='text-color-text-grey font-interMedium text-base mt-5 mb-2'>Password</p>
         <input
           type='password'
           value={password}
           placeholder='Enter your password'
           onChange={handlePasswordChange}
-          className='w-[100%] rounded-lg p-2 border border-color-border font-inter font-regular text-base'
+          className='w-[100%] rounded-lg p-2 border border-color-border font-inter text-base'
         />
-        <p className='mb-6 mt-1 text-right text-color-blue font-inter font-semibold text-base'>Forget Password?</p>
-        {error && <p className='text-color-red font-inter font-regular text-base mb-2'>{error}</p>}
+        <p className='mb-6 mt-1 text-right text-color-blue font-interSemibold text-base'>Forget Password?</p>
+        {error && <p className='text-color-red font-inter text-base mb-2'>{error}</p>}
         <Button text='Login' onClick={handleLogin} loading={loading} />
       </div>
     </main>

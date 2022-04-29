@@ -16,8 +16,8 @@ const classes = {
   boxShadow: 'shadow-[0_5px_10px_rgba(0,0,0,0.05)]',
   image: 'w-[32px]',
   textWrapper: 'flex flex-col items-start ml-[16px]',
-  text: 'font-inter font-[400] text-color-lt-grey',
-  storeText: 'font-inter font-[500] text-color-black',
+  text: 'font-inter text-color-lt-grey',
+  storeText: 'font-interMedium text-color-black',
 };
 
 const AppButton: React.FC<Props> = ({
