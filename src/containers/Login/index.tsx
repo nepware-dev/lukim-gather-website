@@ -1,23 +1,36 @@
-import React, {useState, useCallback} from 'react';
+import React, {useState, useCallback, useEffect} from 'react';
 import {gql, useMutation} from '@apollo/client';
-import {useNavigate} from 'react-router-dom';
+import {Link, useNavigate} from 'react-router-dom';
 
 import Button from '@components/Button';
+import InputField from '@components/InputField';
+import Navbar from '@components/Navbar';
+import {dispatchLogin} from '@services/dispatch';
 
-import {dispatchLogin} from '../../services/dispatch';
+const classes = {
+  mainContainer: 'bg-color-bg w-[100%] min-h-[100vh]',
+  container: 'max-w-[1440px] mx-auto px-[5vw]',
+  contentContainer: 'flex items-center justify-center pt-16',
+  contentWrapper: 'max-w-[473px] px-[32px] py-[42px] rounded-3xl bg-[#fff]',
+  title: 'font-interSemibold text-[32px] text-[#101828] text-center mb-4',
+  info: 'font-inter text-base text-[#585D69] text-center mb-8',
+  inputsWrapper: 'flex flex-col gap-[24px]',
+  text: 'mb-6 mt-1 text-right text-color-blue font-interSemibold text-base',
+  error: 'text-color-red font-inter text-base mb-2',
+};
 
 const LOGIN = gql`
-    mutation TokenAuth($username: String!, $password: String!) {
-        tokenAuth(username: $username, password: $password) {
-            token
-            refreshToken
-            user {
-                firstName
-                lastName
-                email
-            }
-        }
+  mutation TokenAuth($username: String!, $password: String!) {
+    tokenAuth(username: $username, password: $password) {
+      token
+      refreshToken
+      user {
+        firstName
+        lastName
+        email
+      }
     }
+  }
 `;
 
 const Login = () => {
@@ -25,14 +38,6 @@ const Login = () => {
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [error, setError] = useState<string>();
-
-  const handleUsernameChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setUsername(e.target.value);
-  }, []);
-
-  const handlePasswordChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setPassword(e.target.value);
-  }, []);
 
   const [login, {loading}] = useMutation(LOGIN, {
     onCompleted: ({tokenAuth}) => {
@@ -44,37 +49,76 @@ const Login = () => {
       setError(graphQLErrors[0].message);
     },
   });
+
   const handleLogin = useCallback(async () => {
     setError('');
     await login({variables: {username, password}});
   }, [username, password, login]);
 
+  useEffect(() => {
+    const listener = (event: KeyboardEvent) => {
+      if (event.code === 'Enter' || event.code === 'NumpadEnter') {
+        if (!username || !password) return;
+        handleLogin();
+      }
+    };
+    document.addEventListener('keydown', listener);
+    return () => {
+      document.removeEventListener('keydown', listener);
+    };
+  }, [handleLogin, password, username]);
+
+  const handleUsernameChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setUsername(e.target.value);
+    },
+    [],
+  );
+
+  const handlePasswordChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setPassword(e.target.value);
+    },
+    [],
+  );
+
   return (
-    <main className='bg-color-bg w-[100%] h-screen grid'>
-      <div className='place-self-center bg-color-white px-8 py-10 w-fit rounded-3xl w-96'>
-        <h2 className='text-[#101828] text-center font-interSemibold text-[32px] mb-4'>Welcome back</h2>
-        <p className='text-[#585D69] text-center font-inter text-base mb-10'>Please enter your details.</p>
-        <p className='text-color-text-grey font-interMedium text-base mb-2'>Username</p>
-        <input
-          type='text'
-          value={username}
-          placeholder='Enter your username'
-          onChange={handleUsernameChange}
-          className='w-[100%] rounded-lg p-2 border border-color-border font-inter text-base'
-        />
-        <p className='text-color-text-grey font-interMedium text-base mt-5 mb-2'>Password</p>
-        <input
-          type='password'
-          value={password}
-          placeholder='Enter your password'
-          onChange={handlePasswordChange}
-          className='w-[100%] rounded-lg p-2 border border-color-border font-inter text-base'
-        />
-        <p className='mb-6 mt-1 text-right text-color-blue font-interSemibold text-base'>Forget Password?</p>
-        {error && <p className='text-color-red font-inter text-base mb-2'>{error}</p>}
-        <Button text='Login' onClick={handleLogin} loading={loading} />
+    <div className={classes.mainContainer}>
+      <div className={classes.container}>
+        <Navbar hideButton />
+        <div className={classes.contentContainer}>
+          <div className={classes.contentWrapper}>
+            <h2 className={classes.title}>Welcome back</h2>
+            <p className={classes.info}>Please enter your details.</p>
+            <div className={classes.inputsWrapper}>
+              <InputField
+                title='Username'
+                value={username}
+                placeholder='Enter your Email address'
+                onChange={handleUsernameChange}
+              />
+              <InputField
+                title='Password'
+                value={password}
+                placeholder='Enter your password'
+                password
+                onChange={handlePasswordChange}
+              />
+            </div>
+            <Link to='/forgot-password'>
+              <p className={classes.text}>Forget Password?</p>
+            </Link>
+            {error && <p className={classes.error}>{error}</p>}
+            <Button
+              text='Login'
+              onClick={handleLogin}
+              loading={loading}
+              disabled={!username || !password}
+            />
+          </div>
+        </div>
       </div>
-    </main>
+    </div>
   );
 };
 export default Login;
