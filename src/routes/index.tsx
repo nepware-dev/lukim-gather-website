@@ -11,6 +11,7 @@ import Login from '@containers/Login';
 import AccountSettings from '@containers/AccountSettings';
 import ResetPassword from '@containers/ResetPassword';
 import ForgotPassword from '@containers/ForgotPassword';
+import Page404 from '@containers/Page404';
 
 interface Props {
   isAuthenticated: boolean;
@@ -27,12 +28,13 @@ const AppRoutes = () => {
       <Route path='/' element={<Home />} />
       <Route path='/login' element={<Login />} />
       <Route path='/forgot-password' element={<ForgotPassword />} />
-      <Route path='/reset-password' element={<ResetPassword />} />
       <Route path='/' element={<PrivateRoute isAuthenticated={isAuthenticated} />}>
         <Route path='/dashboard' element={<Dashboard />} />
         <Route path='/surveys' element={<Surveys />} />
         <Route path='/account-settings' element={<AccountSettings />} />
+        <Route path='/reset-password' element={<ResetPassword />} />
       </Route>
+      <Route path='*' element={<Page404 />} />
     </Routes>
   );
 };

@@ -1,4 +1,4 @@
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {gql, useMutation} from '@apollo/client';
 import {HiOutlineX} from 'react-icons/hi';
 
@@ -92,6 +92,27 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails}) => {
   });
   const [categoryIcon] = useCategoryIcon(data?.category?.id);
   const [showDeclineModal, setShowDeclineModal] = useState<boolean>(false);
+
+  const escapeListener = useCallback(
+    (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        if (showDeclineModal) {
+          setShowDeclineModal(false);
+        } else {
+          setShowDetails(false);
+        }
+      }
+    },
+    [setShowDetails, showDeclineModal],
+  );
+
+  useEffect(() => {
+    document.addEventListener('keydown', escapeListener);
+
+    return () => {
+      document.removeEventListener('keydown', escapeListener);
+    };
+  }, [escapeListener]);
 
   const handleShowDeclineModal = useCallback(() => {
     setShowDeclineModal(true);
