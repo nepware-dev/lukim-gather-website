@@ -1,9 +1,17 @@
-import React, {useCallback, useEffect, useState} from 'react';
+/* eslint-disable max-len */
+import React, {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react';
+import DatePicker from 'react-datepicker';
 import {gql, useQuery} from '@apollo/client';
 import {BsCalendar4Event} from 'react-icons/bs';
 import {RiArrowDownSLine} from 'react-icons/ri';
 
 import cs from '@utils/cs';
+import {formatDate} from '@utils/formatDate';
 
 import DashboardHeader from '@components/DashboardHeader';
 import DashboardLayout from '@components/DashboardLayout';
@@ -13,12 +21,14 @@ import Pagination from '@components/Pagination';
 import Dropdown from '@components/Dropdown';
 import SurveyEntry from '@components/SurveyEntry';
 
+import 'react-datepicker/dist/react-datepicker.css';
+
 const classes = {
   container: 'px-[20px] mt-[24px] mb-[150px]',
   title: 'md:hidden mb-[20px] font-interSemibold text-[24px] text-[#101828]',
   header: 'flex flex-wrap gap-4 justify-between',
   tabs: 'min-w-[275px]',
-  datePicker: 'flex items-center gap-[10px] h-[42px] px-[14px] border border-[#CCDCE8] rounded-lg font-interMedium text-[14px] text-[#585D69]',
+  datePicker: 'w-[260px] flex items-center gap-[10px] h-[42px] px-[14px] border border-[#CCDCE8] rounded-lg font-interMedium text-[14px] text-[#585D69]',
   surveyTable: 'md:max-w-[calc(100vw-276px)] overflow-x-auto',
   footer: 'w-[100%] flex flex-wrap gap-4 items-center justify-between mt-[24px]',
   dropdownWrapper: 'flex gap-[12px] items-center',
@@ -61,19 +71,54 @@ const Surveys = () => {
   const [rows, setRows] = useState<number>(10);
   const [activeIndex, setActiveIndex] = useState<number>(0);
   const [showDetails, setShowDetails] = useState<boolean>(false);
+  const [dateRange, setDateRange] = useState([new Date(), new Date()]);
+  const [maxDate, setMaxDate] = useState<Date>();
+  const [minDate, setMinDate] = useState<Date>();
+  const [startDate, endDate] = dateRange;
+
+  useEffect(() => {
+    if (!data) return;
+    const MaxDate = new Date(
+      Math.max(
+        ...data.happeningSurveys.map(
+          (el: {createdAt: string}) => new Date(el.createdAt),
+        ),
+      ),
+    );
+    const MinDate = new Date(
+      Math.min(
+        ...data.happeningSurveys.map(
+          (el: {createdAt: string}) => new Date(el.createdAt),
+        ),
+      ),
+    );
+    setDateRange([MinDate, MaxDate]);
+    setMaxDate(MaxDate);
+    setMinDate(MinDate);
+  }, [data]);
 
   useEffect(() => {
     if (!data) return;
     if (status === 'All') {
-      const slicedData = data.happeningSurveys.slice(
+      const filterData = data.happeningSurveys.filter(
+        (item: {createdAt: string}) => new Date(new Date(item.createdAt).toDateString())
+            >= new Date(startDate.toDateString())
+          && new Date(new Date(item.createdAt).toDateString())
+            <= new Date(endDate?.toDateString()),
+      );
+      const slicedData = filterData.slice(
         rows * activePage - rows,
         rows * activePage,
       );
       setSurveyData(slicedData);
-      setTotalPages(Math.ceil(data.happeningSurveys.length / rows));
+      setTotalPages(Math.ceil(filterData.length / rows));
     } else {
       const filterData = data.happeningSurveys.filter(
-        (item: {status: string}) => item.status.toLowerCase() === status.toLowerCase(),
+        (item: {status: string; createdAt: string}) => new Date(new Date(item.createdAt).toDateString())
+            >= new Date(startDate.toDateString())
+          && new Date(new Date(item.createdAt).toDateString())
+            <= new Date(endDate?.toDateString())
+          && item.status.toLowerCase() === status.toLowerCase(),
       );
       const slicedData = filterData.slice(
         rows * activePage - rows,
@@ -82,7 +127,7 @@ const Surveys = () => {
       setSurveyData(slicedData);
       setTotalPages(Math.ceil(filterData.length / rows));
     }
-  }, [activePage, data, rows, status]);
+  }, [activePage, data, endDate, rows, startDate, status]);
 
   const handleTab = useCallback((text: string) => {
     setStatus(text);
@@ -136,6 +181,30 @@ const Surveys = () => {
     [handle10rows, handle5rows, rows],
   );
 
+  const CustomInput = forwardRef<
+    HTMLButtonElement,
+    React.HTMLProps<HTMLButtonElement>
+  >(({onClick}, ref) => (
+    <button
+      className={classes.datePicker}
+      onClick={onClick}
+      ref={ref}
+      type='button'
+    >
+      <BsCalendar4Event size={18} color='#585D69' />
+      <p>
+        {`${startDate ? `${formatDate(startDate)} -` : ''} ${
+          endDate ? formatDate(endDate) : ''
+        }`}
+      </p>
+    </button>
+  ));
+
+  const handleDateChange = useCallback((update) => {
+    setDateRange(update);
+    setActivePage(1);
+  }, []);
+
   return (
     <>
       <DashboardLayout>
@@ -172,9 +241,16 @@ const Surveys = () => {
                 ])}
               />
             </div>
-            <div className={classes.datePicker}>
-              <BsCalendar4Event size={18} color='#585D69' />
-              <p>Jan 1, 2022 - Feb 2, 2022</p>
+            <div className='cursor-pointer'>
+              <DatePicker
+                selectsRange
+                startDate={startDate}
+                endDate={endDate}
+                minDate={minDate}
+                maxDate={maxDate}
+                onChange={handleDateChange}
+                customInput={<CustomInput />}
+              />
             </div>
           </div>
           <div className={classes.surveyTable}>
@@ -202,7 +278,10 @@ const Surveys = () => {
         </div>
       </DashboardLayout>
       {showDetails && (
-        <SurveyEntry data={surveyData[activeIndex]} setShowDetails={setShowDetails} />
+        <SurveyEntry
+          data={surveyData[activeIndex]}
+          setShowDetails={setShowDetails}
+        />
       )}
     </>
   );
