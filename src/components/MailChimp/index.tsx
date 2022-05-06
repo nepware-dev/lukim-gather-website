@@ -35,7 +35,7 @@ const MailChimpForm: React.FC<Props> = ({status, message, onValidated}) => {
         />
         <button
           type='button'
-          className='h-[50px] px-[25px] bg-color-green-alt text-color-white font-inter rounded-r-xl rounded-l-xl sm:rounded-l-none'
+          className='h-[50px] px-[25px] bg-[#EC6D25] text-color-white font-inter rounded-r-xl rounded-l-xl sm:rounded-l-none'
           onClick={handleSubmit}
         >
           Sign up
