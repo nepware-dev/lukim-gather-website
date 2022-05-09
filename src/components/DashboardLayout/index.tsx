@@ -28,9 +28,16 @@ const classes = {
   child: 'w-screen',
   hidden: 'hidden',
   cursor: 'cursor-pointer',
+  hideOverflowY: 'max-h-screen overflow-y-scroll',
 };
 
-const DashboardLayout = ({children}: {children: ReactNode}) => {
+const DashboardLayout = ({
+  children,
+  hideOverflowY = false,
+}: {
+  children: ReactNode;
+  hideOverflowY?: boolean;
+}) => {
   const {pathname} = useLocation();
   const [showSideBar, setShowSideBar] = useState<boolean>(false);
 
@@ -55,7 +62,12 @@ const DashboardLayout = ({children}: {children: ReactNode}) => {
   );
 
   return (
-    <div className={classes.mainContainer}>
+    <div
+      className={cs(classes.mainContainer, [
+        classes.hideOverflowY,
+        hideOverflowY,
+      ])}
+    >
       <MobileHeader />
       <div
         className={cs(

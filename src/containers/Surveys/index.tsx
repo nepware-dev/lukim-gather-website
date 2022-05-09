@@ -207,7 +207,7 @@ const Surveys = () => {
 
   return (
     <>
-      <DashboardLayout>
+      <DashboardLayout hideOverflowY={showDetails}>
         <DashboardHeader title='Surveys' />
         <div className={classes.container}>
           <h2 className={classes.title}>Surveys</h2>
