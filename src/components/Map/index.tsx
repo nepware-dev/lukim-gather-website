@@ -4,8 +4,6 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 
 import marker from '@images/marker.png';
 
-mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_TOKEN || '';
-
 const makeMap = (
   id: string | HTMLElement,
   center: [number, number],
@@ -34,7 +32,10 @@ interface Props {
 
 const SurveyMap: React.FC<Props> = ({center}) => {
   useEffect(() => {
-    makeMap('map', center);
+    if (process.env.REACT_APP_MAPBOX_TOKEN) {
+      mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_TOKEN;
+      makeMap('map', center);
+    }
   }, [center]);
 
   return <div id='map' className='w-[100%] h-[100%] rounded-lg' />;

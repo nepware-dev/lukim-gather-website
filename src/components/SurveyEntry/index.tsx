@@ -92,6 +92,27 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails}) => {
   });
   const [categoryIcon] = useCategoryIcon(data?.category?.id);
   const [showDeclineModal, setShowDeclineModal] = useState<boolean>(false);
+  const [locationName, setLocationName] = useState<string>('');
+
+  const getLocationName = useCallback(async () => {
+    const response = await fetch(
+      `https://api.mapbox.com/geocoding/v5/mapbox.places/${
+        data?.location?.coordinates[0] || 0
+      },${data?.location?.coordinates[1] || 0}.json?types=place&access_token=${
+        process.env.REACT_APP_MAPBOX_TOKEN
+      }`,
+    );
+    const resData: {
+      features: [{place_name?: string}];
+    } = await response.json();
+    if (resData.features[0]?.place_name) {
+      setLocationName(resData.features[0].place_name);
+    }
+  }, [data?.location?.coordinates]);
+
+  useEffect(() => {
+    getLocationName();
+  }, [getLocationName]);
 
   const escapeListener = useCallback(
     (event: KeyboardEvent) => {
@@ -196,7 +217,7 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails}) => {
           </div>
           <Title text='Location' />
           <div>
-            <p className={classes.info}>-</p>
+            <p className={classes.info}>{locationName || ''}</p>
           </div>
           <div className={classes.mapWrapper}>
             <Map center={data?.location?.coordinates || [0, 0]} />
