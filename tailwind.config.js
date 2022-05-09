@@ -5,7 +5,8 @@ module.exports = {
       inter: ['Inter-normal', 'sans-serif'],
       interMedium: ['Inter-medium', 'sans-serif'],
       interSemibold: ['Inter-semibold', 'sans-serif'],
-      sans: ['DMSans', 'sans-serif'],
+      sans: ['DMSans-normal', 'sans-serif'],
+      sansBold: ['DMSans-bold', 'sans-serif'],
     },
     colors: {
       transparent: 'transparent',

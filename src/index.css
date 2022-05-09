@@ -3,7 +3,12 @@
 @tailwind utilities;
 
 @font-face {
-  font-family: 'DMSans';
+  font-family: 'DMSans-normal';
+  src: url('./assets/fonts/DMSans-Regular.ttf');
+}
+
+@font-face {
+  font-family: 'DMSans-bold';
   src: url('./assets/fonts/DMSans-Bold.ttf');
 }
 
