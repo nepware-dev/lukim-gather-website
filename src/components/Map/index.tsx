@@ -18,6 +18,7 @@ const makeMap = (
   id: string | HTMLElement,
   center: [number, number],
   happeningSurveysData?: undefined,
+  surveyPolySourceData?: undefined,
 ): Promise<Map> => {
   const fallbackCoordinate = center[0] === 0 && center[1] === 0;
   const map = new Map({
@@ -55,6 +56,11 @@ const makeMap = (
           clusterRadius: 40,
         });
 
+        map.addSource('surveyPolySource', {
+          type: 'geojson',
+          data: surveyPolySourceData,
+        });
+
         map.addLayer({
           id: 'clusters',
           type: 'circle',
@@ -83,13 +89,35 @@ const makeMap = (
         });
 
         map.addLayer({
+          id: 'polygonTitle',
+          type: 'symbol',
+          source: 'surveyPolySource',
+          layout: {
+            'text-field': ['get', 'title', ['get', 'surveyItem']],
+          },
+          paint: {
+            'text-color': 'blue',
+          },
+        });
+
+        map.addLayer({
+          id: 'polygon',
+          type: 'fill',
+          source: 'surveyPolySource',
+          layout: {},
+          paint: {
+            'fill-color': '#5486BD',
+            'fill-opacity': 0.25,
+          },
+        });
+
+        map.addLayer({
           id: 'cluster-count',
           type: 'symbol',
           source: 'happeningSurveys',
           filter: ['has', 'point_count'],
           layout: {
             'text-field': '{point_count_abbreviated}',
-            'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
             'text-size': 12,
           },
           paint: {
@@ -123,6 +151,8 @@ const makeMap = (
                  Description: ${item.description}
                  <br/>
                  Feel: ${item.sentiment}
+                 <br />
+                 Created at: ${item.createdAt}
                 `,
             )
             .addTo(map);
@@ -178,7 +208,23 @@ const SurveyMap: React.FC<Props> = ({center, showCluster}) => {
           type: 'FeatureCollection',
           features: [...shape],
         };
-        makeMap('map', [150, -5], surveyGeoJSON);
+        const shapePoly = data?.happeningSurveys
+          .filter((survey) => survey.boundary)
+          .map((survey) => ({
+            type: 'Feature',
+            properties: {
+              surveyItem: survey,
+            },
+            geometry: {
+              type: survey.boundary.type,
+              coordinates: survey.boundary.coordinates,
+            },
+          })) || [];
+        const surveyPolySource = {
+          type: 'FeatureCollection',
+          features: [...shapePoly],
+        };
+        makeMap('map', [150, -5], surveyGeoJSON, surveyPolySource);
       } else {
         makeMap('map', center);
       }

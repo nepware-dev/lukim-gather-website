@@ -52,10 +52,15 @@ export const GET_SURVEY_DATA = gql`
         title
       }
       createdAt
+      boundary {
+        type
+        coordinates
+      }
       location {
         type
         coordinates
       }
+      improvement
       sentiment
       status
     }
