@@ -127,6 +127,24 @@ const makeMap = (
             )
             .addTo(map);
         });
+        map.on('click', 'clusters', (e) => {
+          const features = map.queryRenderedFeatures(e.point, {
+            layers: ['clusters'],
+          });
+          const clusterId = features[0].properties.cluster_id;
+          map.getSource('happeningSurveys').getClusterExpansionZoom(
+            clusterId,
+            (err, zoom) => {
+              if (err) return;
+
+              map.easeTo({
+                center: features[0].geometry.coordinates,
+                zoom,
+                duration: 1500,
+              });
+            },
+          );
+        });
       });
       return resolve(map);
     });
