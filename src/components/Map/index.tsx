@@ -1,7 +1,13 @@
 // @ts-nocheck
 import React, {useEffect} from 'react';
-import mapboxgl, {Map} from 'mapbox-gl';
+/* eslint-disable import/order */
+/* eslint-disable import/no-unresolved */
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+// eslint-disable-next-line import/no-webpack-loader-syntax
+import mapboxgl, {Map} from '!mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
+
 import {useQuery} from '@apollo/client';
 
 import marker from '@images/marker.png';
