@@ -1,22 +1,19 @@
 import React from 'react';
-import DashboardCard from '@components/DashboardCard';
 import DashboardHeader from '@components/DashboardHeader';
 import DashboardLayout from '@components/DashboardLayout';
+import Map from '@components/Map';
 
 const classes = {
   title: 'md:hidden m-[20px] font-interSemibold text-[24px] text-[#101828]',
-  contentWrapper: 'flex flex-wrap justify-center gap-[20px] px-[20px] my-[24px]',
+  mapWrapper: 'h-[90%] w-[100%] mx-[1em] rounded-lg',
 };
 
 const Dashboard = () => (
   <DashboardLayout>
     <DashboardHeader title='Dashboard' />
     <h2 className={classes.title}>Dashboard</h2>
-    <div className={classes.contentWrapper}>
-      <DashboardCard />
-      <DashboardCard />
-      <DashboardCard />
-      <DashboardCard />
+    <div className={classes.mapWrapper}>
+      <Map showCluster />
     </div>
   </DashboardLayout>
 );
