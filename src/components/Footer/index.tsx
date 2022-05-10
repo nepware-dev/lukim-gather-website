@@ -13,7 +13,7 @@ const classes = {
   partnersWrapper: 'flex flex-col items-center my-[64px] gap-[72px]',
   partnerTitle: 'uppercase font-sans text-[#0A52A1] text-[24px]',
   partnersImgWrapper: 'flex flex-col sm:flex-row gap-[34px] sm:gap-[64px] items-center',
-  undpImage: 'max-h-[68px]',
+  partnerImage: 'max-h-[80px]',
   separator: 'hidden sm:flex h-[98px] w-[2.31px] bg-[#CEDCEC] mx-[5px]',
   text: 'mt-[28px] mb-[50px] font-inter text-color-lt-grey text-center',
 };
@@ -30,10 +30,10 @@ const Footer = () => (
     <div className={classes.partnersWrapper}>
       <h2 className={classes.partnerTitle}>Partners</h2>
       <div className={classes.partnersImgWrapper}>
-        <img src={UndpLogo} alt='undp' className={classes.undpImage} />
+        <img src={CepaLogo} alt='cepa' className={classes.partnerImage} />
+        <img src={GefLogo} alt='gef' className={classes.partnerImage} />
         <div className={classes.separator} />
-        <img src={CepaLogo} alt='cepa' />
-        <img src={GefLogo} alt='gef' />
+        <img src={UndpLogo} alt='undp' className={classes.partnerImage} />
       </div>
     </div>
     <p className={classes.text}>
