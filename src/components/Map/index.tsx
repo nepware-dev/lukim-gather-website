@@ -12,6 +12,7 @@ import {useQuery} from '@apollo/client';
 
 import marker from '@images/marker.png';
 import {GET_SURVEY_DATA} from '@containers/Surveys';
+import surveyCategory from '../../data/surveyCategory';
 
 const makeMap = (
   id: string | HTMLElement,
@@ -39,84 +40,93 @@ const makeMap = (
       if (!happeningSurveysData) {
         return resolve(map);
       }
-      map.addSource('happeningSurveys', {
-        type: 'geojson',
-        data: happeningSurveysData,
-        cluster: true,
-        clusterMaxZoom: 14,
-        clusterRadius: 40,
-      });
+      Promise.all(
+        surveyCategory.filter((category) => category.childs.filter((categoryIcon) => new Promise(() => { //eslint-disable-line
+          map.loadImage(categoryIcon.icon, (error, res) => {
+            map.addImage(categoryIcon.id, res);
+          });
+        }))),
+      ).then(() => {
+        map.addSource('happeningSurveys', {
+          type: 'geojson',
+          data: happeningSurveysData,
+          cluster: true,
+          clusterMaxZoom: 14,
+          clusterRadius: 40,
+        });
 
-      map.addLayer({
-        id: 'clusters',
-        type: 'circle',
-        source: 'happeningSurveys',
-        filter: ['has', 'point_count'],
-        paint: {
-          'circle-color': [
-            'step',
-            ['get', 'point_count'],
-            '#5486BD',
-            100,
-            '#f1f075',
-            750,
-            '#f28cb1',
-          ],
-          'circle-radius': [
-            'step',
-            ['get', 'point_count'],
-            20,
-            100,
-            30,
-            750,
-            40,
-          ],
-        },
-      });
+        map.addLayer({
+          id: 'clusters',
+          type: 'circle',
+          source: 'happeningSurveys',
+          filter: ['has', 'point_count'],
+          paint: {
+            'circle-color': [
+              'step',
+              ['get', 'point_count'],
+              '#5486BD',
+              100,
+              '#f1f075',
+              750,
+              '#f28cb1',
+            ],
+            'circle-radius': [
+              'step',
+              ['get', 'point_count'],
+              20,
+              100,
+              30,
+              750,
+              40,
+            ],
+          },
+        });
 
-      map.addLayer({
-        id: 'cluster-count',
-        type: 'symbol',
-        source: 'happeningSurveys',
-        filter: ['has', 'point_count'],
-        layout: {
-          'text-field': '{point_count_abbreviated}',
-          'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
-          'text-size': 12,
-        },
-        paint: {
-          'text-color': 'white',
-        },
-      });
+        map.addLayer({
+          id: 'cluster-count',
+          type: 'symbol',
+          source: 'happeningSurveys',
+          filter: ['has', 'point_count'],
+          layout: {
+            'text-field': '{point_count_abbreviated}',
+            'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
+            'text-size': 12,
+          },
+          paint: {
+            'text-color': 'white',
+          },
+        });
 
-      map.addLayer({
-        id: 'unclustered-point',
-        type: 'circle',
-        source: 'happeningSurveys',
-        filter: ['!has', 'point_count'],
-        paint: {
-          'circle-color': '#5486BD',
-          'circle-radius': 9,
-        },
-      });
+        map.addLayer({
+          id: 'unclustered-point',
+          type: 'symbol',
+          source: 'happeningSurveys',
+          filter: ['!has', 'point_count'],
+          layout: {
+            'icon-image': ['get', 'id', ['get', 'category', ['get', 'surveyItem']]],
+            'icon-allow-overlap': true,
+            'icon-size': 0.5,
+          },
+        });
 
-      map.on('click', 'unclustered-point', (e) => {
-        const coordinates = e.features[0].geometry.coordinates.slice();
-        const item = JSON.parse(e.features[0].properties.surveyItem);
-        new mapboxgl.Popup()
-          .setLngLat(coordinates)
-          .setHTML(
-            `
-             Category: ${item.category.title}
-             <br/>
-             Title: ${item.title}
-             <br/>
-             Description: ${item.description}
-             <br/>
-             Sentiment: ${item.sentiment}
-            `,
-          )
-          .addTo(map);
+        map.on('click', 'unclustered-point', (e) => {
+          const coordinates = e.features[0].geometry.coordinates.slice();
+          const item = JSON.parse(e.features[0].properties.surveyItem);
+          new mapboxgl.Popup()
+            .setLngLat(coordinates)
+            .setHTML(
+              `
+                 Category: ${item.category.title}
+                 <br/>
+                 Title: ${item.title}
+                 <br/>
+                 Description: ${item.description}
+                 <br/>
+                 Feel: ${item.sentiment}
+                `,
+            )
+            .addTo(map);
+        });
       });
       return resolve(map);
     });
