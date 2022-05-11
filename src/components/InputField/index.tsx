@@ -2,6 +2,8 @@ import React, {useCallback, useState} from 'react';
 import {AiOutlineEye, AiOutlineEyeInvisible} from 'react-icons/ai';
 import cs from '@utils/cs';
 
+import classes from './styles';
+
 interface Props {
   title: string;
   value: string;
@@ -10,14 +12,6 @@ interface Props {
   inputClassname?: string;
   onChange(e: React.ChangeEvent<HTMLInputElement>): void;
 }
-
-const classes = {
-  title: 'text-color-text-grey font-interMedium text-base mb-2',
-  inputWrapper: 'w-[100%] relative',
-  input: 'w-[100%] rounded-lg pl-3 py-4 border border-[#CCDCE8] font-inter text-base appearance-none',
-  iconWrapper: 'absolute top-[32%] right-[20px] cursor-pointer',
-  hidden: 'hidden',
-};
 
 const InputField: React.FC<Props> = ({
   title,

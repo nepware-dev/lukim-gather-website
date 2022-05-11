@@ -5,20 +5,13 @@ import cs from '@utils/cs';
 import appleIcon from '@images/apple.svg';
 import androidIcon from '@images/android.svg';
 
+import classes from './styles';
+
 interface Props {
   android?: boolean;
   bgGrey?: boolean;
   boxShadow?: boolean;
 }
-
-const classes = {
-  container: 'w-[160px] h-[58px] sm:w-[193px] rounded-xl flex items-center justify-center',
-  boxShadow: 'shadow-[0_5px_10px_rgba(0,0,0,0.05)]',
-  image: 'w-[32px]',
-  textWrapper: 'flex flex-col items-start ml-[16px]',
-  text: 'font-inter text-color-lt-grey',
-  storeText: 'font-interMedium text-color-black',
-};
 
 const AppButton: React.FC<Props> = ({
   android = false,
