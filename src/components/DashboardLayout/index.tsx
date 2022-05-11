@@ -9,27 +9,7 @@ import UserDropdown from '@components/UserDropdown';
 
 import logo from '@images/lukim-nav-logo.png';
 
-const classes = {
-  mainContainer: 'overflow-x-hidden',
-  container: 'flex md:-translate-x-0 ease-in-out duration-300',
-  showSideBar: '-translate-x-0',
-  hideSideBar: '-translate-x-[235px]',
-  sideBar: 'min-w-[236px] min-h-[100vh] px-[20px] bg-[#F2F5F9] border-r border-[#CCDCE8]',
-  logoWrapper: 'hidden md:inline-block pt-[24px]',
-  logo: 'h-[60px]',
-  linksWrapper: 'flex flex-col mt-[85px]',
-  link: 'flex items-center py-[10px] px-[8px] mb-[15px] rounded-lg gap-[15px]',
-  activeLink: 'bg-color-white text-[#00518B]',
-  inactiveLink: 'text-[#404653]',
-  linkText: 'font-interSemibold text-[16px]',
-  count: 'w-[24px] h-[19px] flex items-center justify-center ml-auto text-[12px] font-inter bg-[#E6EEF3] rounded-full',
-  mobileHeader: 'md:hidden w-full p-4 flex items-center justify-between border-b border-[#CEDCEC]',
-  userDropdown: 'md:hidden mt-[20px]',
-  child: 'w-screen',
-  hidden: 'hidden',
-  cursor: 'cursor-pointer',
-  hideOverflowY: 'max-h-screen overflow-y-scroll',
-};
+import classes from './styles';
 
 const DashboardLayout = ({
   children,

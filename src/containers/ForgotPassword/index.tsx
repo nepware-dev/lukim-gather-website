@@ -8,21 +8,7 @@ import Navbar from '@components/Navbar';
 import InputField from '@components/InputField';
 import Button from '@components/Button';
 
-const classes = {
-  mainContainer: 'bg-color-bg w-[100%] min-h-[100vh]',
-  container: 'max-w-[1440px] mx-auto px-[5vw]',
-  contentContainer: 'flex items-center justify-center pt-32',
-  contentWrapper: 'max-w-[473px] px-[32px] py-[42px] rounded-3xl bg-[#fff]',
-  header: 'flex items-center gap-[21px] mb-4',
-  title: 'font-interSemibold text-[32px] text-[#101828]',
-  info: 'font-inter text-base text-[#585D69] mb-8',
-  button: 'mt-[28px] mb-[32px]',
-  email: 'font-interSemibold text-[#101828]',
-  textWrapper: 'flex gap-[8px]',
-  text: 'font-inter text-base text-[#585D69]',
-  sendAgain: 'font-interSemibold text-base text-[#00518B]',
-  cursor: 'cursor-pointer',
-};
+import classes from './styles';
 
 const ForgotPassword = () => {
   const navigate = useNavigate();

@@ -5,17 +5,11 @@ import {BsArrowLeftShort} from 'react-icons/bs';
 import cs from '@utils/cs';
 import UserDropdown from '@components/UserDropdown';
 
+import classes from './styles';
+
 interface Props {
   title?: string;
 }
-
-const classes = {
-  container: 'hidden md:flex h-[84px] w-[100%] px-[20px] justify-between items-center border-b border-[#CCDCE8]',
-  title: 'font-interSemibold text-[24px] text-[#101828]',
-  wrapper: 'flex items-center gap-[12px] cursor-pointer',
-  text: 'font-inter text-[16px] text-[#101828]',
-  hidden: 'hidden',
-};
 
 const DashboardHeader: React.FC<Props> = ({title}) => {
   const navigate = useNavigate();

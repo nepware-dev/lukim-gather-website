@@ -4,6 +4,8 @@ import {RiArrowLeftSLine, RiArrowRightSLine} from 'react-icons/ri';
 import cs from '@utils/cs';
 import Loader from '@components/Loader';
 
+import classes from './styles';
+
 interface Props {
   text: string;
   className?: string;
@@ -25,17 +27,6 @@ interface ArrowBtnProps {
   disabled: boolean;
   onClick(): void;
 }
-
-const classes = {
-  button: 'w-[100%] h-[49px] px-5 bg-[#EC6D25] rounded-lg',
-  disabled: 'cursor-not-allowed opacity-80',
-  text: 'font-interSemibold text-color-white text-base',
-  loading: 'opacity-50 cursor-not-allowed',
-  NumButton: 'w-[28px] h-[28px] font-interMedium text-[14px] rounded-full',
-  activeNumBtn: 'bg-[#6AA12A] text-[#fff]',
-  hidden: 'hidden',
-  ArrowBtn: 'flex items-center justify-center w-[26px] h-[26px] rounded-full bg-[#E7ECF2]',
-};
 
 const Button: React.FC<Props> = ({
   text,

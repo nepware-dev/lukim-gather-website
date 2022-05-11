@@ -3,10 +3,7 @@ import DashboardHeader from '@components/DashboardHeader';
 import DashboardLayout from '@components/DashboardLayout';
 import Map from '@components/Map';
 
-const classes = {
-  title: 'md:hidden m-[20px] font-interSemibold text-[24px] text-[#101828]',
-  mapWrapper: 'h-[90%] w-[100%] px-[1em] py-[1em] rounded-lg',
-};
+import classes from './styles';
 
 const Dashboard = () => (
   <DashboardLayout>
