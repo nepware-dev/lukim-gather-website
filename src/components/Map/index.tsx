@@ -17,14 +17,14 @@ import surveyCategory from '../../data/surveyCategory';
 const makeMap = (
   id: string | HTMLElement,
   center: [number, number],
+  polygonCoordinates?: [[number, number][]] | undefined,
   happeningSurveysData?: undefined,
   surveyPolySourceData?: undefined,
 ): Promise<Map> => {
-  const fallbackCoordinate = center[0] === 0 && center[1] === 0;
   const map = new Map({
     container: id,
     center,
-    zoom: fallbackCoordinate ? 3 : 5,
+    zoom: 5,
     style: 'mapbox://styles/mapbox/outdoors-v11',
   });
   const el = document.createElement('div');
@@ -39,14 +39,42 @@ const makeMap = (
   return new Promise((resolve) => {
     map.on('load', () => {
       if (!happeningSurveysData) {
+        if (!!polygonCoordinates) {
+          map.addSource('polygonBoundary', {
+            type: 'geojson',
+            data: {
+              type: 'Feature',
+              geometry: {
+                type: 'MultiPolygon',
+                coordinates: polygonCoordinates,
+              },
+            },
+          });
+          map.addLayer({
+            id: 'polygonBoundary',
+            type: 'fill',
+            source: 'polygonBoundary',
+            layout: {},
+            paint: {
+              'fill-color': '#5486BD',
+              'fill-opacity': 0.25,
+            },
+          });
+        }
         return resolve(map);
       }
       Promise.all(
-        surveyCategory.filter((category) => category.childs.filter((categoryIcon) => new Promise(() => { //eslint-disable-line
-          map.loadImage(categoryIcon.icon, (error, res) => {
-            map.addImage(categoryIcon.id, res);
-          });
-        }))),
+        surveyCategory.filter((category) =>
+          category.childs.filter(
+            (categoryIcon) =>
+              new Promise(() => {
+                //eslint-disable-line
+                map.loadImage(categoryIcon.icon, (error, res) => {
+                  map.addImage(categoryIcon.id, res);
+                });
+              }),
+          ),
+        ),
       ).then(() => {
         map.addSource('happeningSurveys', {
           type: 'geojson',
@@ -131,7 +159,11 @@ const makeMap = (
           source: 'happeningSurveys',
           filter: ['!has', 'point_count'],
           layout: {
-            'icon-image': ['get', 'id', ['get', 'category', ['get', 'surveyItem']]],
+            'icon-image': [
+              'get',
+              'id',
+              ['get', 'category', ['get', 'surveyItem']],
+            ],
             'icon-allow-overlap': true,
             'icon-size': 0.5,
           },
@@ -162,9 +194,9 @@ const makeMap = (
             layers: ['clusters'],
           });
           const clusterId = features[0].properties.cluster_id;
-          map.getSource('happeningSurveys').getClusterExpansionZoom(
-            clusterId,
-            (err, zoom) => {
+          map
+            .getSource('happeningSurveys')
+            .getClusterExpansionZoom(clusterId, (err, zoom) => {
               if (err) return;
 
               map.easeTo({
@@ -172,8 +204,7 @@ const makeMap = (
                 zoom,
                 duration: 1500,
               });
-            },
-          );
+            });
         });
       });
       return resolve(map);
@@ -184,49 +215,56 @@ const makeMap = (
 interface Props {
   center?: [longitude: number, latitude: number];
   showCluster?: boolean;
+  polygonCoordinates?: [[number, number][]] | undefined;
 }
 
-const SurveyMap: React.FC<Props> = ({center, showCluster}) => {
+const SurveyMap: React.FC<Props> = ({
+  center,
+  showCluster,
+  polygonCoordinates,
+}) => {
   const {data} = useQuery(GET_SURVEY_DATA);
   useEffect(() => {
     if (process.env.REACT_APP_MAPBOX_TOKEN) {
       mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_TOKEN;
       if (showCluster) {
-        const shape = data?.happeningSurveys
-          .filter((survey) => survey.location)
-          .map((survey) => ({
-            type: 'Feature',
-            properties: {
-              surveyItem: survey,
-            },
-            geometry: {
-              type: survey.location.type,
-              coordinates: survey.location.coordinates,
-            },
-          })) || [];
+        const shape =
+          data?.happeningSurveys
+            .filter((survey) => survey.location)
+            .map((survey) => ({
+              type: 'Feature',
+              properties: {
+                surveyItem: survey,
+              },
+              geometry: {
+                type: survey.location.type,
+                coordinates: survey.location.coordinates,
+              },
+            })) || [];
         const surveyGeoJSON = {
           type: 'FeatureCollection',
           features: [...shape],
         };
-        const shapePoly = data?.happeningSurveys
-          .filter((survey) => survey.boundary)
-          .map((survey) => ({
-            type: 'Feature',
-            properties: {
-              surveyItem: survey,
-            },
-            geometry: {
-              type: survey.boundary.type,
-              coordinates: survey.boundary.coordinates,
-            },
-          })) || [];
+        const shapePoly =
+          data?.happeningSurveys
+            .filter((survey) => survey.boundary)
+            .map((survey) => ({
+              type: 'Feature',
+              properties: {
+                surveyItem: survey,
+              },
+              geometry: {
+                type: survey.boundary.type,
+                coordinates: survey.boundary.coordinates,
+              },
+            })) || [];
         const surveyPolySource = {
           type: 'FeatureCollection',
           features: [...shapePoly],
         };
-        makeMap('map', [150, -5], surveyGeoJSON, surveyPolySource);
+        makeMap('map', [150, -5], undefined, surveyGeoJSON, surveyPolySource);
       } else {
-        makeMap('map', center);
+        makeMap('map', center, polygonCoordinates);
       }
     }
   }, [center, showCluster, data]);

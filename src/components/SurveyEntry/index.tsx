@@ -181,7 +181,10 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails}) => {
             <p className={classes.info}>{locationName || ''}</p>
           </div>
           <div className={classes.mapWrapper}>
-            <Map center={data?.location?.coordinates || [0, 0]} />
+            <Map
+              center={data?.location?.coordinates || [147.28, -9.5]}
+              polygonCoordinates={data?.boundary?.coordinates}
+            />
           </div>
           <div className={classes.buttons}>
             <Button

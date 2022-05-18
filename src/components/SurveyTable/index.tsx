@@ -18,6 +18,7 @@ export type SurveyDataType = {
   location: {type: string; coordinates: [number, number]};
   sentiment: string;
   status: string;
+  boundary: {coordinates: [[number, number][]]} | null;
 };
 
 interface Props {
