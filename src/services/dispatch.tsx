@@ -13,7 +13,7 @@ const {dispatch} = store;
 
 export const dispatchLogin = async (accessToken: string, refreshToken: string, user: UserType) => {
   dispatch(setToken(accessToken));
-  setRefreshToken(refreshToken);
+  dispatch(setRefreshToken(refreshToken));
   dispatch(setUser(user));
   dispatch(setLogin());
 };
