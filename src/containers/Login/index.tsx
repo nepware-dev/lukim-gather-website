@@ -84,7 +84,7 @@ const Login = () => {
               <InputField
                 title='Username'
                 value={username}
-                placeholder='Enter your Email address'
+                placeholder='Enter your email address'
                 onChange={handleUsernameChange}
               />
               <InputField
@@ -96,7 +96,7 @@ const Login = () => {
               />
             </div>
             <Link to='/forgot-password'>
-              <p className={classes.text}>Forget Password?</p>
+              <p className={classes.text}>Forgot Password?</p>
             </Link>
             {error && <p className={classes.error}>{error}</p>}
             <Button

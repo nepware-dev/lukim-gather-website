@@ -10,6 +10,8 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 
 import {useQuery} from '@apollo/client';
 
+import {formatDate} from '@utils/formatDate';
+
 import marker from '@images/marker.png';
 import {GET_SURVEY_DATA} from '@containers/Surveys';
 import surveyCategory from '../../data/surveyCategory';
@@ -169,11 +171,10 @@ const makeMap = (
           },
         });
 
-        map.on('click', 'unclustered-point', (e) => {
-          const coordinates = e.features[0].geometry.coordinates.slice();
+        map.on('click', ['unclustered-point', 'polygon'], (e) => {
           const item = JSON.parse(e.features[0].properties.surveyItem);
           new mapboxgl.Popup()
-            .setLngLat(coordinates)
+            .setLngLat(e.lngLat)
             .setHTML(
               `
                  Category: ${item.category.title}
@@ -184,7 +185,7 @@ const makeMap = (
                  <br/>
                  Feel: ${item.sentiment}
                  <br />
-                 Created at: ${item.createdAt}
+                 Created At: ${formatDate(item.createdAt)}
                 `,
             )
             .addTo(map);
