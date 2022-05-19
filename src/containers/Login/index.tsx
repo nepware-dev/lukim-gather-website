@@ -18,6 +18,7 @@ const LOGIN = gql`
         firstName
         lastName
         email
+        isStaff
       }
     }
   }
