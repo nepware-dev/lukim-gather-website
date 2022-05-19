@@ -2,6 +2,7 @@ export type UserType = {
   firstName: string;
   lastName: string;
   email: string;
+  isStaff: boolean;
 };
 
 export interface AuthState {

@@ -1,10 +1,12 @@
 import React, {useCallback, useEffect, useState} from 'react';
+import {useSelector} from 'react-redux';
 import {gql, useMutation} from '@apollo/client';
 import {HiOutlineX} from 'react-icons/hi';
 
 import cs from '@utils/cs';
 import {formatDate} from '@utils/formatDate';
 import useCategoryIcon from '@hooks/useCategoryIcon';
+import {rootState} from '@store/rootReducer';
 
 import Button from '@components/Button';
 import Map from '@components/Map';
@@ -54,6 +56,11 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails}) => {
   const [categoryIcon] = useCategoryIcon(data?.category?.id);
   const [showDeclineModal, setShowDeclineModal] = useState<boolean>(false);
   const [locationName, setLocationName] = useState<string>('');
+  const {
+    auth: {
+      user: {isStaff},
+    },
+  } = useSelector((state: rootState) => state);
 
   const getLocationName = useCallback(async () => {
     const response = await fetch(
@@ -186,7 +193,7 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails}) => {
               polygonCoordinates={data?.boundary?.coordinates}
             />
           </div>
-          <div className={classes.buttons}>
+          <div className={cs(classes.buttons, ['hidden', !isStaff])}>
             <Button
               text='Accept'
               className={classes.acceptBtn}

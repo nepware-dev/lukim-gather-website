@@ -5,7 +5,9 @@ import {AuthState, UserType} from '../types/auth';
 
 const initialState: AuthState = {
   isAuthenticated: false,
-  user: {firstName: '', lastName: '', email: ''},
+  user: {
+    firstName: '', lastName: '', email: '', isStaff: false,
+  },
   token: null,
   refreshToken: null,
   idToken: null,
@@ -15,19 +17,19 @@ const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    setLogin: (state) => {
+    setLogin: (state: AuthState) => {
       state.isAuthenticated = true;
     },
-    setUser: (state, {payload}: PayloadAction<UserType>) => {
+    setUser: (state: AuthState, {payload}: PayloadAction<UserType>) => {
       state.user = payload;
     },
-    setToken: (state, {payload}: PayloadAction<string>) => {
+    setToken: (state: AuthState, {payload}: PayloadAction<string>) => {
       state.token = payload;
     },
-    setRefreshToken: (state, {payload}: PayloadAction<string>) => {
+    setRefreshToken: (state: AuthState, {payload}: PayloadAction<string>) => {
       state.refreshToken = payload;
     },
-    setIdToken: (state, {payload}: PayloadAction<string>) => {
+    setIdToken: (state: AuthState, {payload}: PayloadAction<string>) => {
       state.idToken = payload;
     },
     setLogout: () => initialState,
