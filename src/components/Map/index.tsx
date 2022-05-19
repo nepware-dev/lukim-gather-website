@@ -26,7 +26,7 @@ const makeMap = (
   const map = new Map({
     container: id,
     center,
-    zoom: 5,
+    zoom: polygonCoordinates ? 10 : 5,
     style: 'mapbox://styles/mapbox/outdoors-v11',
   });
   const el = document.createElement('div');
@@ -35,7 +35,9 @@ const makeMap = (
   el.style.backgroundImage = `url(${marker})`;
 
   if (!happeningSurveysData) {
-    new mapboxgl.Marker(el).setLngLat(center).addTo(map);
+    if(!polygonCoordinates) {
+      new mapboxgl.Marker(el).setLngLat(center).addTo(map);
+    }
   }
 
   return new Promise((resolve) => {
@@ -45,13 +47,17 @@ const makeMap = (
           map.addSource('polygonBoundary', {
             type: 'geojson',
             data: {
-              type: 'Feature',
-              geometry: {
-                type: 'MultiPolygon',
-                coordinates: polygonCoordinates,
+              "type": "FeatureCollection",
+              "features": [{
+                "type": "Feature",
+                "properties": {},
+                "geometry": {
+                  "type": "MultiPolygon",
+                  "coordinates": polygonCoordinates
+                  }
+                }]
               },
-            },
-          });
+            });
           map.addLayer({
             id: 'polygonBoundary',
             type: 'fill',
@@ -59,7 +65,7 @@ const makeMap = (
             layout: {},
             paint: {
               'fill-color': '#5486BD',
-              'fill-opacity': 0.25,
+              'fill-opacity': 0.5,
             },
           });
         }
