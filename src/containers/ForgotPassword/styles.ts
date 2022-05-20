@@ -12,4 +12,7 @@ export default {
   text: 'font-inter text-base text-[#585D69]',
   sendAgain: 'font-interSemibold text-base text-[#00518B]',
   cursor: 'cursor-pointer',
+  error: 'text-color-red mt-[28px]',
+  otpContainer: 'flex justify-between gap-1 sm:gap-2',
+  otpInput: 'w-1/6 py-2 sm:py-3 border border-[#CCDCE8] rounded-lg font-interMedium text-[18px] sm:text-[24px] text-center',
 };

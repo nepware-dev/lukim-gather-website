@@ -48,7 +48,7 @@ const errorLink = onError(
           auth: {refreshToken},
         } = store.getState();
         if (
-          err?.message?.toLowerCase()
+          err?.message
                         === 'error decoding signature'
                     && refreshToken
         ) {

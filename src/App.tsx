@@ -3,6 +3,8 @@ import {ApolloProvider} from '@apollo/client';
 import {Provider} from 'react-redux';
 import {PersistGate} from 'redux-persist/integration/react';
 
+import ToastContainer from '@components/ToastContainer';
+
 import client from './services/client';
 import {store, persistor} from './store';
 import Routes from './routes';
@@ -17,6 +19,7 @@ function App() {
           <BrowserRouter>
             <Routes />
           </BrowserRouter>
+          <ToastContainer />
         </PersistGate>
       </Provider>
     </ApolloProvider>
