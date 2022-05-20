@@ -1,5 +1,8 @@
-import React, {useCallback, useState} from 'react';
-import {Link} from 'react-router-dom';
+import React, {useCallback, useEffect, useState} from 'react';
+import {
+  Link, useLocation, useNavigate,
+} from 'react-router-dom';
+import {gql, useMutation} from '@apollo/client';
 
 import Navbar from '@components/Navbar';
 import InputField from '@components/InputField';
@@ -7,8 +10,47 @@ import Button from '@components/Button';
 
 import classes from './styles';
 
+const PASSWORD_RESET_CHANGE = gql`
+    mutation PasswordResetChange($data: PasswordResetChangeInput!) {
+        passwordResetChange(data: $data) {
+            ok
+        }
+    }
+`;
+
 const ResetPassword = () => {
+  const location: {state: any} = useLocation();
+  const navigate = useNavigate();
   const [newPassword, setNewPassword] = useState<string>('');
+  const [error, setError] = useState<string>('');
+
+  useEffect(() => {
+    if (!location?.state?.username || !location?.state?.identifier) {
+      navigate(-1);
+    }
+  }, [location?.state?.identifier, location?.state?.username, navigate]);
+
+  const [passwordResetChange, {loading}] = useMutation(PASSWORD_RESET_CHANGE, {
+    onCompleted: () => {
+      navigate('/login');
+    },
+    onError: (err) => {
+      setError(String(err));
+    },
+  });
+
+  const handleSaveNewPassword = useCallback(async () => {
+    await passwordResetChange({
+      variables: {
+        data: {
+          username: location?.state?.username,
+          password: newPassword,
+          rePassword: newPassword,
+          identifier: location?.state?.identifier,
+        },
+      },
+    });
+  }, [passwordResetChange, location?.state?.username, location?.state?.identifier, newPassword]);
 
   const handleNewPasswordChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -16,10 +58,6 @@ const ResetPassword = () => {
     },
     [],
   );
-
-  const handleSaveNewPassword = useCallback(() => {
-    setNewPassword('');
-  }, []);
 
   return (
     <div className={classes.mainContainer}>
@@ -44,6 +82,8 @@ const ResetPassword = () => {
               text='Save new password'
               className={classes.button}
               onClick={handleSaveNewPassword}
+              loading={!error && loading}
+              disabled={!newPassword}
             />
             <div className={classes.wrapper}>
               <p className={classes.goBack}>
