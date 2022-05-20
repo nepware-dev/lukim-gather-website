@@ -7,6 +7,7 @@ import {RootStateOrAny, useSelector} from 'react-redux';
 import Home from '@containers/Home';
 import Dashboard from '@containers/Dashboard';
 import Surveys from '@containers/Surveys';
+import CustomForms from '@containers/CustomForms';
 import Login from '@containers/Login';
 import AccountSettings from '@containers/AccountSettings';
 import ResetPassword from '@containers/ResetPassword';
@@ -17,20 +18,24 @@ interface Props {
   isAuthenticated: boolean;
 }
 
-const PrivateRoute: React.FC<Props> = ({
-  isAuthenticated,
-}) => (isAuthenticated ? <Outlet /> : <Navigate to='/login' />);
+const PrivateRoute: React.FC<Props> = ({isAuthenticated}) => (isAuthenticated ? <Outlet /> : <Navigate to='/login' />);
 
 const AppRoutes = () => {
-  const isAuthenticated = useSelector((state: RootStateOrAny) => state.auth.isAuthenticated);
+  const isAuthenticated = useSelector(
+    (state: RootStateOrAny) => state.auth.isAuthenticated,
+  );
   return (
     <Routes>
       <Route path='/' element={<Home />} />
       <Route path='/login' element={<Login />} />
       <Route path='/forgot-password' element={<ForgotPassword />} />
-      <Route path='/' element={<PrivateRoute isAuthenticated={isAuthenticated} />}>
+      <Route
+        path='/'
+        element={<PrivateRoute isAuthenticated={isAuthenticated} />}
+      >
         <Route path='/dashboard' element={<Dashboard />} />
         <Route path='/surveys' element={<Surveys />} />
+        <Route path='/custom-forms' element={<CustomForms />} />
         <Route path='/account-settings' element={<AccountSettings />} />
         <Route path='/reset-password' element={<ResetPassword />} />
       </Route>

@@ -3,6 +3,7 @@ import {Link, useLocation} from 'react-router-dom';
 import {BsFillGridFill} from 'react-icons/bs';
 import {FiFileText} from 'react-icons/fi';
 import {HiMenuAlt1, HiOutlineX} from 'react-icons/hi';
+import {GoListUnordered} from 'react-icons/go';
 
 import cs from '@utils/cs';
 import UserDropdown from '@components/UserDropdown';
@@ -92,6 +93,17 @@ const DashboardLayout = ({
               >
                 -
               </span>
+            </Link>
+            <Link
+              to='/custom-forms'
+              className={cs(
+                classes.link,
+                [classes.activeLink, pathname === '/custom-forms'],
+                [classes.inactiveLink, pathname !== '/custom-forms'],
+              )}
+            >
+              <GoListUnordered size={20} />
+              <p className={classes.linkText}>Custom Forms</p>
             </Link>
             <div className={classes.userDropdown}>
               <UserDropdown />
