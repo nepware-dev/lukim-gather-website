@@ -35,7 +35,7 @@ const makeMap = (
   el.style.backgroundImage = `url(${marker})`;
 
   if (!happeningSurveysData) {
-    if(!polygonCoordinates) {
+    if (!polygonCoordinates) {
       new mapboxgl.Marker(el).setLngLat(center).addTo(map);
     }
   }
@@ -47,17 +47,19 @@ const makeMap = (
           map.addSource('polygonBoundary', {
             type: 'geojson',
             data: {
-              "type": "FeatureCollection",
-              "features": [{
-                "type": "Feature",
-                "properties": {},
-                "geometry": {
-                  "type": "MultiPolygon",
-                  "coordinates": polygonCoordinates
-                  }
-                }]
-              },
-            });
+              type: 'FeatureCollection',
+              features: [
+                {
+                  type: 'Feature',
+                  properties: {},
+                  geometry: {
+                    type: 'MultiPolygon',
+                    coordinates: polygonCoordinates,
+                  },
+                },
+              ],
+            },
+          });
           map.addLayer({
             id: 'polygonBoundary',
             type: 'fill',
@@ -177,8 +179,37 @@ const makeMap = (
           },
         });
 
-        map.on('click', ['unclustered-point', 'polygon'], (e) => {
-          const item = JSON.parse(e.features[0].properties.surveyItem);
+        map.on('click', ['unclustered-point', 'polygon', 'clusters'], (e) => {
+          const cluster = e.features.find(
+            (feat) => feat.layer.id === 'clusters',
+          );
+          if (cluster) {
+            const features = map.queryRenderedFeatures(e.point, {
+              layers: ['clusters'],
+            });
+            const clusterId = cluster.properties.cluster_id;
+            return map
+              .getSource('happeningSurveys')
+              .getClusterExpansionZoom(clusterId, (err, zoom) => {
+                if (err) return;
+
+                map.easeTo({
+                  center: features[0].geometry.coordinates,
+                  zoom,
+                  duration: 1500,
+                });
+              });
+          }
+          let item;
+          if (
+            !e.features.some((feat) => feat.layer?.id === 'unclustered-point')
+          ) {
+            item = JSON.parse(
+              e.features[e.features.length - 1].properties.surveyItem,
+            );
+          } else {
+            item = JSON.parse(e.features[0].properties.surveyItem);
+          }
           new mapboxgl.Popup()
             .setLngLat(e.lngLat)
             .setHTML(
@@ -195,23 +226,6 @@ const makeMap = (
                 `,
             )
             .addTo(map);
-        });
-        map.on('click', 'clusters', (e) => {
-          const features = map.queryRenderedFeatures(e.point, {
-            layers: ['clusters'],
-          });
-          const clusterId = features[0].properties.cluster_id;
-          map
-            .getSource('happeningSurveys')
-            .getClusterExpansionZoom(clusterId, (err, zoom) => {
-              if (err) return;
-
-              map.easeTo({
-                center: features[0].geometry.coordinates,
-                zoom,
-                duration: 1500,
-              });
-            });
         });
       });
       return resolve(map);
