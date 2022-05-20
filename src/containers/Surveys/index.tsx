@@ -5,6 +5,7 @@ import React, {
   useEffect,
   useState,
 } from 'react';
+import {CSVLink} from 'react-csv';
 import DatePicker from 'react-datepicker';
 import {gql, useQuery} from '@apollo/client';
 import {BsCalendar4Event} from 'react-icons/bs';
@@ -197,6 +198,19 @@ const Surveys = () => {
     setActivePage(1);
   }, []);
 
+  const headers = [
+    {label: 'UUID', key: 'id'},
+    {label: 'Category', key: 'category.title'},
+    {label: 'Title', key: 'title'},
+    {label: 'Description', key: 'description'},
+    {label: 'Sentiment', key: 'sentiment'},
+    {label: 'Improvement', key: 'improvement'},
+    {label: 'Location', key: 'location.coordinates'},
+    {label: 'Boundary', key: 'boundary.coordinates'},
+    {label: 'Status', key: 'status'},
+    {label: 'Created Date', key: 'createdAt'},
+  ];
+
   return (
     <>
       <DashboardLayout hideOverflowY={showDetails}>
@@ -204,6 +218,9 @@ const Surveys = () => {
         <div className={classes.container}>
           <h2 className={classes.title}>Surveys</h2>
           <div className={classes.header}>
+            <div className='cursor-pointer'>
+              {data && (<CSVLink className='h-[44px] w-fit flex items-center gap-[8px] rounded-lg px-[12px] bg-[#FDF0E9] cursor-pointer' filename={`Happening-Survey-Report-${Date.now()}`} data={data?.happeningSurveys} headers={headers}><span className='font-interMedium text-[14px] text-[#70747E]'>Export to CSV</span></CSVLink>)}
+            </div>
             <div className={classes.tabs}>
               <SurveyTab
                 text='All'
