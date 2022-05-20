@@ -1,5 +1,6 @@
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
+import {gql, useMutation} from '@apollo/client';
 import {BsArrowLeftShort} from 'react-icons/bs';
 
 import cs from '@utils/cs';
@@ -10,10 +11,35 @@ import Button from '@components/Button';
 
 import classes from './styles';
 
+const PASSWORD_RESET = gql`
+    mutation PasswordReset($data: PasswordResetPinInput!) {
+        passwordReset(data: $data) {
+            ok
+        }
+    }
+`;
+
+const mailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+
 const ForgotPassword = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState<string>('');
   const [showMailSentInfo, setShowMailSentInfo] = useState<boolean>(false);
+  const [error, setError] = useState<string>('');
+  const [passwordReset, {loading}] = useMutation(PASSWORD_RESET, {
+    onCompleted: () => {
+      setShowMailSentInfo(true);
+    },
+    onError: (err) => {
+      setError(String(err));
+    },
+  });
+
+  useEffect(() => {
+    if (error) {
+      setTimeout(() => setError(''), 5000);
+    }
+  }, [error]);
 
   const handleEmailChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -22,9 +48,19 @@ const ForgotPassword = () => {
     [],
   );
 
-  const handleSendResetMail = useCallback(() => {
-    setShowMailSentInfo(true);
-  }, []);
+  const handleSendResetMail = useCallback(async () => {
+    if (!email.match(mailRegex)) {
+      setError('Error: Invalid email address');
+      return;
+    }
+    await passwordReset({
+      variables: {
+        data: {
+          username: email.toLowerCase(),
+        },
+      },
+    });
+  }, [email, passwordReset]);
 
   const handleGoBack = useCallback(() => {
     navigate(-1);
@@ -61,11 +97,13 @@ const ForgotPassword = () => {
               placeholder='John@example'
               onChange={handleEmailChange}
             />
+            {!!error && <p className={classes.error}>{error}</p>}
             <Button
               text='Send reset mail'
               className={classes.button}
               onClick={handleSendResetMail}
               disabled={!email}
+              loading={!error && loading}
             />
           </div>
         </div>
@@ -93,7 +131,7 @@ const ForgotPassword = () => {
             </p>
             <div className={classes.textWrapper}>
               <p className={classes.text}>{'Didn\'t receive email?'}</p>
-              <div className={classes.cursor}>
+              <div className={classes.cursor} onClick={handleSendResetMail}>
                 <p className={classes.sendAgain}>Send it again</p>
               </div>
             </div>

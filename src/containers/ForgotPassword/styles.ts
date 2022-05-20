@@ -12,4 +12,5 @@ export default {
   text: 'font-inter text-base text-[#585D69]',
   sendAgain: 'font-interSemibold text-base text-[#00518B]',
   cursor: 'cursor-pointer',
+  error: 'text-color-red mt-[28px]',
 };
