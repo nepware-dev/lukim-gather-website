@@ -15,6 +15,7 @@ module.exports = function override(config) {
       '@store': resolve('src/store'),
       '@utils': resolve('src/utils'),
       '@services': resolve('src/services'),
+      '@ra': resolve('src/vendor/react-arsenal'),
     },
   };
 

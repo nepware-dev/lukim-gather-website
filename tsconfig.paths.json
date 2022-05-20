@@ -9,7 +9,8 @@
       "@routes/*": ["routes/*"],
       "@store/*": ["store/*"],
       "@utils/*": ["utils/*"],
-      "@services/*": ["services/*"]
+      "@services/*": ["services/*"],
+      "@ra/*": ["vendor/react-arsenal/*"]
     }
   }
 }
