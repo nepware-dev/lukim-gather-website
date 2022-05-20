@@ -21,10 +21,12 @@ import SurveyTab from '@components/SurveyTab';
 import Pagination from '@components/Pagination';
 import Dropdown from '@components/Dropdown';
 import SurveyEntry from '@components/SurveyEntry';
+import SelectInput from '@ra/components/Form/SelectInput'; // eslint-disable-line no-eval
 
 import 'react-datepicker/dist/react-datepicker.css';
 
 import classes from './styles';
+import styles from './styles.module.scss';
 
 export const GET_SURVEY_DATA = gql`
   query {
@@ -55,8 +57,26 @@ export const GET_SURVEY_DATA = gql`
   }
 `;
 
+export const GET_CATEGORY_DATA = gql`
+  query {
+    protectedAreaCategories (ordering: "id") {
+      id
+      title
+    }
+  }
+`;
+
+export type CategoryType = {
+  id: number,
+  title: string
+}
+
+const titleExtractor = (item: CategoryType) => item?.title;
+const keyExtractor = (item: CategoryType) => item?.id;
+
 const Surveys = () => {
   const {data} = useQuery(GET_SURVEY_DATA);
+  const {data: category} = useQuery(GET_CATEGORY_DATA);
   const [status, setStatus] = useState<string>('All');
   const [surveyData, setSurveyData] = useState<SurveyDataType[]>([]);
   const [activePage, setActivePage] = useState<number>(1);
@@ -68,6 +88,7 @@ const Surveys = () => {
   const [maxDate, setMaxDate] = useState<Date>();
   const [minDate, setMinDate] = useState<Date>();
   const [startDate, endDate] = dateRange;
+  const [selectInputCategory, setSelectInputCategory] = useState<any>(null);
 
   useEffect(() => {
     if (!data) return;
@@ -94,10 +115,19 @@ const Surveys = () => {
     if (!data) return;
     if (status === 'All') {
       const filterData = data.happeningSurveys.filter(
-        (item: {createdAt: string}) => new Date(new Date(item.createdAt).toDateString())
+        (item: {createdAt: string, category: CategoryType}) => {
+          if (selectInputCategory) {
+            return new Date(new Date(item.createdAt).toDateString())
             >= new Date(startDate.toDateString())
-          && new Date(new Date(item.createdAt).toDateString())
-            <= new Date(endDate?.toDateString()),
+            && new Date(new Date(item.createdAt).toDateString())
+            <= new Date(endDate?.toDateString())
+            && item.category.id === selectInputCategory.id;
+          }
+          return new Date(new Date(item.createdAt).toDateString())
+            >= new Date(startDate.toDateString())
+            && new Date(new Date(item.createdAt).toDateString())
+            <= new Date(endDate?.toDateString());
+        },
       );
       const slicedData = filterData.slice(
         rows * activePage - rows,
@@ -107,11 +137,21 @@ const Surveys = () => {
       setTotalPages(Math.ceil(filterData.length / rows));
     } else {
       const filterData = data.happeningSurveys.filter(
-        (item: {status: string; createdAt: string}) => new Date(new Date(item.createdAt).toDateString())
+        (item: {status: string; createdAt: string, category: CategoryType}) => {
+          if (selectInputCategory) {
+            return new Date(new Date(item.createdAt).toDateString())
+              >= new Date(startDate.toDateString())
+            && new Date(new Date(item.createdAt).toDateString())
+              <= new Date(endDate?.toDateString())
+            && item.status.toLowerCase() === status.toLowerCase()
+            && item.category.id === selectInputCategory.id;
+          }
+          return new Date(new Date(item.createdAt).toDateString())
             >= new Date(startDate.toDateString())
           && new Date(new Date(item.createdAt).toDateString())
             <= new Date(endDate?.toDateString())
-          && item.status.toLowerCase() === status.toLowerCase(),
+          && item.status.toLowerCase() === status.toLowerCase();
+        },
       );
       const slicedData = filterData.slice(
         rows * activePage - rows,
@@ -120,7 +160,7 @@ const Surveys = () => {
       setSurveyData(slicedData);
       setTotalPages(Math.ceil(filterData.length / rows));
     }
-  }, [activePage, data, endDate, rows, startDate, status]);
+  }, [activePage, data, endDate, rows, startDate, status, selectInputCategory]);
 
   const handleTab = useCallback((text: string) => {
     setStatus(text);
@@ -198,6 +238,10 @@ const Surveys = () => {
     setActivePage(1);
   }, []);
 
+  const handleCategoryChange = useCallback(({option}) => {
+    setSelectInputCategory(option);
+  }, []);
+
   const headers = [
     {label: 'UUID', key: 'id'},
     {label: 'Category', key: 'category.title'},
@@ -248,6 +292,14 @@ const Surveys = () => {
               />
             </div>
             <div className='flex gap-[24px] cursor-pointer'>
+              <SelectInput
+                className={cs(styles.select, 'h-[44px]', 'w-[100%]', 'rounded-lg', 'border-[#CCDCE8]')}
+                valueExtractor={titleExtractor}
+                keyExtractor={keyExtractor}
+                options={category?.protectedAreaCategories}
+                placeholder='Category'
+                onChange={handleCategoryChange}
+              />
               <DatePicker
                 selectsRange
                 startDate={startDate}
