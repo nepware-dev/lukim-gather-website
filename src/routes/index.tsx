@@ -37,8 +37,8 @@ const AppRoutes = () => {
         <Route path='/surveys' element={<Surveys />} />
         <Route path='/custom-forms' element={<CustomForms />} />
         <Route path='/account-settings' element={<AccountSettings />} />
-        <Route path='/reset-password' element={<ResetPassword />} />
       </Route>
+      <Route path='/reset-password' element={<ResetPassword />} />
       <Route path='*' element={<Page404 />} />
     </Routes>
   );

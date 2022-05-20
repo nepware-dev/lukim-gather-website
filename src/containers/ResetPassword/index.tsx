@@ -1,25 +1,46 @@
 import React, {useCallback, useState} from 'react';
 import {Link} from 'react-router-dom';
+import {useMutation} from '@apollo/client';
 
 import Navbar from '@components/Navbar';
 import InputField from '@components/InputField';
 import Button from '@components/Button';
 
+import {PASSWORD_RESET_CHANGE} from '@services/gql';
+import {dispatchLogout} from '@services/dispatch';
+
 import classes from './styles';
 
 const ResetPassword = () => {
-  const [newPassword, setNewPassword] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
 
   const handleNewPasswordChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      setNewPassword(e.target.value);
+      setPassword(e.target.value);
     },
     [],
   );
+  const [passwordResetChange, {loading}] = useMutation(PASSWORD_RESET_CHANGE, {
+    onCompleted: () => {
+      dispatchLogout();
+    },
+    onError: ({graphQLErrors}) => {
+      console.log(graphQLErrors[0].message);
+    },
+  });
 
-  const handleSaveNewPassword = useCallback(() => {
-    setNewPassword('');
-  }, []);
+  const handleSaveNewPassword = useCallback(async () => {
+    await passwordResetChange({
+      variables: {
+        data: {
+          username: '',
+          password,
+          rePassword: password,
+          identifier: '',
+        },
+      },
+    });
+  }, [passwordResetChange, password]);
 
   return (
     <div className={classes.mainContainer}>
@@ -35,7 +56,7 @@ const ResetPassword = () => {
             </p>
             <InputField
               title='New password'
-              value={newPassword}
+              value={password}
               placeholder='Enter your new password'
               password
               onChange={handleNewPasswordChange}
@@ -44,6 +65,7 @@ const ResetPassword = () => {
               text='Save new password'
               className={classes.button}
               onClick={handleSaveNewPassword}
+              disabled={!password || loading}
             />
             <div className={classes.wrapper}>
               <p className={classes.goBack}>
