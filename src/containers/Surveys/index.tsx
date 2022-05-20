@@ -218,9 +218,6 @@ const Surveys = () => {
         <div className={classes.container}>
           <h2 className={classes.title}>Surveys</h2>
           <div className={classes.header}>
-            <div className='cursor-pointer'>
-              {data && (<CSVLink className='h-[44px] w-fit flex items-center gap-[8px] rounded-lg px-[12px] bg-[#FDF0E9] cursor-pointer' filename={`Happening-Survey-Report-${Date.now()}`} data={data?.happeningSurveys} headers={headers}><span className='font-interMedium text-[14px] text-[#70747E]'>Export to CSV</span></CSVLink>)}
-            </div>
             <div className={classes.tabs}>
               <SurveyTab
                 text='All'
@@ -250,7 +247,7 @@ const Surveys = () => {
                 ])}
               />
             </div>
-            <div className='cursor-pointer'>
+            <div className='flex gap-[24px] cursor-pointer'>
               <DatePicker
                 selectsRange
                 startDate={startDate}
@@ -260,6 +257,7 @@ const Surveys = () => {
                 onChange={handleDateChange}
                 customInput={<CustomInput />}
               />
+              {surveyData && (<CSVLink className='h-[44px] w-[100%] px-[12px] flex items-center rounded-lg border-[#CCDCE8] bg-[#E7E8EA] font-interMedium text-[14px] text-[#70747E]' filename={`Happening-Survey-Report-${Date.now()}`} data={surveyData} headers={headers}><span>Export to CSV</span></CSVLink>)}
             </div>
           </div>
           <div className={classes.surveyTable}>

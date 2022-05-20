@@ -6,7 +6,7 @@ export default {
   tableItemRow: 'h-[56px] border-t border-[#CCDCE8]',
   itemTitle: 'pl-[20px] text-[#282F3E] font-interMedium text-[16px]',
   categoryWrapper: 'flex items-center gap-[9px]',
-  categoryIcon: 'h-[18px]',
+  categoryIcon: 'h-[32px]',
   categoryTitle: 'text-[#282F3E] font-inter text-[16px]',
   date: 'text-[#282F3E] font-inter text-[16px]',
   status: 'max-w-fit px-[12px] py-[4px] rounded-full uppercase font-interMedium text-[12px]',
