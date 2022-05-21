@@ -5,6 +5,7 @@ import {formatDate} from '@utils/formatDate';
 
 import {FormDataType} from '@components/FormTable';
 
+import cs from '@ra/cs';
 import classes from './styles';
 
 type Entries<T> = {
@@ -40,8 +41,8 @@ interface Props {
 interface FormValueRendererProps {
   name: string;
   value: string | number | object;
-  topLevel?: boolean;
   formModel: FormModelType;
+  level: number;
 }
 
 const Title = ({text}: {text: string}) => (
@@ -53,8 +54,8 @@ const Title = ({text}: {text: string}) => (
 const FormValueRenderer = ({
   name,
   value,
-  topLevel,
   formModel,
+  level,
 }: FormValueRendererProps) => {
   const formattedValue = useMemo(() => {
     if (typeof value === 'string') {
@@ -81,13 +82,16 @@ const FormValueRenderer = ({
 
   if (value && typeof value === 'object') {
     return (
-      <div>
-        {topLevel && <Title text={formattedName} />}
+      <div className='mb-6'>
+        {level === 0
+          ? <Title text={formattedName} />
+          : <p className={classes.formItemTopic}>{formattedName}</p>}
         {Object.entries(value).map(([key, val]) => (
           <FormValueRenderer
             key={`${name}-${key}`}
             name={key}
             value={val}
+            level={level + 1}
             formModel={formModel}
           />
         ))}
@@ -95,17 +99,17 @@ const FormValueRenderer = ({
     );
   }
 
-  if (name?.toLowerCase()?.startsWith('note_') || value === '') {
+  if (name?.toLowerCase()?.startsWith('note_')) {
     return null;
   }
 
   return (
-    <div className={classes.formItem}>
+    <div className={cs(classes.formItem, {[classes.formNested]: level > 1})}>
       <span className={classes.formKey}>
         {formattedName}
         :
       </span>
-      <span className={classes.formValue}>{formattedValue}</span>
+      <span className={classes.formValue}>{formattedValue || '-'}</span>
     </div>
   );
 };
@@ -153,7 +157,7 @@ const FormEntry: React.FC<Props> = ({data, setShowDetails, formModel}) => {
               key={key}
               name={key}
               value={value}
-              topLevel
+              level={0}
               formModel={formModel}
             />
           ))}
