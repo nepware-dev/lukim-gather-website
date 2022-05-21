@@ -1978,6 +1978,13 @@
   resolved "https://registry.yarnpkg.com/@types/json5/-/json5-0.0.29.tgz#ee28707ae94e11d2b827bcbe5270bcea7f3e71ee"
   integrity sha1-7ihweulOEdK4J7y+UnC86n8+ce4=
 
+"@types/mapbox-gl@^2.6.0":
+  version "2.7.2"
+  resolved "https://registry.yarnpkg.com/@types/mapbox-gl/-/mapbox-gl-2.7.2.tgz#7122ad95cb8dadc4168c166eb8f3f3ba5ed51d6b"
+  integrity sha512-2/qyLtiQxiTYEQuOxaqiNiZPvjND35rde/ZQpxx8D5bEcYK4PDXWv/DIxPsfxqyhiP1E6Wbni0SfjkbqcqOfCQ==
+  dependencies:
+    "@types/geojson" "*"
+
 "@types/mapbox-gl@^2.6.4":
   version "2.6.4"
   resolved "https://registry.yarnpkg.com/@types/mapbox-gl/-/mapbox-gl-2.6.4.tgz#6ad568b180bc852adf655ebb0345363cfd4bed55"
@@ -7603,6 +7610,13 @@ react-mailchimp-subscribe@^2.1.3:
     jsonp "^0.2.1"
     prop-types "^15.5.10"
     to-querystring "^1.0.4"
+
+react-map-gl@^7.0.13:
+  version "7.0.13"
+  resolved "https://registry.yarnpkg.com/react-map-gl/-/react-map-gl-7.0.13.tgz#5f701435b503418a4476cf915fae9ce91d158cc9"
+  integrity sha512-XkZ2OySoVe7t8WA0ftsgzoDh6jGUCAEKqNgSXRPTIgD0ewvHYnxC+aCNAif9dq61fOCui3gMjyo1GWchNfHm/g==
+  dependencies:
+    "@types/mapbox-gl" "^2.6.0"
 
 react-onclickoutside@^6.12.0:
   version "6.12.1"
