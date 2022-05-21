@@ -50,6 +50,9 @@ export const GET_SURVEY_DATA = gql`
         type
         coordinates
       }
+      region {
+        id
+      }
       improvement
       sentiment
       status
@@ -66,17 +69,27 @@ export const GET_CATEGORY_DATA = gql`
   }
 `;
 
-export type CategoryType = {
+export const GET_REGION_DATA = gql`
+  query {
+    regions (parent: 1) {
+      id
+      name
+    }
+  }
+`;
+
+export type SelectInputType = {
   id: number,
   title: string
 }
 
-const titleExtractor = (item: CategoryType) => item?.title;
-const keyExtractor = (item: CategoryType) => item?.id;
+const titleExtractor = (item: SelectInputType) => item?.title;
+const keyExtractor = (item: SelectInputType) => item?.id;
 
 const Surveys = () => {
   const {data} = useQuery(GET_SURVEY_DATA);
   const {data: category} = useQuery(GET_CATEGORY_DATA);
+  const {data: regions} = useQuery(GET_REGION_DATA);
   const [status, setStatus] = useState<string>('All');
   const [surveyData, setSurveyData] = useState<SurveyDataType[]>([]);
   const [activePage, setActivePage] = useState<number>(1);
@@ -88,7 +101,8 @@ const Surveys = () => {
   const [maxDate, setMaxDate] = useState<Date>();
   const [minDate, setMinDate] = useState<Date>();
   const [startDate, endDate] = dateRange;
-  const [selectInputCategory, setSelectInputCategory] = useState<any>(null);
+  const [selectInputCategory, setSelectInputCategory] = useState<SelectInputType | null>(null);
+  const [selectInputRegion, setSelectInputRegion] = useState<SelectInputType | null>(null);
 
   useEffect(() => {
     if (!data) return;
@@ -115,18 +129,22 @@ const Surveys = () => {
     if (!data) return;
     if (status === 'All') {
       const filterData = data.happeningSurveys.filter(
-        (item: {createdAt: string, category: CategoryType}) => {
-          if (selectInputCategory) {
-            return new Date(new Date(item.createdAt).toDateString())
-            >= new Date(startDate.toDateString())
-            && new Date(new Date(item.createdAt).toDateString())
-            <= new Date(endDate?.toDateString())
-            && item.category.id === selectInputCategory.id;
-          }
-          return new Date(new Date(item.createdAt).toDateString())
+        (item: {createdAt: string, category: SelectInputType, region: SelectInputType}) => {
+          const filterItem = new Date(new Date(item.createdAt).toDateString())
             >= new Date(startDate.toDateString())
             && new Date(new Date(item.createdAt).toDateString())
             <= new Date(endDate?.toDateString());
+          if (selectInputCategory && selectInputRegion) {
+            return filterItem && (selectInputCategory && (item.category.id === selectInputCategory.id))
+            && (selectInputRegion && (item.region && (item.region.id === selectInputRegion.id)));
+          }
+          if (selectInputCategory) {
+            return filterItem && (selectInputCategory && (item.category.id === selectInputCategory.id));
+          }
+          if (selectInputRegion) {
+            return filterItem && (selectInputRegion && (item.region && (item.region.id === selectInputRegion.id)));
+          }
+          return filterItem;
         },
       );
       const slicedData = filterData.slice(
@@ -137,20 +155,23 @@ const Surveys = () => {
       setTotalPages(Math.ceil(filterData.length / rows));
     } else {
       const filterData = data.happeningSurveys.filter(
-        (item: {status: string; createdAt: string, category: CategoryType}) => {
-          if (selectInputCategory) {
-            return new Date(new Date(item.createdAt).toDateString())
+        (item: {status: string; createdAt: string, category: SelectInputType, region: SelectInputType}) => {
+          const filterItem = new Date(new Date(item.createdAt).toDateString())
               >= new Date(startDate.toDateString())
             && new Date(new Date(item.createdAt).toDateString())
               <= new Date(endDate?.toDateString())
-            && item.status.toLowerCase() === status.toLowerCase()
-            && item.category.id === selectInputCategory.id;
+            && item.status.toLowerCase() === status.toLowerCase();
+          if (selectInputCategory && selectInputRegion) {
+            return filterItem && item.category.id === selectInputCategory.id
+            && (item.region && (item.region && (item.region.id === selectInputRegion.id)));
           }
-          return new Date(new Date(item.createdAt).toDateString())
-            >= new Date(startDate.toDateString())
-          && new Date(new Date(item.createdAt).toDateString())
-            <= new Date(endDate?.toDateString())
-          && item.status.toLowerCase() === status.toLowerCase();
+          if (selectInputCategory) {
+            return filterItem && item.category.id === selectInputCategory.id;
+          }
+          if (selectInputRegion) {
+            return filterItem && (item.region && (item.region && (item.region.id === selectInputRegion.id)));
+          }
+          return filterItem;
         },
       );
       const slicedData = filterData.slice(
@@ -160,7 +181,7 @@ const Surveys = () => {
       setSurveyData(slicedData);
       setTotalPages(Math.ceil(filterData.length / rows));
     }
-  }, [activePage, data, endDate, rows, startDate, status, selectInputCategory]);
+  }, [activePage, data, endDate, rows, startDate, status, selectInputCategory, selectInputRegion]);
 
   const handleTab = useCallback((text: string) => {
     setStatus(text);
@@ -242,6 +263,10 @@ const Surveys = () => {
     setSelectInputCategory(option);
   }, []);
 
+  const handleRegionChange = useCallback(({option}) => {
+    setSelectInputRegion(option);
+  }, []);
+
   const headers = [
     {label: 'UUID', key: 'id'},
     {label: 'Category', key: 'category.title'},
@@ -254,6 +279,14 @@ const Surveys = () => {
     {label: 'Status', key: 'status'},
     {label: 'Created Date', key: 'createdAt'},
   ];
+
+  const regionOptions = regions?.regions.map(({
+    name: title,
+    ...item
+  }: {name: string}) => ({
+    title,
+    ...item,
+  }));
 
   return (
     <>
@@ -292,6 +325,14 @@ const Surveys = () => {
               />
             </div>
             <div className='flex gap-[24px] cursor-pointer'>
+              <SelectInput
+                className={cs(styles.select, 'h-[44px]', 'w-[100%]', 'rounded-lg', 'border-[#CCDCE8]')}
+                valueExtractor={titleExtractor}
+                keyExtractor={keyExtractor}
+                options={regionOptions}
+                placeholder='Region'
+                onChange={handleRegionChange}
+              />
               <SelectInput
                 className={cs(styles.select, 'h-[44px]', 'w-[100%]', 'rounded-lg', 'border-[#CCDCE8]')}
                 valueExtractor={titleExtractor}
