@@ -2,11 +2,9 @@ const path = require('path');
 
 const resolve = (dir) => path.resolve(__dirname, dir);
 
-module.exports = function override(config) {
-  config.resolve = {
-    ...config.resolve,
+module.exports = {
+  webpack: {
     alias: {
-      ...config.alias,
       '@images': resolve('src/assets/images'),
       '@components': resolve('src/components'),
       '@containers': resolve('src/containers'),
@@ -17,7 +15,10 @@ module.exports = function override(config) {
       '@services': resolve('src/services'),
       '@ra': resolve('src/vendor/react-arsenal'),
     },
-  };
-
-  return config;
+  },
+  babel: {
+    loaderOptions: {
+      ignore: ['./node_modules/mapbox-gl/dist/mapbox-gl.js'],
+    },
+  },
 };

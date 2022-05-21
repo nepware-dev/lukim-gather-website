@@ -1,15 +1,53 @@
 // @ts-nocheck
 // @ts-ignore
-import React, {useCallback, useEffect, useMemo, useRef} from 'react';
-import {Map, Source, Layer, Popup} from 'react-map-gl';
+import React, {useCallback, useEffect, useState, useMemo, useRef} from 'react';
+import Map, {Source, Layer, Popup} from 'react-map-gl';
 import type {MapRef, GeoJSONSource} from 'react-map-gl';
-import {useQuery} from '@apollo/client';
+import {gql, useQuery} from '@apollo/client';
 import {CSVLink} from 'react-csv';
 
 import DashboardHeader from '@components/DashboardHeader';
 import DashboardLayout from '@components/DashboardLayout';
 import {GET_SURVEY_DATA} from '@containers/Surveys';
+import SelectInput from '@ra/components/Form/SelectInput'; // eslint-disable-line no-eval
 import {formatDate} from '@utils/formatDate';
+import cs from '@utils/cs';
+
+import {
+  clusterLayer,
+  clusterCountLayer,
+  unclusteredPointLayer,
+  polygonTitle,
+  polygon,
+} from './layers';
+import surveyCategory from '../../data/surveyCategory';
+import classes from './styles';
+
+export type SelectInputType = {
+  id: number,
+  title: string
+}
+
+const titleExtractor = (item: SelectInputType) => item?.title;
+const keyExtractor = (item: SelectInputType) => item?.id;
+
+export const GET_CATEGORY_DATA = gql`
+  query {
+    protectedAreaCategories (ordering: "id") {
+      id
+      title
+    }
+  }
+`;
+
+export const GET_REGION_DATA = gql`
+  query {
+    regions (parent: 1) {
+      id
+      name
+    }
+  }
+`;
 
 const headers = [
   {label: 'UUID', key: 'id'},
@@ -22,28 +60,49 @@ const headers = [
   {label: 'Boundary', key: 'boundary.coordinates'},
   {label: 'Status', key: 'status'},
   {label: 'Created Date', key: 'createdAt'},
+  {label: 'Longitude', key: 'location.coordinates[0]'},
+  {label: 'Latitude', key: 'location.coordinates[1]'},
 ];
-
-import {
-  clusterLayer,
-  clusterCountLayer,
-  unclusteredPointLayer,
-  polygonTitle,
-  polygon,
-} from './layers';
-import surveyCategory from '../../data/surveyCategory';
-
-import classes from './styles';
 
 const Dashboard = () => {
   const mapRef = useRef<MapRef>(null);
   const [popup, setPopUp] = React.useState(null);
-  const [popupLngLat, setPopUpLngLat] = React.useState(null);
+  const [filteredData, setFilteredData] = React.useState([]);
+  const [popupLngLat, setPopUpLngLat] = React.useState<any>(null);
+  const [selectInputCategory, setSelectInputCategory] = useState<SelectInputType | null>(null);
+  const [selectInputRegion, setSelectInputRegion] = useState<SelectInputType | null>(null);
   const {data} = useQuery(GET_SURVEY_DATA);
+  const {data: category} = useQuery(GET_CATEGORY_DATA);
+  const {data: regions} = useQuery(GET_REGION_DATA);
 
-  const surveyGeoJSON = useMemo(() => {
+  useEffect(() => {
+    if (!data) return;
+    const _filteredData = data.happeningSurveys?.filter(
+      (item: {createdAt: string, category: SelectInputType, region: SelectInputType}) => {
+        if (selectInputCategory && (item.category.id !== selectInputCategory.id)) {
+          return false
+        }
+        if (selectInputRegion && (item.region?.id !== selectInputRegion.id)) {
+          return false;
+        }
+        return true;
+      },
+    );
+
+    setFilteredData(_filteredData);
+  }, [data, selectInputCategory, selectInputRegion]);
+
+  const handleCategoryChange = useCallback(({option}) => {
+    setSelectInputCategory(option);
+  }, []);
+
+  const handleRegionChange = useCallback(({option}) => {
+    setSelectInputRegion(option);
+  }, []);
+
+  const surveyGeoJSON: any = useMemo(() => {
     const shape =
-      data?.happeningSurveys
+      filteredData
         .filter((survey) => survey.location)
         .map((survey) => ({
           type: 'Feature',
@@ -59,11 +118,11 @@ const Dashboard = () => {
       type: 'FeatureCollection',
       features: [...shape],
     };
-  }, [data]);
+  }, [filteredData]);
 
-  const surveyPolyGeoJSON = useMemo(() => {
+  const surveyPolyGeoJSON: any = useMemo(() => {
     const shapePoly =
-      data?.happeningSurveys
+      filteredData
         .filter((survey) => survey.boundary)
         .map((survey) => ({
           type: 'Feature',
@@ -79,7 +138,7 @@ const Dashboard = () => {
       type: 'FeatureCollection',
       features: [...shapePoly],
     };
-  }, [data]);
+  }, [filteredData]);
 
   const onClick = useCallback(event => {
     const cluster = event.features.find(
@@ -139,15 +198,40 @@ const Dashboard = () => {
     );
   }, []);
 
+  const regionOptions = useMemo(() => regions?.regions.map(({
+    name: title,
+    ...item
+  }: {name: string}) => ({
+      title,
+      ...item,
+    }))
+    , [regions]);
+
   return (
     <DashboardLayout>
       <DashboardHeader title='Dashboard' />
       <h2 className={classes.title}>Dashboard</h2>
       <div className={classes.header}>
-        {data?.happeningSurveys && (<CSVLink
+        <SelectInput
+          className={cs('h-[44px]', 'w-[12em]', 'rounded-lg', 'border-[#CCDCE8]')}
+          valueExtractor={titleExtractor}
+          keyExtractor={keyExtractor}
+          options={regionOptions}
+          placeholder='Region'
+          onChange={handleRegionChange}
+        />
+        <SelectInput
+          className={cs('h-[44px]', 'w-[12em]', 'rounded-lg', 'border-[#CCDCE8]')}
+          valueExtractor={titleExtractor}
+          keyExtractor={keyExtractor}
+          options={category?.protectedAreaCategories}
+          placeholder='Category'
+          onChange={handleCategoryChange}
+        />
+        {filteredData && (<CSVLink
           className={classes.csvLink}
           filename={`Happening-Survey-Report-${Date.now()}`}
-          data={data?.happeningSurveys}
+          data={filteredData}
           headers={headers}>
             <span>Export to CSV</span>
         </CSVLink>)}
