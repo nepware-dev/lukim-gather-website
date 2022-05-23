@@ -278,6 +278,8 @@ const Surveys = () => {
     {label: 'Boundary', key: 'boundary.coordinates'},
     {label: 'Status', key: 'status'},
     {label: 'Created Date', key: 'createdAt'},
+    {label: 'Longitude', key: 'location.coordinates[0]'},
+    {label: 'Latitude', key: 'location.coordinates[1]'},
   ];
 
   const regionOptions = regions?.regions.map(({

@@ -9,6 +9,8 @@ import {setContext} from '@apollo/client/link/context';
 import {store, persistor} from './store';
 import Routes from './routes';
 
+import './styles/_base.scss';
+
 const httpLink = createHttpLink({
   uri: process.env.REACT_APP_API_BASE_URL,
 });
