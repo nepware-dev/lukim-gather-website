@@ -4,6 +4,7 @@ import React, {
   useCallback,
   useEffect,
   useState,
+  useMemo,
 } from 'react';
 import {CSVLink} from 'react-csv';
 import DatePicker from 'react-datepicker';
@@ -26,7 +27,6 @@ import SelectInput from '@ra/components/Form/SelectInput'; // eslint-disable-lin
 import 'react-datepicker/dist/react-datepicker.css';
 
 import classes from './styles';
-import styles from './styles.module.scss';
 
 export const GET_SURVEY_DATA = gql`
   query {
@@ -267,7 +267,7 @@ const Surveys = () => {
     setSelectInputRegion(option);
   }, []);
 
-  const headers = [
+  const headers = useMemo(() => ([
     {label: 'UUID', key: 'id'},
     {label: 'Category', key: 'category.title'},
     {label: 'Title', key: 'title'},
@@ -275,12 +275,12 @@ const Surveys = () => {
     {label: 'Sentiment', key: 'sentiment'},
     {label: 'Improvement', key: 'improvement'},
     {label: 'Location', key: 'location.coordinates'},
+    {label: 'Longitude', key: 'location.coordinates[0]'},
+    {label: 'Latitude', key: 'location.coordinates[1]'},
     {label: 'Boundary', key: 'boundary.coordinates'},
     {label: 'Status', key: 'status'},
     {label: 'Created Date', key: 'createdAt'},
-    {label: 'Longitude', key: 'location.coordinates[0]'},
-    {label: 'Latitude', key: 'location.coordinates[1]'},
-  ];
+  ]), []);
 
   const regionOptions = regions?.regions.map(({
     name: title,
@@ -326,9 +326,9 @@ const Surveys = () => {
                 ])}
               />
             </div>
-            <div className='flex gap-[24px] cursor-pointer'>
+            <div className='flex gap-[24px] flex-wrap'>
               <SelectInput
-                className={cs(styles.select, 'h-[44px]', 'w-[100%]', 'rounded-lg', 'border-[#CCDCE8]')}
+                className={cs('h-[44px]', 'w-[12em]', 'rounded-lg', 'border-[#CCDCE8]')}
                 valueExtractor={titleExtractor}
                 keyExtractor={keyExtractor}
                 options={regionOptions}
@@ -336,7 +336,7 @@ const Surveys = () => {
                 onChange={handleRegionChange}
               />
               <SelectInput
-                className={cs(styles.select, 'h-[44px]', 'w-[100%]', 'rounded-lg', 'border-[#CCDCE8]')}
+                className={cs('h-[44px]', 'w-[12em]', 'rounded-lg', 'border-[#CCDCE8]')}
                 valueExtractor={titleExtractor}
                 keyExtractor={keyExtractor}
                 options={category?.protectedAreaCategories}
@@ -344,6 +344,7 @@ const Surveys = () => {
                 onChange={handleCategoryChange}
               />
               <DatePicker
+                wrapperClassName='!w-max'
                 selectsRange
                 startDate={startDate}
                 endDate={endDate}
@@ -352,7 +353,16 @@ const Surveys = () => {
                 onChange={handleDateChange}
                 customInput={<CustomInput />}
               />
-              {surveyData && (<CSVLink className='h-[44px] w-[100%] px-[12px] flex items-center rounded-lg border-[#CCDCE8] bg-[#E7E8EA] font-interMedium text-[14px] text-[#70747E]' filename={`Happening-Survey-Report-${Date.now()}`} data={surveyData} headers={headers}><span>Export to CSV</span></CSVLink>)}
+              {surveyData && (
+                <CSVLink
+                  className='h-[44px] px-[12px] flex items-center rounded-lg border-[#CCDCE8] bg-[#E7E8EA] font-interMedium text-[14px] text-[#70747E]'
+                  filename={`Happening-Survey-Report-${new Date().toISOString()}.csv`}
+                  data={surveyData}
+                  headers={headers}
+                >
+                  <span>Export to CSV</span>
+                </CSVLink>
+              )}
             </div>
           </div>
           <div className={classes.surveyTable}>

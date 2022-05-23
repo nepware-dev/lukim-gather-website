@@ -53,7 +53,66 @@ export const unclusteredPointLayer: LayerProps = {
       ['get', 'category', ['get', 'surveyItem']],
     ],
     'icon-allow-overlap': true,
-    'icon-size': 0.5,
+    'icon-size': 0.65,
+  },
+};
+
+export const clusterCustomFormLayer: LayerProps = {
+  id: 'clusters-form',
+  type: 'circle',
+  source: 'customSurveys',
+  filter: ['has', 'point_count'],
+  paint: {
+    'circle-color': '#000',
+    'circle-opacity': 0.5,
+    'circle-radius': [
+      'step',
+      ['get', 'point_count'],
+      20,
+      100,
+      30,
+      750,
+      40,
+    ],
+  },
+};
+
+export const clusterCustomFormCountLayer: LayerProps = {
+  id: 'cluster-count-form',
+  type: 'symbol',
+  source: 'customSurveys',
+  filter: ['has', 'point_count'],
+  layout: {
+    'text-field': '{point_count_abbreviated}',
+    'text-size': 12,
+  },
+  paint: {
+    'text-color': 'white',
+  },
+};
+
+export const unclusteredCustomFormPointLayer: LayerProps = {
+  id: 'unclustered-form-point',
+  type: 'circle',
+  source: 'customSurveys',
+  filter: ['!has', 'point_count'],
+  paint: {
+    'circle-color': '#000',
+    'circle-radius': 15,
+    'circle-opacity': 0.5,
+  },
+};
+
+export const unclusteredCustomFormPointTextLayer: LayerProps = {
+  id: 'unclustered-form-point-text',
+  type: 'symbol',
+  source: 'customSurveys',
+  filter: ['!has', 'point_count'],
+  layout: {
+    'text-field': 'C',
+  },
+  paint: {
+    'text-color': '#fff',
   },
 };
 

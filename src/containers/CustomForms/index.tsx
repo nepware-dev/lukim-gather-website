@@ -10,6 +10,7 @@ import DatePicker from 'react-datepicker';
 import {gql, useQuery} from '@apollo/client';
 import {BsCalendar4Event} from 'react-icons/bs';
 import {RiArrowDownSLine} from 'react-icons/ri';
+import {CSVLink} from 'react-csv';
 
 import cs from '@utils/cs';
 import {formatDate} from '@utils/formatDate';
@@ -22,13 +23,15 @@ import Dropdown from '@components/Dropdown';
 import FormEntry from '@components/FormEntry';
 import {XMLParser} from 'fast-xml-parser';
 
+import {flattenObject} from '@containers/Dashboard';
+
 import 'react-datepicker/dist/react-datepicker.css';
 
 import classes from './styles';
 
 export const GET_SURVEY_DATA = gql`
   query {
-    survey {
+    survey(ordering: "-created_at") {
       id
       title
       createdAt
@@ -192,6 +195,11 @@ const CustomForms = () => {
     setActivePage(1);
   }, []);
 
+  const flatCustomSurveys = useMemo(() => data?.survey?.map((srvForm: FormDataType) => {
+    const formAnswers = JSON.parse(srvForm.answer);
+    return flattenObject(formAnswers?.data);
+  }) || [], [data]);
+
   return (
     <>
       <DashboardLayout hideOverflowY={showDetails}>
@@ -210,6 +218,16 @@ const CustomForms = () => {
                 customInput={<CustomInput />}
               />
             </div>
+            {surveyFormData?.length > 0 && (
+              <CSVLink
+                className='h-[44px] px-[12px] flex items-center rounded-lg border-[#CCDCE8] bg-[#E7E8EA] font-interMedium text-[14px] text-[#70747E]'
+                filename={`Custom-Survey-Report-${new Date().toISOString()}.csv`}
+                data={flatCustomSurveys}
+              >
+                <span>Export to CSV</span>
+              </CSVLink>
+            )}
+
           </div>
           <div className={classes.surveyTable}>
             <FormTable
