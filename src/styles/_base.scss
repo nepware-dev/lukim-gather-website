@@ -1,1 +1,14 @@
 @import '@ra/styles/base';
+
+:root {
+  --color-primary: #196297;
+}
+
+.select-indicator {
+  display: flex;
+  align-items: center;
+}
+
+.select-value {
+  max-width: 40vw;
+}
