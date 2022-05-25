@@ -326,9 +326,9 @@ const Surveys = () => {
                 ])}
               />
             </div>
-            <div className='flex gap-[24px] flex-wrap'>
+            <div className={classes.wrapper}>
               <SelectInput
-                className={cs('h-[44px]', 'w-[12em]', 'rounded-lg', 'border-[#CCDCE8]')}
+                className={classes.selectInput}
                 valueExtractor={titleExtractor}
                 keyExtractor={keyExtractor}
                 options={regionOptions}
@@ -336,26 +336,27 @@ const Surveys = () => {
                 onChange={handleRegionChange}
               />
               <SelectInput
-                className={cs('h-[44px]', 'w-[12em]', 'rounded-lg', 'border-[#CCDCE8]')}
+                className={classes.selectInput}
                 valueExtractor={titleExtractor}
                 keyExtractor={keyExtractor}
                 options={category?.protectedAreaCategories}
                 placeholder='Category'
                 onChange={handleCategoryChange}
               />
-              <DatePicker
-                wrapperClassName='!w-max'
-                selectsRange
-                startDate={startDate}
-                endDate={endDate}
-                minDate={minDate}
-                maxDate={maxDate}
-                onChange={handleDateChange}
-                customInput={<CustomInput />}
-              />
+              <div>
+                <DatePicker
+                  selectsRange
+                  startDate={startDate}
+                  endDate={endDate}
+                  minDate={minDate}
+                  maxDate={maxDate}
+                  onChange={handleDateChange}
+                  customInput={<CustomInput />}
+                />
+              </div>
               {surveyData && (
                 <CSVLink
-                  className='h-[44px] px-[12px] flex items-center rounded-lg border-[#CCDCE8] bg-[#E7E8EA] font-interMedium text-[14px] text-[#70747E]'
+                  className={classes.csv}
                   filename={`Happening-Survey-Report-${new Date().toISOString()}.csv`}
                   data={surveyData}
                   headers={headers}
