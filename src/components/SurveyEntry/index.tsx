@@ -1,6 +1,11 @@
-import React, {useCallback, useEffect, useState} from 'react';
+// @ts-nocheck
+import React, {
+  useCallback, useEffect, useMemo, useState,
+} from 'react';
 import {useSelector} from 'react-redux';
 import {gql, useMutation} from '@apollo/client';
+import Map, {Marker, Source, Layer} from 'react-map-gl';
+import type {LayerProps} from 'react-map-gl';
 import {HiOutlineX} from 'react-icons/hi';
 
 import cs from '@utils/cs';
@@ -9,12 +14,13 @@ import useCategoryIcon from '@hooks/useCategoryIcon';
 import {rootState} from '@store/rootReducer';
 
 import Button from '@components/Button';
-import Map from '@components/Map';
 import {SurveyDataType} from '@components/SurveyTable';
 import {GET_SURVEY_DATA} from '@containers/Surveys';
 
 import tree from '@images/category-tree.png';
+import marker from '@images/marker.png';
 
+import 'mapbox-gl/dist/mapbox-gl.css';
 import classes from './styles';
 
 interface Props {
@@ -48,6 +54,36 @@ const UPDATE_SURVEY_STATUS = gql`
     }
   }
 `;
+
+const polygon: LayerProps = {
+  id: 'polygon',
+  type: 'fill',
+  source: 'surveyPolySource',
+  layout: {},
+  paint: {
+    'fill-color': '#5486BD',
+    'fill-opacity': 0.25,
+  },
+};
+
+const polygonTitle: LayerProps = {
+  id: 'polygonTitle',
+  type: 'symbol',
+  source: 'surveyPolySource',
+  layout: {
+    'text-field': ['get', 'title', ['get', 'surveyItem']],
+  },
+  paint: {
+    'text-color': 'blue',
+  },
+};
+
+const getNested = (obj: any[] | undefined) => {
+  if (Array.isArray(obj) && Array.isArray(obj[0])) {
+    return getNested(obj[0]);
+  }
+  return obj;
+};
 
 const SurveyEntry: React.FC<Props> = ({data, setShowDetails}) => {
   const [updateHappeningSurvey] = useMutation(UPDATE_SURVEY_STATUS, {
@@ -130,6 +166,27 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails}) => {
     setShowDetails(false);
   }, [data.id, setShowDetails, updateHappeningSurvey]);
 
+  const surveyPolyGeoJSON: any = useMemo(() => ({
+    type: 'FeatureCollection',
+    features: [
+      {
+        type: 'Feature',
+        properties: {
+          surveyItem: data,
+        },
+        geometry: {
+          type: 'MultiPolygon',
+          coordinates: data?.boundary?.coordinates || [],
+        },
+      },
+    ],
+  }), [data]);
+
+  const boundaryStartPoint: any = useMemo(
+    () => getNested(data?.boundary?.coordinates),
+    [data?.boundary?.coordinates],
+  );
+
   return (
     <div>
       <div className={classes.detailsContainer}>
@@ -189,9 +246,29 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails}) => {
           </div>
           <div className={classes.mapWrapper}>
             <Map
-              center={data?.location?.coordinates || [147.28, -9.5]}
-              polygonCoordinates={data?.boundary?.coordinates}
-            />
+              initialViewState={{
+                longitude: data?.location?.coordinates[0] || boundaryStartPoint[0] || 150,
+                latitude: data?.location?.coordinates[1] || boundaryStartPoint[1] || -5,
+                zoom: 5,
+              }}
+              mapStyle='mapbox://styles/mapbox/outdoors-v11'
+              mapboxAccessToken={process.env.REACT_APP_MAPBOX_TOKEN}
+            >
+              <Source
+                id='surveyPolySource'
+                type='geojson'
+                data={surveyPolyGeoJSON}
+              >
+                <Layer {...polygon} />
+                <Layer {...polygonTitle} />
+              </Source>
+              <Marker
+                longitude={data?.location?.coordinates[0] || boundaryStartPoint[0] || 150}
+                latitude={data?.location?.coordinates[1] || boundaryStartPoint[1] || -5}
+              >
+                <img src={marker} alt='marker' />
+              </Marker>
+            </Map>
           </div>
           <div className={cs(classes.buttons, ['hidden', !isStaff])}>
             <Button
