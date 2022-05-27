@@ -19,6 +19,7 @@ export type SurveyDataType = {
   sentiment: string;
   status: string;
   boundary: {coordinates: [[[number, number][]]]} | null;
+  improvement: string | null;
 };
 
 interface Props {
@@ -62,6 +63,9 @@ const SurveyItem: React.FC<ItemProps> = ({
         </div>
       </td>
       <td>
+        <p className={classes.improvement}>{item.improvement || '-'}</p>
+      </td>
+      <td>
         <p className={classes.date}>{formatDate(item.createdAt)}</p>
       </td>
       <td>
@@ -99,6 +103,9 @@ const SurveyTable: React.FC<Props> = ({
           </th>
           <th>
             <p className={classes.headingTitle}>Category</p>
+          </th>
+          <th>
+            <p className={classes.headingTitle}>Improvement</p>
           </th>
           <th>
             <p className={classes.headingTitle}>Date</p>
