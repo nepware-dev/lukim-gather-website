@@ -1,5 +1,5 @@
 import React from 'react';
-import {useNavigate} from 'react-router-dom';
+import {Link, useNavigate} from 'react-router-dom';
 import {RootStateOrAny, useSelector} from 'react-redux';
 
 import cs from '@utils/cs';
@@ -17,7 +17,9 @@ const Navbar: React.FC<Props> = ({hideButton = false}) => {
   const onLoginClick = () => navigate('/login');
   return (
     <nav className='w-full py-[22px] flex justify-between'>
-      <img src={NavLogo} alt='lukim-logo' className='h-[66px]' />
+      <Link to='/'>
+        <img src={NavLogo} alt='lukim-logo' className='h-[66px]' />
+      </Link>
       <div className={cs(['hidden', hideButton])}>
         {isAuthenticated ? (
           <Button text='Dashboard' onClick={onDashboardClick} />
