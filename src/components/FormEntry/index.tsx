@@ -29,7 +29,7 @@ type FormModelInstanceType = {
 };
 
 type FormModelType = {
-  model: {instance: FormModelInstanceType[]};
+  model: { instance: FormModelInstanceType[] };
 };
 
 interface Props {
@@ -45,7 +45,7 @@ interface FormValueRendererProps {
   level: number;
 }
 
-const Title = ({text}: {text: string}) => (
+const Title = ({text}: { text: string }) => (
   <div className={classes.titleWrapper}>
     <h3 className={classes.titleText}>{text}</h3>
   </div>
@@ -65,12 +65,18 @@ const FormValueRenderer = ({
       ) {
         let answerObj: InstanceItemType | undefined;
         formModel.model.instance.find((ins) => {
-          answerObj = ins?.root?.item?.find((itm) => itm.name === value);
+          answerObj = ins?.root?.item?.find(
+            (itm) => itm.name === value,
+          );
           if (answerObj) {
             return true;
           }
           return false;
         });
+        if (name?.toLowerCase() === 'why_area_important') {
+          return value?.replace(/ /g, ', ').replace(/_/g, ' ');
+        }
+
         return answerObj?.label || value.replace(/_/g, ' ');
       }
       return value;
@@ -83,9 +89,11 @@ const FormValueRenderer = ({
   if (value && typeof value === 'object') {
     return (
       <div className='mb-6'>
-        {level === 0
-          ? <Title text={formattedName} />
-          : <p className={classes.formItemTopic}>{formattedName}</p>}
+        {level === 0 ? (
+          <Title text={formattedName} />
+        ) : (
+          <p className={classes.formItemTopic}>{formattedName}</p>
+        )}
         {Object.entries(value).map(([key, val]) => (
           <FormValueRenderer
             key={`${name}-${key}`}
@@ -104,7 +112,11 @@ const FormValueRenderer = ({
   }
 
   return (
-    <div className={cs(classes.formItem, {[classes.formNested]: level > 1})}>
+    <div
+      className={cs(classes.formItem, {
+        [classes.formNested]: level > 1,
+      })}
+    >
       <span className={classes.formKey}>
         {formattedName}
         :

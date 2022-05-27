@@ -227,7 +227,7 @@ const Dashboard = () => {
       });
       const clusterId = cluster.properties.cluster_id;
       return mapRef.current
-        .getSource('happeningSurveys')
+        .getSource(cluster.source)
         .getClusterExpansionZoom(clusterId, (err, zoom) => {
           if (err) return;
 
