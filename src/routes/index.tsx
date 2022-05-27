@@ -1,6 +1,6 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {
-  Navigate, Outlet, Route, Routes,
+  Navigate, Outlet, Route, Routes, useLocation,
 } from 'react-router-dom';
 import {RootStateOrAny, useSelector} from 'react-redux';
 
@@ -13,6 +13,8 @@ import AccountSettings from '@containers/AccountSettings';
 import ResetPassword from '@containers/ResetPassword';
 import ForgotPassword from '@containers/ForgotPassword';
 import Page404 from '@containers/Page404';
+import PrivacyPolicy from '@containers/PrivacyPolicy';
+import TermsAndConditions from '@containers/TermsAndConditions';
 
 interface Props {
   isAuthenticated: boolean;
@@ -21,12 +23,19 @@ interface Props {
 const PrivateRoute: React.FC<Props> = ({isAuthenticated}) => (isAuthenticated ? <Outlet /> : <Navigate to='/login' />);
 
 const AppRoutes = () => {
+  const {pathname} = useLocation();
   const isAuthenticated = useSelector(
     (state: RootStateOrAny) => state.auth.isAuthenticated,
   );
+
+  useEffect(() => {
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  }, [pathname]);
   return (
     <Routes>
       <Route path='/' element={<Home />} />
+      <Route path='/privacy' element={<PrivacyPolicy />} />
+      <Route path='/terms' element={<TermsAndConditions />} />
       <Route path='/login' element={<Login />} />
       <Route path='/forgot-password' element={<ForgotPassword />} />
       <Route

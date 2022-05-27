@@ -8,4 +8,6 @@ export default {
   partnerImage: 'max-h-[80px]',
   separator: 'hidden sm:flex h-[98px] w-[2.31px] bg-[#CEDCEC] mx-[5px]',
   text: 'mt-[28px] mb-[50px] font-inter text-color-lt-grey text-center',
+  footerCred: 'flex justify-between',
+  legalLink: 'flex gap-[20px]',
 };
