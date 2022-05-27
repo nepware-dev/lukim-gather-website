@@ -1,11 +1,11 @@
-// @ts-nocheck
 import React, {
-  useCallback, useEffect, useMemo, useState,
+  useCallback, useEffect, useMemo, useRef, useState,
 } from 'react';
 import {useSelector} from 'react-redux';
 import {gql, useMutation} from '@apollo/client';
 import Map, {Marker, Source, Layer} from 'react-map-gl';
-import type {LayerProps} from 'react-map-gl';
+import type {MapRef} from 'react-map-gl';
+import bbox from '@turf/bbox';
 import {HiOutlineX} from 'react-icons/hi';
 
 import cs from '@utils/cs';
@@ -19,6 +19,8 @@ import {GET_SURVEY_DATA} from '@containers/Surveys';
 
 import tree from '@images/category-tree.png';
 import marker from '@images/marker.png';
+
+import {polygon, polygonTitle} from './layers';
 
 import 'mapbox-gl/dist/mapbox-gl.css';
 import classes from './styles';
@@ -55,37 +57,8 @@ const UPDATE_SURVEY_STATUS = gql`
   }
 `;
 
-const polygon: LayerProps = {
-  id: 'polygon',
-  type: 'fill',
-  source: 'surveyPolySource',
-  layout: {},
-  paint: {
-    'fill-color': '#5486BD',
-    'fill-opacity': 0.25,
-  },
-};
-
-const polygonTitle: LayerProps = {
-  id: 'polygonTitle',
-  type: 'symbol',
-  source: 'surveyPolySource',
-  layout: {
-    'text-field': ['get', 'title', ['get', 'surveyItem']],
-  },
-  paint: {
-    'text-color': 'blue',
-  },
-};
-
-const getNested = (obj: any[] | undefined) => {
-  if (Array.isArray(obj) && Array.isArray(obj[0])) {
-    return getNested(obj[0]);
-  }
-  return obj;
-};
-
 const SurveyEntry: React.FC<Props> = ({data, setShowDetails}) => {
+  const mapRef = useRef<MapRef>(null);
   const [updateHappeningSurvey] = useMutation(UPDATE_SURVEY_STATUS, {
     refetchQueries: [GET_SURVEY_DATA, 'happeningSurveys'],
   });
@@ -182,10 +155,17 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails}) => {
     ],
   }), [data]);
 
-  const boundaryStartPoint: any = useMemo(
-    () => getNested(data?.boundary?.coordinates),
-    [data?.boundary?.coordinates],
-  );
+  const onMapLoad = useCallback(() => {
+    if (!mapRef.current || !data.boundary?.coordinates) return;
+    const [minLng, minLat, maxLng, maxLat] = bbox(surveyPolyGeoJSON);
+    mapRef.current.fitBounds(
+      [
+        [minLng, minLat],
+        [maxLng, maxLat],
+      ],
+      {padding: 20, duration: 1000},
+    );
+  }, [data.boundary?.coordinates, surveyPolyGeoJSON]);
 
   return (
     <div>
@@ -234,6 +214,12 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails}) => {
           <div>
             <Feel sentiment={data.sentiment || '-'} />
           </div>
+          <Title text='Improvement' />
+          <div>
+            <p className={classes.info}>
+              {data.improvement || '-'}
+            </p>
+          </div>
           <Title text='Description' />
           <div>
             <p className={classes.info}>
@@ -246,13 +232,15 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails}) => {
           </div>
           <div className={classes.mapWrapper}>
             <Map
+              ref={mapRef}
               initialViewState={{
-                longitude: data?.location?.coordinates[0] || boundaryStartPoint[0] || 150,
-                latitude: data?.location?.coordinates[1] || boundaryStartPoint[1] || -5,
+                longitude: data?.location?.coordinates[0] || 150,
+                latitude: data?.location?.coordinates[1] || -5,
                 zoom: 5,
               }}
               mapStyle='mapbox://styles/mapbox/outdoors-v11'
               mapboxAccessToken={process.env.REACT_APP_MAPBOX_TOKEN}
+              onLoad={onMapLoad}
             >
               <Source
                 id='surveyPolySource'
@@ -262,12 +250,15 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails}) => {
                 <Layer {...polygon} />
                 <Layer {...polygonTitle} />
               </Source>
-              <Marker
-                longitude={data?.location?.coordinates[0] || boundaryStartPoint[0] || 150}
-                latitude={data?.location?.coordinates[1] || boundaryStartPoint[1] || -5}
-              >
-                <img src={marker} alt='marker' />
-              </Marker>
+              {data?.location?.coordinates
+              && (
+                <Marker
+                  longitude={data?.location?.coordinates[0]}
+                  latitude={data?.location?.coordinates[1]}
+                >
+                  <img src={marker} alt='marker' />
+                </Marker>
+              )}
             </Map>
           </div>
           <div className={cs(classes.buttons, ['hidden', !isStaff])}>
