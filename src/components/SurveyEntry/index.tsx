@@ -6,7 +6,9 @@ import {gql, useMutation} from '@apollo/client';
 import Map, {Marker, Source, Layer} from 'react-map-gl';
 import type {MapRef} from 'react-map-gl';
 import bbox from '@turf/bbox';
-import {HiOutlineX} from 'react-icons/hi';
+import {
+  HiOutlineX, HiTrendingDown, HiTrendingUp, HiMenuAlt4,
+} from 'react-icons/hi';
 
 import cs from '@utils/cs';
 import {formatDate} from '@utils/formatDate';
@@ -42,6 +44,32 @@ const Feel = ({sentiment}: {sentiment: string}) => (
   </div>
 );
 
+export const Improvement = ({improvement}: {improvement: string | null}) => {
+  const status = improvement?.toLowerCase();
+
+  const renderImprovementIcon = useCallback(
+    () => {
+      switch (status) {
+      case 'increasing':
+        return <HiTrendingUp size={25} color='#EC6D25' />;
+      case 'decreasing':
+        return <HiTrendingDown size={25} color='#EC6D25' />;
+      case 'same':
+        return <HiMenuAlt4 size={25} color='#EC6D25' />;
+      default:
+        return <p className='ml-2'>-</p>;
+      }
+    },
+    [status],
+  );
+
+  return (
+    <>
+      {renderImprovementIcon()}
+    </>
+  );
+};
+
 const UPDATE_SURVEY_STATUS = gql`
   mutation UpdateHappeningSurvey(
     $data: UpdateHappeningSurveyInput!
@@ -73,10 +101,8 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails}) => {
 
   const getLocationName = useCallback(async () => {
     const response = await fetch(
-      `https://api.mapbox.com/geocoding/v5/mapbox.places/${
-        data?.location?.coordinates[0] || 0
-      },${data?.location?.coordinates[1] || 0}.json?types=place&access_token=${
-        process.env.REACT_APP_MAPBOX_TOKEN
+      `https://api.mapbox.com/geocoding/v5/mapbox.places/${data?.location?.coordinates[0] || 0
+      },${data?.location?.coordinates[1] || 0}.json?types=place&access_token=${process.env.REACT_APP_MAPBOX_TOKEN
       }`,
     );
     const resData: {
@@ -171,21 +197,23 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails}) => {
     <div>
       <div className={classes.detailsContainer}>
         <div className={classes.detailsModal}>
-          <div className={classes.iconWrapper} onClick={hideDetails}>
-            <HiOutlineX size={14} />
-          </div>
-          <div className={classes.header}>
-            <h2 className={classes.headerTitle}>{data?.title}</h2>
-            <p
-              className={cs(
-                classes.status,
-                [classes.pending, data.status.toLowerCase() === 'pending'],
-                [classes.rejected, data.status.toLowerCase() === 'rejected'],
-                [classes.approved, data.status.toLowerCase() === 'approved'],
-              )}
-            >
-              {data.status}
-            </p>
+          <div className={classes.headerWrapper}>
+            <div className={classes.iconWrapper} onClick={hideDetails}>
+              <HiOutlineX size={14} />
+            </div>
+            <div className={classes.header}>
+              <h2 className={classes.headerTitle}>{data?.title}</h2>
+              <p
+                className={cs(
+                  classes.status,
+                  [classes.pending, data.status.toLowerCase() === 'pending'],
+                  [classes.rejected, data.status.toLowerCase() === 'rejected'],
+                  [classes.approved, data.status.toLowerCase() === 'approved'],
+                )}
+              >
+                {data.status}
+              </p>
+            </div>
           </div>
           <p className={classes.date}>{formatDate(data.createdAt)}</p>
           <Title text='category' />
@@ -215,10 +243,8 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails}) => {
             <Feel sentiment={data.sentiment || '-'} />
           </div>
           <Title text='Improvement' />
-          <div>
-            <p className={classes.info}>
-              {data.improvement || '-'}
-            </p>
+          <div className={classes.wrapper}>
+            <Improvement improvement={data.improvement} />
           </div>
           <Title text='Description' />
           <div>
@@ -251,14 +277,14 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails}) => {
                 <Layer {...polygonTitle} />
               </Source>
               {data?.location?.coordinates
-              && (
-                <Marker
-                  longitude={data?.location?.coordinates[0]}
-                  latitude={data?.location?.coordinates[1]}
-                >
-                  <img src={marker} alt='marker' />
-                </Marker>
-              )}
+                && (
+                  <Marker
+                    longitude={data?.location?.coordinates[0]}
+                    latitude={data?.location?.coordinates[1]}
+                  >
+                    <img src={marker} alt='marker' />
+                  </Marker>
+                )}
             </Map>
           </div>
           <div className={cs(classes.buttons, ['hidden', !isStaff])}>
