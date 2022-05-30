@@ -3,6 +3,7 @@ import React, {useCallback} from 'react';
 import cs from '@utils/cs';
 import {formatDate} from '@utils/formatDate';
 import useCategoryIcon from '@hooks/useCategoryIcon';
+import {Improvement} from '@components/SurveyEntry';
 
 import tree from '@images/category-tree.png';
 
@@ -63,7 +64,9 @@ const SurveyItem: React.FC<ItemProps> = ({
         </div>
       </td>
       <td>
-        <p className={classes.improvement}>{item.improvement || '-'}</p>
+        <div className='ml-9'>
+          <Improvement improvement={item?.improvement} />
+        </div>
       </td>
       <td>
         <p className={classes.date}>{formatDate(item.createdAt)}</p>

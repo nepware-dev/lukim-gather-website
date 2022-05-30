@@ -9,7 +9,7 @@ import Button from '@components/Button';
 import classes from './styles';
 
 const AccountSettings = () => {
-  const [activeTab, setActiveTab] = useState<string>('Email');
+  const [activeTab, setActiveTab] = useState<string>('Password');
   const [email, setEmail] = useState<string>('');
   const [currentPassword, setCurrentPassword] = useState<string>('');
   const [newPassword, setNewPassword] = useState<string>('');
@@ -50,11 +50,6 @@ const AccountSettings = () => {
         <div className={classes.contentWrapper}>
           <div className={classes.tabsWrapper}>
             <AccountTab
-              text='Email'
-              isActive={activeTab === 'Email'}
-              onClick={handleTab}
-            />
-            <AccountTab
               text='Password'
               isActive={activeTab === 'Password'}
               onClick={handleTab}
@@ -90,7 +85,7 @@ const AccountSettings = () => {
                 <Button
                   text='Save Changes'
                   onClick={handleSaveChanges}
-                  disabled={!email || !currentPassword || !newPassword}
+                  disabled={!currentPassword || !newPassword}
                 />
               </div>
             )}
