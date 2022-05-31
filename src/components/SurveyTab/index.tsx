@@ -21,9 +21,11 @@ const SurveyTab: React.FC<Props> = ({
     <button
       type='button'
       onClick={handleClick}
-      className={cs(classes.button, [classes.active, isActive], className)}
+      className={cs(classes.button, className)}
     >
-      {text}
+      <span className={cs(classes.text, [classes.active, isActive])}>
+        {text}
+      </span>
     </button>
   );
 };

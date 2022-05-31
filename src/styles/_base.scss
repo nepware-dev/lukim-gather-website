@@ -4,9 +4,24 @@
   --color-primary: #196297;
 }
 
+.select-control {
+  color: #585D69;
+}
+
 .select-indicator {
   display: flex;
   align-items: center;
+
+  svg[class*="clear"] {
+    background-color: #9FA3A9;
+    border-radius: 50%;
+    padding: 3px;
+
+    path {
+      color: white;
+    }
+  }
+
 }
 
 .mapboxgl-map {

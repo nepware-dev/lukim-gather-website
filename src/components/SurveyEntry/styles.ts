@@ -16,7 +16,7 @@ export default {
   approved: 'bg-[#E7F5EF] text-[#12B76A]',
   date: 'font-inter text-[16px] text-[#585D69]',
   categoryWrapper: 'flex items-center gap-[10px]',
-  categoryImg: 'h-[20px]',
+  categoryImg: 'h-[60px]',
   categoryTitle: 'font-interMedium text-[16px] leading-[19.36px]',
   photosWrapper: 'flex gap-[12px] overflow-x-auto max-w-[calc(100vw-40px)]',
   photo: 'h-[143px] w-[187px] rounded-lg',

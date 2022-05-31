@@ -2,7 +2,7 @@ export default {
   container: 'px-[20px] mt-[24px] mb-[150px]',
   title: 'md:hidden mb-[20px] font-interSemibold text-[24px] text-[#101828]',
   header: 'flex flex-wrap gap-4 justify-between',
-  tabs: 'min-w-[275px]',
+  tabs: 'min-w-[200px]',
   wrapper: 'flex gap-4 flex-wrap',
   selectInput: 'h-[42px] min-w-[260px] sm:min-w-[12em] w-max cursor-pointer',
   datePicker: 'w-[260px] flex items-center gap-[10px] h-[42px] px-[14px] border border-[#CCDCE8] rounded-lg font-interMedium text-[14px] text-[#585D69]',
@@ -14,5 +14,7 @@ export default {
   dropdownLabel: 'flex items-center gap-[15px] h-[42px] px-[14px] border border-[#CCDCE8] rounded-lg font-interMedium text-[14px] text-[#585D69] cursor-pointer',
   dropdownItems: 'flex-col py-[8px] px-[14px] font-interMedium border border-[#CCDCE8] text-[14px] rounded-lg',
   dropdownItem: 'cursor-pointer p-[10px] rounded-lg',
-  filterWrapper: 'mt-4 flex gap-4 flex-wrap',
+  filterWrapper: 'mt-4 flex-none flex',
+  selectInputWrapper: 'flex-1 flex gap-4',
+  clear: 'flex items-center cursor-pointer hover:text-[#585D69]',
 };
