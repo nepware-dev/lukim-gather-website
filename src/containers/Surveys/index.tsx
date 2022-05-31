@@ -6,12 +6,14 @@ import React, {
   useState,
   useMemo,
 } from 'react';
+import {useSelector} from 'react-redux';
 import {CSVLink} from 'react-csv';
 import DatePicker from 'react-datepicker';
 import {gql, useQuery} from '@apollo/client';
-import {BsCalendar4Event} from 'react-icons/bs';
+import {BsCalendar4Event, BsArrowUpRight} from 'react-icons/bs';
 import {RiArrowDownSLine} from 'react-icons/ri';
 
+import {rootState} from '@store/rootReducer';
 import cs from '@utils/cs';
 import {formatDate} from '@utils/formatDate';
 
@@ -22,6 +24,7 @@ import SurveyTab from '@components/SurveyTab';
 import Pagination from '@components/Pagination';
 import Dropdown from '@components/Dropdown';
 import SurveyEntry from '@components/SurveyEntry';
+import SurveyFilter from '@components/SurveyFilter';
 import SelectInput from '@ra/components/Form/SelectInput'; // eslint-disable-line no-eval
 
 import 'react-datepicker/dist/react-datepicker.css';
@@ -41,7 +44,6 @@ export const GET_SURVEY_DATA = gql`
         id
         title
       }
-      createdAt
       boundary {
         type
         coordinates
@@ -56,6 +58,10 @@ export const GET_SURVEY_DATA = gql`
       improvement
       sentiment
       status
+      createdAt
+      createdBy {
+        id
+      }
     }
   }
 `;
@@ -78,15 +84,36 @@ export const GET_REGION_DATA = gql`
   }
 `;
 
-export type SelectInputType = {
-  id: number,
-  title: string
+export type OptionDataType = {
+    id: number,
+    title: string
 }
 
-const titleExtractor = (item: SelectInputType) => item?.title;
-const keyExtractor = (item: SelectInputType) => item?.id;
+export type SelectInputDataType = {
+  category?: {
+    id: number,
+    title: string
+  } | null,
+  region?: {
+    id: number,
+    title: string
+  } | null,
+  status?: {
+    id: number,
+    title: string
+  } | null,
+}
+
+const titleExtractor = (item: OptionDataType) => item?.title;
+const keyExtractor = (item: OptionDataType) => item?.id;
 
 const Surveys = () => {
+  const {
+    auth: {
+      user: {id: userId},
+    },
+  } = useSelector((state: rootState) => state);
+
   const {data} = useQuery(GET_SURVEY_DATA);
   const {data: category} = useQuery(GET_CATEGORY_DATA);
   const {data: regions} = useQuery(GET_REGION_DATA);
@@ -101,8 +128,12 @@ const Surveys = () => {
   const [maxDate, setMaxDate] = useState<Date>();
   const [minDate, setMinDate] = useState<Date>();
   const [startDate, endDate] = dateRange;
-  const [selectInputCategory, setSelectInputCategory] = useState<SelectInputType | null>(null);
-  const [selectInputRegion, setSelectInputRegion] = useState<SelectInputType | null>(null);
+  const [selectInputData, setSelectInputData] = useState< SelectInputDataType| null>({
+    category: null,
+    region: null,
+    status: null,
+  });
+  const [toggleFilter, setToggleFilter] = useState<boolean>(false);
 
   useEffect(() => {
     if (!data) return;
@@ -127,61 +158,36 @@ const Surveys = () => {
 
   useEffect(() => {
     if (!data) return;
-    if (status === 'All') {
-      const filterData = data.happeningSurveys.filter(
-        (item: {createdAt: string, category: SelectInputType, region: SelectInputType}) => {
-          const filterItem = new Date(new Date(item.createdAt).toDateString())
+    const filterData = data.happeningSurveys.filter(
+      (item: {createdAt: string, category: OptionDataType, region: OptionDataType, status: string, createdBy: {id: string}}) => {
+        if (selectInputData?.category && (item.category.id !== selectInputData.category.id)) {
+          return false;
+        }
+        if (selectInputData?.region && (item.region?.id !== selectInputData.region.id)) {
+          return false;
+        }
+        if (selectInputData?.status && (item.status !== selectInputData.status.title)) {
+          return false;
+        }
+        if (status === 'My Entries' && (item.createdBy.id !== userId)) {
+          return false;
+        }
+        if (!(new Date(new Date(item.createdAt).toDateString())
             >= new Date(startDate.toDateString())
             && new Date(new Date(item.createdAt).toDateString())
-            <= new Date(endDate?.toDateString());
-          if (selectInputCategory && selectInputRegion) {
-            return filterItem && (selectInputCategory && (item.category.id === selectInputCategory.id))
-            && (selectInputRegion && (item.region && (item.region.id === selectInputRegion.id)));
-          }
-          if (selectInputCategory) {
-            return filterItem && (selectInputCategory && (item.category.id === selectInputCategory.id));
-          }
-          if (selectInputRegion) {
-            return filterItem && (selectInputRegion && (item.region && (item.region.id === selectInputRegion.id)));
-          }
-          return filterItem;
-        },
-      );
-      const slicedData = filterData.slice(
-        rows * activePage - rows,
-        rows * activePage,
-      );
-      setSurveyData(slicedData);
-      setTotalPages(Math.ceil(filterData.length / rows));
-    } else {
-      const filterData = data.happeningSurveys.filter(
-        (item: {status: string; createdAt: string, category: SelectInputType, region: SelectInputType}) => {
-          const filterItem = new Date(new Date(item.createdAt).toDateString())
-              >= new Date(startDate.toDateString())
-            && new Date(new Date(item.createdAt).toDateString())
-              <= new Date(endDate?.toDateString())
-            && item.status.toLowerCase() === status.toLowerCase();
-          if (selectInputCategory && selectInputRegion) {
-            return filterItem && item.category.id === selectInputCategory.id
-            && (item.region && (item.region && (item.region.id === selectInputRegion.id)));
-          }
-          if (selectInputCategory) {
-            return filterItem && item.category.id === selectInputCategory.id;
-          }
-          if (selectInputRegion) {
-            return filterItem && (item.region && (item.region && (item.region.id === selectInputRegion.id)));
-          }
-          return filterItem;
-        },
-      );
-      const slicedData = filterData.slice(
-        rows * activePage - rows,
-        rows * activePage,
-      );
-      setSurveyData(slicedData);
-      setTotalPages(Math.ceil(filterData.length / rows));
-    }
-  }, [activePage, data, endDate, rows, startDate, status, selectInputCategory, selectInputRegion]);
+            <= new Date(endDate?.toDateString()))) {
+          return false;
+        }
+        return true;
+      },
+    );
+    const slicedData = filterData.slice(
+      rows * activePage - rows,
+      rows * activePage,
+    );
+    setSurveyData(slicedData);
+    setTotalPages(Math.ceil(filterData.length / rows));
+  }, [activePage, data, endDate, rows, startDate, status, selectInputData, userId]);
 
   const handleTab = useCallback((text: string) => {
     setStatus(text);
@@ -259,13 +265,24 @@ const Surveys = () => {
     setActivePage(1);
   }, []);
 
-  const handleCategoryChange = useCallback(({option}) => {
-    setSelectInputCategory(option);
-  }, []);
+  const handleStatusChange = useCallback(({option}) => {
+    setSelectInputData({...selectInputData, status: option});
+    setActivePage(1);
+  }, [selectInputData]);
 
   const handleRegionChange = useCallback(({option}) => {
-    setSelectInputRegion(option);
-  }, []);
+    setSelectInputData({...selectInputData, region: option});
+    setActivePage(1);
+  }, [selectInputData]);
+
+  const handleCategoryChange = useCallback(({option}) => {
+    setSelectInputData({...selectInputData, category: option});
+    setActivePage(1);
+  }, [selectInputData]);
+
+  const handleToggle = useCallback(() => {
+    setToggleFilter(!toggleFilter);
+  }, [toggleFilter]);
 
   const headers = useMemo(() => ([
     {label: 'UUID', key: 'id'},
@@ -290,6 +307,20 @@ const Surveys = () => {
     ...item,
   }));
 
+  const surveyStatus = [{
+    title: 'PENDING',
+    id: '1',
+  },
+  {
+    title: 'REJECTED',
+    id: '2',
+  },
+  {
+    title: 'APPROVED',
+    id: '3',
+  },
+  ];
+
   return (
     <>
       <DashboardLayout hideOverflowY={showDetails}>
@@ -308,18 +339,9 @@ const Surveys = () => {
                 ])}
               />
               <SurveyTab
-                text='Approved'
+                text='My Entries'
                 onClick={handleTab}
-                isActive={status === 'Approved'}
-                className={cs(
-                  ['border-x', status === 'Approved'],
-                  ['border-x-0', status !== 'Approved'],
-                )}
-              />
-              <SurveyTab
-                text='Pending'
-                onClick={handleTab}
-                isActive={status === 'Pending'}
+                isActive={status === 'My Entries'}
                 className={cs('rounded-r-lg', [
                   'border-l-0',
                   status === 'Approved',
@@ -327,22 +349,7 @@ const Surveys = () => {
               />
             </div>
             <div className={classes.wrapper}>
-              <SelectInput
-                className={classes.selectInput}
-                valueExtractor={titleExtractor}
-                keyExtractor={keyExtractor}
-                options={regionOptions}
-                placeholder='Region'
-                onChange={handleRegionChange}
-              />
-              <SelectInput
-                className={classes.selectInput}
-                valueExtractor={titleExtractor}
-                keyExtractor={keyExtractor}
-                options={category?.protectedAreaCategories}
-                placeholder='Category'
-                onChange={handleCategoryChange}
-              />
+              <SurveyFilter active={toggleFilter} onClick={handleToggle} />
               <div>
                 <DatePicker
                   selectsRange
@@ -361,11 +368,43 @@ const Surveys = () => {
                   data={surveyData}
                   headers={headers}
                 >
-                  <span>Export to CSV</span>
+                  <BsArrowUpRight />
+                  <span className='ml-2'>Export to CSV</span>
                 </CSVLink>
               )}
             </div>
           </div>
+          {toggleFilter && (
+            <div className={classes.filterWrapper}>
+              <SelectInput
+                className={classes.selectInput}
+                defaultValue={selectInputData?.status}
+                valueExtractor={titleExtractor}
+                keyExtractor={keyExtractor}
+                options={surveyStatus}
+                placeholder='Status'
+                onChange={handleStatusChange}
+              />
+              <SelectInput
+                className={classes.selectInput}
+                defaultValue={selectInputData?.region}
+                valueExtractor={titleExtractor}
+                keyExtractor={keyExtractor}
+                options={regionOptions}
+                placeholder='Region'
+                onChange={handleRegionChange}
+              />
+              <SelectInput
+                className={classes.selectInput}
+                defaultValue={selectInputData?.category}
+                valueExtractor={titleExtractor}
+                keyExtractor={keyExtractor}
+                options={category?.protectedAreaCategories}
+                placeholder='Category'
+                onChange={handleCategoryChange}
+              />
+            </div>
+          )}
           <div className={classes.surveyTable}>
             <SurveyTable
               data={surveyData}
