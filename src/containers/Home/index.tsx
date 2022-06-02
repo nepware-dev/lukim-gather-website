@@ -47,7 +47,9 @@ const Home = () => {
               </p>
               <div className={classes.heroButtons}>
                 <AppButton boxShadow />
-                <AppButton android boxShadow available beta />
+                <a href='https://play.google.com/store/apps/details?id=org.lukimgather' target='_blank' rel='noreferrer'>
+                  <AppButton android boxShadow available beta />
+                </a>
               </div>
             </div>
             <div className={classes.heroImageWrapper}>
