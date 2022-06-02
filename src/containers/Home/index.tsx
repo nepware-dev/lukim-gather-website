@@ -47,7 +47,7 @@ const Home = () => {
               </p>
               <div className={classes.heroButtons}>
                 <AppButton boxShadow />
-                <AppButton android boxShadow />
+                <AppButton android boxShadow available beta />
               </div>
             </div>
             <div className={classes.heroImageWrapper}>
