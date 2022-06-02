@@ -11,12 +11,16 @@ interface Props {
   android?: boolean;
   bgGrey?: boolean;
   boxShadow?: boolean;
+  available?: boolean;
+  beta?: boolean;
 }
 
 const AppButton: React.FC<Props> = ({
   android = false,
   bgGrey = false,
   boxShadow = false,
+  available = false,
+  beta = false,
 }) => (
   <button
     type='button'
@@ -33,11 +37,12 @@ const AppButton: React.FC<Props> = ({
       className={classes.image}
     />
     <div className={classes.textWrapper}>
-      <p className={classes.text}>Soon on</p>
+      <p className={classes.text}>{available ? 'Available on' : 'Soon on'}</p>
       <p className={classes.storeText}>
         {android ? 'Play Store' : 'App Store'}
       </p>
     </div>
+    <p className={cs(['hidden', !beta], classes.beta)}>Beta</p>
   </button>
 );
 
