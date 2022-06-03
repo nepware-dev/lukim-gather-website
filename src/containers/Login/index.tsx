@@ -2,10 +2,12 @@ import React, {useState, useCallback, useEffect} from 'react';
 import {gql, useMutation} from '@apollo/client';
 import {Link, useNavigate} from 'react-router-dom';
 
+import {dispatchLogin} from '@services/dispatch';
+import useToast from '@hooks/useToast';
+
 import Button from '@components/Button';
 import InputField from '@components/InputField';
 import Navbar from '@components/Navbar';
-import {dispatchLogin} from '@services/dispatch';
 
 import classes from './styles';
 
@@ -27,6 +29,7 @@ const LOGIN = gql`
 
 const Login = () => {
   const navigate = useNavigate();
+  const toast = useToast();
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [error, setError] = useState<string>();
@@ -35,10 +38,12 @@ const Login = () => {
     onCompleted: ({tokenAuth}) => {
       const {token, refreshToken, user} = tokenAuth;
       dispatchLogin(token, refreshToken, user);
+      toast('success', 'You are successfully logged in');
       navigate('/dashboard');
     },
     onError: ({graphQLErrors}) => {
       setError(graphQLErrors[0].message);
+      toast('error', graphQLErrors[0]?.message || 'Something went wrong, Please enter valid credentials');
     },
   });
 
@@ -100,11 +105,10 @@ const Login = () => {
             <Link to='/forgot-password'>
               <p className={classes.text}>Forgot Password?</p>
             </Link>
-            {error && <p className={classes.error}>{error}</p>}
             <Button
               text='Login'
               onClick={handleLogin}
-              loading={loading}
+              loading={!error && loading}
               disabled={!username || !password}
             />
           </div>

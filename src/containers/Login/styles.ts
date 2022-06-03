@@ -7,5 +7,4 @@ export default {
   info: 'font-inter text-base text-[#585D69] text-center mb-8',
   inputsWrapper: 'flex flex-col gap-[24px]',
   text: 'mb-6 mt-1 text-right text-color-blue font-interSemibold text-base',
-  error: 'text-color-red font-inter text-base mb-2',
 };

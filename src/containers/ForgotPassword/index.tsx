@@ -1,19 +1,73 @@
 import React, {useCallback, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
+import {gql, useMutation} from '@apollo/client';
 import {BsArrowLeftShort} from 'react-icons/bs';
 
 import cs from '@utils/cs';
+import useToast from '@hooks/useToast';
 
 import Navbar from '@components/Navbar';
 import InputField from '@components/InputField';
 import Button from '@components/Button';
+import OTPInput from '@components/OtpInput';
 
 import classes from './styles';
 
+const PASSWORD_RESET = gql`
+    mutation PasswordReset($data: PasswordResetPinInput!) {
+        passwordReset(data: $data) {
+            ok
+        }
+    }
+`;
+
+const PASSWORD_RESET_VERIFY = gql`
+    mutation PasswordResetVerify($data: PasswordResetPinInput!) {
+        passwordResetVerify(data: $data) {
+            ok
+            result {
+                identifier
+            }
+        }
+    }
+`;
+
+const mailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+
 const ForgotPassword = () => {
   const navigate = useNavigate();
+  const toast = useToast();
   const [email, setEmail] = useState<string>('');
   const [showMailSentInfo, setShowMailSentInfo] = useState<boolean>(false);
+  const [error, setError] = useState<string>('');
+  const [emailVerifyError, setEmailVerifyError] = useState<string>('');
+  const [otpCode, setOtpCode] = useState<string>('');
+  const [passwordReset, {loading}] = useMutation(PASSWORD_RESET, {
+    onCompleted: () => {
+      setShowMailSentInfo(true);
+      toast('success', `We’ve sent the 6 digit otp code to ${email} Please check your inbox`);
+    },
+    onError: (err) => {
+      setError(String(err));
+      toast('error', String(err));
+    },
+  });
+
+  const [passwordResetVerify, {loading: emailVerifyLoading}] = useMutation(PASSWORD_RESET_VERIFY, {
+    onCompleted: (res) => {
+      navigate('/reset-password', {
+        state: {
+          username: email.toLowerCase(),
+          identifier: res?.passwordResetVerify?.result?.identifier,
+        },
+      });
+      toast('success', 'Otp code is validated, Now you can change your password');
+    },
+    onError: (err) => {
+      setEmailVerifyError(String(err));
+      toast('error', String(err));
+    },
+  });
 
   const handleEmailChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -22,9 +76,31 @@ const ForgotPassword = () => {
     [],
   );
 
-  const handleSendResetMail = useCallback(() => {
-    setShowMailSentInfo(true);
-  }, []);
+  const handleSendResetMail = useCallback(async () => {
+    if (!email.match(mailRegex)) {
+      setError('Error: Invalid email address');
+      toast('error', 'You have entered an invalid email address');
+      return;
+    }
+    await passwordReset({
+      variables: {
+        data: {
+          username: email.toLowerCase(),
+        },
+      },
+    });
+  }, [email, passwordReset, toast]);
+
+  const handleEmailVerify = useCallback(async () => {
+    await passwordResetVerify({
+      variables: {
+        data: {
+          username: email.toLowerCase(),
+          pin: parseInt(otpCode, 10),
+        },
+      },
+    });
+  }, [passwordResetVerify, email, otpCode]);
 
   const handleGoBack = useCallback(() => {
     navigate(-1);
@@ -33,6 +109,13 @@ const ForgotPassword = () => {
   const handleHideMailSentInfo = useCallback(() => {
     setShowMailSentInfo(false);
   }, []);
+
+  const handleOtpChange = useCallback(
+    (otp) => {
+      setOtpCode(otp);
+    },
+    [],
+  );
 
   return (
     <div className={classes.mainContainer}>
@@ -66,6 +149,7 @@ const ForgotPassword = () => {
               className={classes.button}
               onClick={handleSendResetMail}
               disabled={!email}
+              loading={!error && loading}
             />
           </div>
         </div>
@@ -86,16 +170,38 @@ const ForgotPassword = () => {
               <h2 className={classes.title}>Forgot password?</h2>
             </div>
             <p className={classes.info}>
-              We’ve sent an email to
+              We’ve sent an otp code to
               <span className={classes.email}>{` ${email}`}</span>
               . Please check
-              your inbox and follow instructions to reset your password.
+              your inbox and enter the 6 digit code to reset your password.
             </p>
+            <div>
+              <OTPInput
+                autoFocus
+                isNumberInput
+                length={6}
+                className={classes.otpContainer}
+                inputClassName={classes.otpInput}
+                onChangeOTP={handleOtpChange}
+              />
+              <Button
+                text='Verify'
+                className={classes.button}
+                onClick={handleEmailVerify}
+                disabled={otpCode.length < 6}
+                loading={!emailVerifyError && emailVerifyLoading}
+              />
+            </div>
             <div className={classes.textWrapper}>
               <p className={classes.text}>{'Didn\'t receive email?'}</p>
-              <div className={classes.cursor}>
+              <button
+                type='button'
+                disabled={loading}
+                className={classes.cursor}
+                onClick={handleSendResetMail}
+              >
                 <p className={classes.sendAgain}>Send it again</p>
-              </div>
+              </button>
             </div>
           </div>
         </div>

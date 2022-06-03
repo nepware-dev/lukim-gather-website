@@ -1,4 +1,7 @@
 import React, {useCallback, useState} from 'react';
+import {gql, useMutation} from '@apollo/client';
+
+import useToast from '@hooks/useToast';
 
 import DashboardHeader from '@components/DashboardHeader';
 import DashboardLayout from '@components/DashboardLayout';
@@ -8,15 +11,43 @@ import Button from '@components/Button';
 
 import classes from './styles';
 
+export const CHANGE_PASSWORD = gql`
+    mutation ChangePassword($data: ChangePasswordInput!) {
+        changePassword(data: $data) {
+            ok
+        }
+    }
+`;
+
 const AccountSettings = () => {
+  const toast = useToast();
   const [activeTab, setActiveTab] = useState<string>('Password');
-  const [email, setEmail] = useState<string>('');
   const [currentPassword, setCurrentPassword] = useState<string>('');
   const [newPassword, setNewPassword] = useState<string>('');
+  const [error, setError] = useState<string>('');
+  const [changePassword, {loading}] = useMutation(CHANGE_PASSWORD, {
+    onCompleted: () => {
+      toast('success', 'Password has been successfully changed!');
+      setCurrentPassword('');
+      setNewPassword('');
+    },
+    onError: (err) => {
+      setError(String(err));
+      toast('error', String(err));
+    },
+  });
 
-  const handleEmail = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setEmail(e.target.value);
-  }, []);
+  const handleChangePassword = useCallback(async () => {
+    await changePassword({
+      variables: {
+        data: {
+          password: currentPassword,
+          newPassword,
+          rePassword: newPassword,
+        },
+      },
+    });
+  }, [changePassword, currentPassword, newPassword]);
 
   const handleCurrentPassword = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -31,12 +62,6 @@ const AccountSettings = () => {
     },
     [],
   );
-
-  const handleSaveChanges = useCallback(() => {
-    setEmail('');
-    setCurrentPassword('');
-    setNewPassword('');
-  }, []);
 
   const handleTab = useCallback((text: string) => {
     setActiveTab(text);
@@ -56,39 +81,30 @@ const AccountSettings = () => {
             />
           </div>
           <div className='w-fit'>
-            {activeTab === 'Email' ? (
+            <div className={classes.inputsWrapper}>
               <InputField
-                title='Email'
-                placeholder='john@example.com'
-                value={email}
-                onChange={handleEmail}
+                password
+                title='Current password'
+                placeholder='Enter your current password'
+                value={currentPassword}
+                onChange={handleCurrentPassword}
                 inputClassname={classes.input}
               />
-            ) : (
-              <div className={classes.inputsWrapper}>
-                <InputField
-                  password
-                  title='Current password'
-                  placeholder='Enter your current password'
-                  value={currentPassword}
-                  onChange={handleCurrentPassword}
-                  inputClassname={classes.input}
-                />
-                <InputField
-                  password
-                  title='New password'
-                  placeholder='Enter your new password'
-                  value={newPassword}
-                  onChange={handleNewPassword}
-                  inputClassname={classes.input}
-                />
-                <Button
-                  text='Save Changes'
-                  onClick={handleSaveChanges}
-                  disabled={!currentPassword || !newPassword}
-                />
-              </div>
-            )}
+              <InputField
+                password
+                title='New password'
+                placeholder='Enter your new password'
+                value={newPassword}
+                onChange={handleNewPassword}
+                inputClassname={classes.input}
+              />
+              <Button
+                text='Save Changes'
+                onClick={handleChangePassword}
+                disabled={!currentPassword || !newPassword}
+                loading={!error && loading}
+              />
+            </div>
           </div>
         </div>
       </div>
