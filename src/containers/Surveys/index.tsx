@@ -382,43 +382,53 @@ const Surveys = () => {
               )}
             </div>
           </div>
-          {toggleFilter && (
-            <div className={classes.filterWrapper}>
-              <div className={classes.selectInputWrapper}>
-                <SelectInput
-                  className={classes.selectInput}
-                  defaultValue={selectInputData?.status}
-                  valueExtractor={titleExtractor}
-                  keyExtractor={keyExtractor}
-                  options={surveyStatus}
-                  placeholder='Status'
-                  onChange={handleStatusChange}
-                />
-                <SelectInput
-                  className={classes.selectInput}
-                  defaultValue={selectInputData?.region}
-                  valueExtractor={titleExtractor}
-                  keyExtractor={keyExtractor}
-                  options={regionOptions}
-                  placeholder='Region'
-                  onChange={handleRegionChange}
-                />
-                <SelectInput
-                  className={classes.selectInput}
-                  defaultValue={selectInputData?.category}
-                  valueExtractor={titleExtractor}
-                  keyExtractor={keyExtractor}
-                  options={category?.protectedAreaCategories}
-                  placeholder='Category'
-                  onChange={handleCategoryChange}
-                />
-              </div>
-              <span className={classes.clear} onClick={handleClearClick}>
-                Clear all filters
-              </span>
-            </div>
+          <div className={cs(
+            classes.filterWrapper,
+            classes.transitionOpacity,
+            [classes.opacityNone, !toggleFilter],
+            [classes.opacityFull, toggleFilter],
           )}
-          <div className={classes.surveyTable}>
+          >
+            <div className={classes.selectInputWrapper}>
+              <SelectInput
+                className={classes.selectInput}
+                defaultValue={selectInputData?.status}
+                valueExtractor={titleExtractor}
+                keyExtractor={keyExtractor}
+                options={surveyStatus}
+                placeholder='Status'
+                onChange={handleStatusChange}
+              />
+              <SelectInput
+                className={classes.selectInput}
+                defaultValue={selectInputData?.region}
+                valueExtractor={titleExtractor}
+                keyExtractor={keyExtractor}
+                options={regionOptions}
+                placeholder='Region'
+                onChange={handleRegionChange}
+              />
+              <SelectInput
+                className={classes.selectInput}
+                defaultValue={selectInputData?.category}
+                valueExtractor={titleExtractor}
+                keyExtractor={keyExtractor}
+                options={category?.protectedAreaCategories}
+                placeholder='Category'
+                onChange={handleCategoryChange}
+              />
+            </div>
+            <span className={classes.clear} onClick={handleClearClick}>
+              Clear all filters
+            </span>
+          </div>
+          <div className={cs(
+            classes.surveyTable,
+            classes.transition,
+            [classes.translate, !toggleFilter],
+            [classes.tranlateNone, toggleFilter],
+          )}
+          >
             <SurveyTable
               data={surveyData}
               setActiveIndex={setActiveIndex}
