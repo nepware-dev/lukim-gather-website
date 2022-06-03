@@ -4,7 +4,7 @@ export default {
   text: 'font-interSemibold text-color-white text-base',
   loading: 'opacity-50 cursor-not-allowed',
   NumButton: 'w-[28px] h-[28px] font-interMedium text-[14px] rounded-full',
-  activeNumBtn: 'bg-[#6AA12A] text-[#fff]',
+  activeNumBtn: 'bg-[#EC6D25] text-[#fff]',
   hidden: 'hidden',
   ArrowBtn: 'flex items-center justify-center w-[26px] h-[26px] rounded-full bg-[#E7ECF2]',
 };
