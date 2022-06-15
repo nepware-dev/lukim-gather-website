@@ -94,7 +94,14 @@ const headers = [
   {label: 'Created Date', value: 'createdAt'},
 ];
 
-const happeningSurveyParser = new Parser({fields: headers});
+const happeningSurveyLocationParser = new Parser({
+  fields: headers.filter((header) => header.label !== 'Boundary'),
+});
+
+const happeningSurveyBoundaryParser = new Parser({
+  fields: headers.filter((header) => !(header.label === 'Location' || header.label === 'Longitude' || header.label === 'Latitude')),
+});
+
 const customSurveyParser = new Parser();
 
 const Dashboard = () => {
@@ -311,9 +318,15 @@ const Dashboard = () => {
 
   const handleCSVClick = useCallback(() => {
     const dateVal = new Date().toISOString();
-    const happeningSurveyCSV = happeningSurveyParser.parse(filteredData);
+    const happeningSurveyLocationCSV = happeningSurveyLocationParser.parse(
+      filteredData.filter((data) => data.location !== null),
+    );
+    const happeningSurveyBoundaryCSV = happeningSurveyBoundaryParser.parse(
+      filteredData.filter((data) => data.boundary !== null),
+    );
     const zip = new JSZip();
-    zip.file(`Happening-Survey-Report-${dateVal}.csv`, happeningSurveyCSV);
+    zip.file(`Happening-Survey-Report-Location-${dateVal}.csv`, happeningSurveyLocationCSV);
+    zip.file(`Happening-Survey-Report-Boundary-${dateVal}.csv`, happeningSurveyBoundaryCSV);
     if (flatCustomForms?.length > 0) {
       const customFormCSV = customSurveyParser.parse(flatCustomForms);
       zip.file(`Custom-Survey-Report-${dateVal}.csv`, customFormCSV);

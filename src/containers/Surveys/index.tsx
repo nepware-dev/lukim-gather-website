@@ -1,22 +1,27 @@
+// @ts-nocheck
+// @ts-ignore
 /* eslint-disable max-len */
 import React, {
   forwardRef,
   useCallback,
   useEffect,
   useState,
-  useMemo,
 } from 'react';
 import {useSelector} from 'react-redux';
-import {CSVLink} from 'react-csv';
 import DatePicker from 'react-datepicker';
 import {gql, useQuery} from '@apollo/client';
 import {BsCalendar4Event, BsArrowUpRight} from 'react-icons/bs';
 import {RiArrowDownSLine} from 'react-icons/ri';
 
+import {Parser} from 'json2csv';
+import JSZip from 'jszip';
+import {saveAs} from 'file-saver';
+
 import {rootState} from '@store/rootReducer';
 import cs from '@utils/cs';
 import {formatDate} from '@utils/formatDate';
 
+import Button from '@components/Button';
 import DashboardHeader from '@components/DashboardHeader';
 import DashboardLayout from '@components/DashboardLayout';
 import SurveyTable, {SurveyDataType} from '@components/SurveyTable';
@@ -106,6 +111,30 @@ export type SelectInputDataType = {
 
 const titleExtractor = (item: OptionDataType) => item?.title;
 const keyExtractor = (item: OptionDataType) => item?.id;
+
+const headers = [
+  {label: 'UUID', value: 'id'},
+  {label: 'Category', value: 'category.title'},
+  {label: 'Title', value: 'title'},
+  {label: 'Description', value: 'description'},
+  {label: 'Sentiment', value: 'sentiment'},
+  {label: 'Improvement', value: 'improvement'},
+  {label: 'Location', value: 'location.coordinates'},
+  {label: 'Longitude', value: 'location.coordinates[0]'},
+  {label: 'Latitude', value: 'location.coordinates[1]'},
+  {label: 'Boundary', value: 'boundary.coordinates'},
+  {label: 'Status', value: 'status'},
+  {label: 'Created Date', value: 'createdAt'},
+];
+
+
+const happeningSurveyLocationParser = new Parser({
+  fields: headers.filter((header) => header.label !== 'Boundary'),
+});
+
+const happeningSurveyBoundaryParser = new Parser({
+  fields: headers.filter((header) => !(header.label === 'Location' || header.label === 'Longitude' || header.label === 'Latitude')),
+});
 
 const Surveys = () => {
   const {
@@ -292,21 +321,6 @@ const Surveys = () => {
     setToggleFilter(!toggleFilter);
   }, [toggleFilter]);
 
-  const headers = useMemo(() => ([
-    {label: 'UUID', key: 'id'},
-    {label: 'Category', key: 'category.title'},
-    {label: 'Title', key: 'title'},
-    {label: 'Description', key: 'description'},
-    {label: 'Sentiment', key: 'sentiment'},
-    {label: 'Improvement', key: 'improvement'},
-    {label: 'Location', key: 'location.coordinates'},
-    {label: 'Longitude', key: 'location.coordinates[0]'},
-    {label: 'Latitude', key: 'location.coordinates[1]'},
-    {label: 'Boundary', key: 'boundary.coordinates'},
-    {label: 'Status', key: 'status'},
-    {label: 'Created Date', key: 'createdAt'},
-  ]), []);
-
   const regionOptions = regions?.regions.map(({
     name: title,
     ...item
@@ -314,6 +328,22 @@ const Surveys = () => {
     title,
     ...item,
   }));
+
+  const handleCSVClick = useCallback(() => {
+    const dateVal = new Date().toISOString();
+    const happeningSurveyLocationCSV = happeningSurveyLocationParser.parse(
+      surveyData.filter((surveyLocation) => surveyLocation.location !== null),
+    );
+    const happeningSurveyBoundaryCSV = happeningSurveyBoundaryParser.parse(
+      surveyData.filter((surveyBoundary) => surveyBoundary.boundary !== null),
+    );
+    const zip = new JSZip();
+    zip.file(`Happening-Survey-Report-Location-${dateVal}.csv`, happeningSurveyLocationCSV);
+    zip.file(`Happening-Survey-Report-Boundary-${dateVal}.csv`, happeningSurveyBoundaryCSV);
+    zip.generateAsync({type: 'blob'}).then((content) => {
+      saveAs(content, `Survey-Report-${dateVal}.zip`);
+    });
+  }, [surveyData]);
 
   const surveyStatus = [{
     title: 'PENDING',
@@ -370,15 +400,14 @@ const Surveys = () => {
                 />
               </div>
               {surveyData && (
-                <CSVLink
+                <button
                   className={classes.csv}
-                  filename={`Happening-Survey-Report-${new Date().toISOString()}.csv`}
-                  data={surveyData}
-                  headers={headers}
+                  onClick={handleCSVClick}
+                  text='Export to CSV'
                 >
                   <BsArrowUpRight />
                   <span className='ml-2'>Export to CSV</span>
-                </CSVLink>
+                </button>
               )}
             </div>
           </div>
