@@ -15,6 +15,8 @@ import ForgotPassword from '@containers/ForgotPassword';
 import Page404 from '@containers/Page404';
 import PrivacyPolicy from '@containers/PrivacyPolicy';
 import TermsAndConditions from '@containers/TermsAndConditions';
+import FAQ from '@containers/FAQ';
+import Resource from '@containers/Resource';
 
 interface Props {
   isAuthenticated: boolean;
@@ -34,6 +36,8 @@ const AppRoutes = () => {
   return (
     <Routes>
       <Route path='/' element={<Home />} />
+      <Route path='/resource' element={<Resource />} />
+      <Route path='/faq' element={<FAQ />} />
       <Route path='/privacy' element={<PrivacyPolicy />} />
       <Route path='/terms' element={<TermsAndConditions />} />
       <Route path='/login' element={<Login />} />

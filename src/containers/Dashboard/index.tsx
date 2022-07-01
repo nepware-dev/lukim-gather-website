@@ -357,7 +357,7 @@ const Dashboard = () => {
           valueExtractor={titleExtractor}
           keyExtractor={keyExtractor}
           options={regionOptions}
-          placeholder='Region'
+          placeholder='Province'
           onChange={handleRegionChange}
         />
         <SelectInput

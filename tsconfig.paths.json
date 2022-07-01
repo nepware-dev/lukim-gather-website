@@ -5,6 +5,7 @@
       "@images/*": ["assets/images/*"],
       "@components/*": ["components/*"],
       "@containers/*": ["containers/*"],
+      "@data/*": ["data/*"],
       "@hooks/*": ["hooks/*"],
       "@routes/*": ["routes/*"],
       "@store/*": ["store/*"],

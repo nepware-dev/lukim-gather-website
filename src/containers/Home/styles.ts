@@ -1,6 +1,4 @@
 export default {
-  mainContainer: 'bg-color-bg w-[100%]',
-  container: 'max-w-[1440px] mx-auto px-[5vw] lg:pb-[320px] lg:relative',
   heroSection: 'py-[20px] flex flex-col gap-[50px] sm:py-[50px] lg:py-[120px] lg:flex-row lg:gap-[20px]',
   heroContent: 'lg:w-[50%]',
   heroTitle: 'font-sansBold leading-[44px] text-[36px] text-color-blue sm:leading-[68px] sm:text-[64px]',
@@ -12,7 +10,7 @@ export default {
   backgroundTitle: 'font-sansBold text-[36px] leading-[44px] text-color-blue mt-[50px] mb-[56px] lg:mt-[0] lg:text-center sm:text-[48px] sm:leading-[62px]',
   bgContentWrapper: 'flex flex-col items-center gap-[40px] lg:flex-row lg:justify-around lg:items-start lg:gap-[20px]',
   bgImage: 'max-h-[250px] max-w-[250px] sm:max-h-[375px] sm:max-w-[375px]',
-  bgContent: 'max-w-[604px]',
+  bgContent: 'max-w-[604px] mb-[200px]',
   bgInfo: 'font-inter text-[16px] leading-[24px] text-color-text sm:text-[18px] sm:leading-[32px]',
   highlightText: 'text-[#EC6D25]',
   bgCards: 'flex flex-col gap-[10px]',
@@ -20,11 +18,4 @@ export default {
   appInfoTitle: 'font-sansBold text-[32px] text-color-text leading-[42px] mb-[64px]',
   appInfoCards: 'flex flex-row flex-wrap justify-center gap-[50px] lg:flex-nowrap',
   contentWrapper: 'max-w-[1440px] mx-auto px-[5vw] pt-[80px] lg:pt-[200px]',
-  appInfo: 'max-w-[930px] mx-auto font-inter text-[16px] leading-[24px] text-color-text sm:text-[18px] sm:leading-[32px]',
-  formWrapper: 'lg:h-[420px] flex flex-col lg:flex-row items-center bg-[#05375A] rounded-3xl px-[5%] mt-[104px] pt-[50px] lg:pt-[0] gap-[40px] lg:gap-[20px]',
-  formContent: 'lg:w-[50%] flex flex-col gap-[20px]',
-  formTitle: 'max-w-[320px] font-sansBold text-[36px] leading-[44px] text-[#EC6D25] sm:text-[48px] sm:leading-[52px]',
-  formText: 'font-inter text-[16px] leading-[24px] text-color-white sm:text-[18px] sm:leading-[32px]',
-  mobileImgWrapper: 'lg:w-[50%] flex justify-center',
-  mobileImage: 'max-h-[420px]',
 };
