@@ -1,5 +1,5 @@
 /* eslint-disable array-callback-return */
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useRef, useState} from 'react';
 import {gql, useQuery} from '@apollo/client';
 
 import List from '@ra/components/List';
@@ -22,6 +22,7 @@ const GET_RESOURCE = gql`
 `;
 
 const Resource = () => {
+  const ref = useRef();
   const {data} = useQuery(GET_RESOURCE);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchedData, setSearchedData] = useState();
@@ -56,6 +57,13 @@ const Resource = () => {
     ),
     [],
   );
+
+  const Props = {
+    data: searchedData || data?.resource,
+    className: classes.bgContent,
+    renderItem: renderItems,
+    keyExtractor,
+  };
   return (
     <Layout>
       <section className={classes.content}>
@@ -67,10 +75,8 @@ const Resource = () => {
         </div>
         <div className={classes.bgContentWrapper}>
           <List
-            data={searchedData || data?.resource}
-            className={classes.bgContent}
-            renderItem={renderItems}
-            keyExtractor={keyExtractor}
+            {...Props}
+            ref={ref}
           />
         </div>
       </section>

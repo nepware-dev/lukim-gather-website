@@ -49,7 +49,9 @@ const AppRoutes = () => {
       >
         <Route path='/dashboard' element={<Dashboard />} />
         <Route path='/surveys' element={<Surveys />} />
+        <Route path='/surveys/:uuid' element={<Surveys />} />
         <Route path='/custom-forms' element={<CustomForms />} />
+        <Route path='/custom-forms/:id' element={<CustomForms />} />
         <Route path='/account-settings' element={<AccountSettings />} />
       </Route>
       <Route path='*' element={<Page404 />} />

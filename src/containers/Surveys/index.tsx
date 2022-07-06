@@ -8,6 +8,7 @@ import React, {
   useState,
 } from 'react';
 import {useSelector} from 'react-redux';
+import {useParams} from 'react-router-dom';
 import DatePicker from 'react-datepicker';
 import {gql, useQuery} from '@apollo/client';
 import {BsCalendar4Event, BsArrowUpRight} from 'react-icons/bs';
@@ -21,7 +22,6 @@ import {rootState} from '@store/rootReducer';
 import cs from '@utils/cs';
 import {formatDate} from '@utils/formatDate';
 
-import Button from '@components/Button';
 import DashboardHeader from '@components/DashboardHeader';
 import DashboardLayout from '@components/DashboardLayout';
 import SurveyTable, {SurveyDataType} from '@components/SurveyTable';
@@ -38,7 +38,42 @@ import classes from './styles';
 
 export const GET_SURVEY_DATA = gql`
   query {
-    happeningSurveys {
+    happeningSurveys (ordering: "-created_at") {
+      id
+      title
+      description
+      attachment {
+        media
+      }
+      category {
+        id
+        title
+      }
+      boundary {
+        type
+        coordinates
+      }
+      location {
+        type
+        coordinates
+      }
+      region {
+        id
+      }
+      improvement
+      sentiment
+      status
+      createdAt
+      createdBy {
+        id
+      }
+    }
+  }
+`;
+
+export const GET_SURVEY = gql`
+  query HappeningSurveys ($id: UUID!) {
+    happeningSurveys (id: $id) {
       id
       title
       description
@@ -127,7 +162,6 @@ const headers = [
   {label: 'Created Date', value: 'createdAt'},
 ];
 
-
 const happeningSurveyLocationParser = new Parser({
   fields: headers.filter((header) => header.label !== 'Boundary'),
 });
@@ -142,6 +176,7 @@ const Surveys = () => {
       user: {id: userId},
     },
   } = useSelector((state: rootState) => state);
+  const {uuid} = useParams();
 
   const {data} = useQuery(GET_SURVEY_DATA);
   const {data: category} = useQuery(GET_CATEGORY_DATA);
@@ -153,6 +188,7 @@ const Surveys = () => {
   const [rows, setRows] = useState<number>(10);
   const [activeIndex, setActiveIndex] = useState<number>(0);
   const [showDetails, setShowDetails] = useState<boolean>(false);
+  const [surveyEntryData, setSurveyEntryData] = useState<SurveyDataType>(null);
   const [dateRange, setDateRange] = useState([new Date(), new Date()]);
   const [maxDate, setMaxDate] = useState<Date>();
   const [minDate, setMinDate] = useState<Date>();
@@ -163,6 +199,20 @@ const Surveys = () => {
     status: null,
   });
   const [toggleFilter, setToggleFilter] = useState<boolean>(false);
+
+  const {refetch} = useQuery(GET_SURVEY, {
+    variables: {id: uuid},
+    fetchPolicy: !uuid ? 'cache-only' : 'cache-first',
+  });
+
+  useEffect(() => {
+    if (!uuid) return;
+    if (surveyData[activeIndex]) return setSurveyEntryData(surveyData[activeIndex]);
+    refetch(uuid).then((res) => {
+      setShowDetails(true);
+      setSurveyEntryData(res?.data?.happeningSurveys?.[0]);
+    });
+  }, [uuid]);
 
   useEffect(() => {
     if (!data) return;
@@ -481,9 +531,9 @@ const Surveys = () => {
           </div>
         </div>
       </DashboardLayout>
-      {showDetails && (
+      {(showDetails && surveyEntryData) && (
         <SurveyEntry
-          data={surveyData[activeIndex]}
+          data={surveyEntryData}
           setShowDetails={setShowDetails}
         />
       )}

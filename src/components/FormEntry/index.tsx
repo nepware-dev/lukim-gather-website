@@ -1,10 +1,13 @@
 import React, {useCallback, useEffect, useMemo} from 'react';
+import {useNavigate} from 'react-router-dom';
 import {HiOutlineX} from 'react-icons/hi';
+import Map, {Marker} from 'react-map-gl';
 
 import {formatDate} from '@utils/formatDate';
 
 import {FormDataType} from '@components/FormTable';
 
+import 'mapbox-gl/dist/mapbox-gl.css';
 import cs from '@ra/cs';
 import classes from './styles';
 
@@ -94,15 +97,49 @@ const FormValueRenderer = ({
         ) : (
           <p className={classes.formItemTopic}>{formattedName}</p>
         )}
-        {Object.entries(value).map(([key, val]) => (
-          <FormValueRenderer
-            key={`${name}-${key}`}
-            name={key}
-            value={val}
-            level={level + 1}
-            formModel={formModel}
-          />
-        ))}
+        {Object.entries(value).map(([key, val]) => {
+          if (key === 'location_gps') {
+            const mapTitle = key?.replace(/_/g, ' ');
+            const mapValue = val.split(' ');
+            return (
+              <div className={classes.formItem}>
+                <span className={classes.formKey}>
+                  {mapTitle}
+                  :
+                </span>
+                {mapValue ? (
+                  <Map
+                    initialViewState={{
+                      longitude: mapValue[1],
+                      latitude: mapValue[0],
+                      zoom: 9,
+                    }}
+                    style={{width: 600, height: 400}}
+                    mapStyle='mapbox://styles/mapbox/streets-v9'
+                    mapboxAccessToken={process.env.REACT_APP_MAPBOX_TOKEN}
+                  >
+                    <Marker
+                      longitude={mapValue[1]}
+                      latitude={mapValue[0]}
+                      anchor='bottom'
+                    />
+                  </Map>
+                ) : (
+                  <span className={classes.formValue}>-</span>
+                )}
+              </div>
+            );
+          }
+          return (
+            <FormValueRenderer
+              key={`${name}-${key}`}
+              name={key}
+              value={val}
+              level={level + 1}
+              formModel={formModel}
+            />
+          );
+        })}
       </div>
     );
   }
@@ -127,6 +164,7 @@ const FormValueRenderer = ({
 };
 
 const FormEntry: React.FC<Props> = ({data, setShowDetails, formModel}) => {
+  const navigate = useNavigate();
   const answers: Entries<AnswerItemType> = useMemo(() => {
     const dataObject: object = JSON.parse(data.answer)?.data ?? {};
     return Object.entries(dataObject).filter(([key]) => key.startsWith('section'));
@@ -136,9 +174,10 @@ const FormEntry: React.FC<Props> = ({data, setShowDetails, formModel}) => {
     (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         setShowDetails(false);
+        navigate('/custom-forms');
       }
     },
-    [setShowDetails],
+    [navigate, setShowDetails],
   );
 
   useEffect(() => {
@@ -150,8 +189,9 @@ const FormEntry: React.FC<Props> = ({data, setShowDetails, formModel}) => {
   }, [escapeListener]);
 
   const hideDetails = useCallback(() => {
+    navigate('/custom-forms');
     setShowDetails(false);
-  }, [setShowDetails]);
+  }, [navigate, setShowDetails]);
 
   return (
     <div>
