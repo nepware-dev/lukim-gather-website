@@ -1,6 +1,3 @@
-// @ts-nocheck
-// @ts-ignore
-/* eslint-disable max-len */
 import React, {
   forwardRef,
   useCallback,
@@ -164,10 +161,12 @@ const headers = [
 
 const happeningSurveyLocationParser = new Parser({
   fields: headers.filter((header) => header.label !== 'Boundary'),
+  defaultValue: 'No matching data found in selection',
 });
 
 const happeningSurveyBoundaryParser = new Parser({
   fields: headers.filter((header) => !(header.label === 'Location' || header.label === 'Longitude' || header.label === 'Latitude')),
+  defaultValue: 'No matching data found in selection',
 });
 
 const Surveys = () => {
@@ -188,7 +187,7 @@ const Surveys = () => {
   const [rows, setRows] = useState<number>(10);
   const [activeIndex, setActiveIndex] = useState<number>(0);
   const [showDetails, setShowDetails] = useState<boolean>(false);
-  const [surveyEntryData, setSurveyEntryData] = useState<SurveyDataType>(null);
+  const [surveyEntryData, setSurveyEntryData] = useState<SurveyDataType | null>(null);
   const [dateRange, setDateRange] = useState([new Date(), new Date()]);
   const [maxDate, setMaxDate] = useState<Date>();
   const [minDate, setMinDate] = useState<Date>();
@@ -207,12 +206,16 @@ const Surveys = () => {
 
   useEffect(() => {
     if (!uuid) return;
-    if (surveyData[activeIndex]) return setSurveyEntryData(surveyData[activeIndex]);
-    refetch(uuid).then((res) => {
+    if (surveyData[activeIndex]) {
+      setShowDetails(true);
+      setSurveyEntryData(surveyData[activeIndex]);
+      return;
+    }
+    refetch({id: uuid}).then((res) => {
       setShowDetails(true);
       setSurveyEntryData(res?.data?.happeningSurveys?.[0]);
     });
-  }, [uuid]);
+  }, [uuid, activeIndex, refetch, surveyData]);
 
   useEffect(() => {
     if (!data) return;
@@ -237,29 +240,32 @@ const Surveys = () => {
 
   useEffect(() => {
     if (!data) return;
-    const filterData = data.happeningSurveys.filter(
-      (item: {createdAt: string, category: OptionDataType, region: OptionDataType, status: string, createdBy: {id: string}}) => {
-        if (selectInputData?.category && (item.category.id !== selectInputData.category.id)) {
-          return false;
-        }
-        if (selectInputData?.region && (item.region?.id !== selectInputData.region.id)) {
-          return false;
-        }
-        if (selectInputData?.status && (item.status !== selectInputData.status.title)) {
-          return false;
-        }
-        if (status === 'My Entries' && (item.createdBy.id !== userId)) {
-          return false;
-        }
-        if (!(new Date(new Date(item.createdAt).toDateString())
+    const filterData = data.happeningSurveys.filter((item: {createdAt: string,
+              category: OptionDataType,
+              region: OptionDataType,
+              status: string,
+              createdBy: {id: string}
+              }) => {
+      if (selectInputData?.category && (item.category.id !== selectInputData.category.id)) {
+        return false;
+      }
+      if (selectInputData?.region && (item.region?.id !== selectInputData.region.id)) {
+        return false;
+      }
+      if (selectInputData?.status && (item.status !== selectInputData.status.title)) {
+        return false;
+      }
+      if (status === 'My Entries' && (item.createdBy.id !== userId)) {
+        return false;
+      }
+      if (!(new Date(new Date(item.createdAt).toDateString())
             >= new Date(startDate.toDateString())
             && new Date(new Date(item.createdAt).toDateString())
             <= new Date(endDate?.toDateString()))) {
-          return false;
-        }
-        return true;
-      },
-    );
+        return false;
+      }
+      return true;
+    });
     const slicedData = filterData.slice(
       rows * activePage - rows,
       rows * activePage,
@@ -453,7 +459,7 @@ const Surveys = () => {
                 <button
                   className={classes.csv}
                   onClick={handleCSVClick}
-                  text='Export to CSV'
+                  type='button'
                 >
                   <BsArrowUpRight />
                   <span className='ml-2'>Export to CSV</span>
