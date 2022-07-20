@@ -96,10 +96,12 @@ const headers = [
 
 const happeningSurveyLocationParser = new Parser({
   fields: headers.filter((header) => header.label !== 'Boundary'),
+  defaultValue: 'No matching data found in selection',
 });
 
 const happeningSurveyBoundaryParser = new Parser({
   fields: headers.filter((header) => !(header.label === 'Location' || header.label === 'Longitude' || header.label === 'Latitude')),
+  defaultValue: 'No matching data found in selection',
 });
 
 const customSurveyParser = new Parser();

@@ -7,4 +7,6 @@ export default {
   letterWrapper: 'w-[28px] h-[28px] flex items-center justify-center rounded-full bg-[#EC6D25]',
   letter: 'text-color-white uppercase',
   name: 'font-inter text-[16px] capitalize',
+  notification: 'relative',
+  notificationCount: 'absolute inline-block w-[14px] h-[14px] bg-[#F04438] rounded-full flex justify-center items-center text-[10px] text-[white] align-right ml-[12px]',
 };
