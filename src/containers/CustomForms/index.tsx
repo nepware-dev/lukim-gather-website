@@ -6,6 +6,7 @@ import React, {
   useState,
   useMemo,
 } from 'react';
+import {useParams} from 'react-router-dom';
 import DatePicker from 'react-datepicker';
 import {gql, useQuery} from '@apollo/client';
 import {BsCalendar4Event} from 'react-icons/bs';
@@ -40,6 +41,17 @@ export const GET_SURVEY_DATA = gql`
   }
 `;
 
+export const GET_SURVEY = gql`
+  query Survey($id: Float!) {
+    survey(id: $id, ordering: "-created_at") {
+      id
+      title
+      createdAt
+      answer
+    }
+  }
+`;
+
 const GET_FORMS = gql`
   query {
     surveyForm {
@@ -51,10 +63,16 @@ const GET_FORMS = gql`
 `;
 
 const CustomForms = () => {
+  const {id} = useParams();
   const {data} = useQuery(GET_SURVEY_DATA);
+  const {refetch} = useQuery(GET_SURVEY, {
+    variables: {id: Number(id)},
+    fetchPolicy: !id ? 'cache-only' : 'cache-first',
+  });
   const {data: formData} = useQuery(GET_FORMS);
   const [status] = useState<string>('All');
   const [surveyFormData, setSurveyFormData] = useState<FormDataType[]>([]);
+  const [activeSurveyFormData, setActiveSurveyFormData] = useState<FormDataType>();
   const [activePage, setActivePage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(0);
   const [rows, setRows] = useState<number>(10);
@@ -64,6 +82,19 @@ const CustomForms = () => {
   const [maxDate, setMaxDate] = useState<Date>();
   const [minDate, setMinDate] = useState<Date>();
   const [startDate, endDate] = dateRange;
+
+  useEffect(() => {
+    if (!id) return;
+    if (surveyFormData[activeIndex]) {
+      setShowDetails(true);
+      setActiveSurveyFormData(surveyFormData[activeIndex]);
+      return;
+    }
+    refetch({id: Number(id)}).then((res) => {
+      setShowDetails(true);
+      setActiveSurveyFormData(res?.data?.survey?.[0]);
+    });
+  }, [id, activeIndex, refetch, surveyFormData]);
 
   useEffect(() => {
     if (!data) return;
@@ -253,9 +284,9 @@ const CustomForms = () => {
           </div>
         </div>
       </DashboardLayout>
-      {showDetails && (
+      {(showDetails && activeSurveyFormData) && (
         <FormEntry
-          data={surveyFormData[activeIndex]}
+          data={activeSurveyFormData}
           setShowDetails={setShowDetails}
           formModel={formModel}
         />

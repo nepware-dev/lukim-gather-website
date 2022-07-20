@@ -1,4 +1,4 @@
-import React, {useCallback} from 'react';
+import React, {useCallback, useRef} from 'react';
 import {gql, useQuery} from '@apollo/client';
 
 import FaqAccordion from '@components/FaqAccordion';
@@ -20,11 +20,18 @@ const GET_FAQ = gql`
 `;
 
 const FAQ = () => {
+  const ref = useRef();
   const {data} = useQuery(GET_FAQ);
   const renderToasts = useCallback(
     ({item}) => <FaqAccordion key={item.id} question={item.question} answer={item.answer} />,
     [],
   );
+  const Props = {
+    data: data?.frequentlyAskedQuestion || [],
+    className: classes.bgContent,
+    renderItem: renderToasts,
+    keyExtractor,
+  };
   return (
     <Layout>
       <section className={classes.content}>
@@ -33,10 +40,8 @@ const FAQ = () => {
         </h2>
         <div className={classes.bgContentWrapper}>
           <List
-            data={data?.frequentlyAskedQuestion || []}
-            className={classes.bgContent}
-            renderItem={renderToasts}
-            keyExtractor={keyExtractor}
+            {...Props}
+            ref={ref}
           />
         </div>
       </section>

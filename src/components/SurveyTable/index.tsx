@@ -1,4 +1,5 @@
 import React, {useCallback} from 'react';
+import {useNavigate} from 'react-router-dom';
 
 import cs from '@utils/cs';
 import {formatDate} from '@utils/formatDate';
@@ -42,11 +43,13 @@ const SurveyItem: React.FC<ItemProps> = ({
   setIndex,
   setShowDetails,
 }) => {
+  const navigate = useNavigate();
   const [categoryIcon] = useCategoryIcon(item?.category?.id);
-  const handleClick = useCallback(() => {
+  const handleClick = useCallback((id: string|number) => {
+    navigate(`/surveys/${id}`);
     setIndex(index);
     setShowDetails(true);
-  }, [index, setIndex, setShowDetails]);
+  }, [index, navigate, setIndex, setShowDetails]);
 
   return (
     <tr className={classes.tableItemRow}>
@@ -84,7 +87,7 @@ const SurveyItem: React.FC<ItemProps> = ({
         </p>
       </td>
       <td>
-        <button type='button' className={classes.button} onClick={handleClick}>
+        <button type='button' className={classes.button} onClick={() => handleClick(item.id)}>
           View entry
         </button>
       </td>

@@ -1,4 +1,5 @@
 import React, {useCallback, useMemo} from 'react';
+import {useNavigate} from 'react-router-dom';
 
 import cs from '@utils/cs';
 import {findPropertyAnywhere} from '@utils/searchTree';
@@ -32,12 +33,14 @@ const FormItem: React.FC<ItemProps> = ({
   setIndex,
   setShowDetails,
 }) => {
+  const navigate = useNavigate();
   const formAnswers = useMemo(() => JSON.parse(item.answer), [item]);
 
-  const handleClick = useCallback(() => {
+  const handleClick = useCallback((id: string|number) => {
+    navigate(`/custom-forms/${id}`);
     setIndex(index);
     setShowDetails(true);
-  }, [index, setIndex, setShowDetails]);
+  }, [index, navigate, setIndex, setShowDetails]);
 
   const interviewerName = useMemo(
     () => findPropertyAnywhere(formAnswers, 'interviewer_name'),
@@ -56,7 +59,7 @@ const FormItem: React.FC<ItemProps> = ({
         <p className={classes.tableText}>{formatDate(item.createdAt)}</p>
       </td>
       <td>
-        <button type='button' className={classes.button} onClick={handleClick}>
+        <button type='button' className={classes.button} onClick={() => handleClick(item.id)}>
           View entry
         </button>
       </td>

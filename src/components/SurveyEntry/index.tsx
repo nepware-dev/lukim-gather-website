@@ -2,6 +2,7 @@ import React, {
   useCallback, useEffect, useMemo, useRef, useState,
 } from 'react';
 import {useSelector} from 'react-redux';
+import {useNavigate} from 'react-router-dom';
 import {gql, useMutation} from '@apollo/client';
 import Map, {Marker, Source, Layer} from 'react-map-gl';
 import type {MapRef} from 'react-map-gl';
@@ -86,6 +87,7 @@ const UPDATE_SURVEY_STATUS = gql`
 `;
 
 const SurveyEntry: React.FC<Props> = ({data, setShowDetails}) => {
+  const navigate = useNavigate();
   const mapRef = useRef<MapRef>(null);
   const [updateHappeningSurvey] = useMutation(UPDATE_SURVEY_STATUS, {
     refetchQueries: [GET_SURVEY_DATA, 'happeningSurveys'],
@@ -124,10 +126,11 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails}) => {
           setShowDeclineModal(false);
         } else {
           setShowDetails(false);
+          navigate('/surveys');
         }
       }
     },
-    [setShowDetails, showDeclineModal],
+    [navigate, setShowDetails, showDeclineModal],
   );
 
   useEffect(() => {
@@ -147,8 +150,9 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails}) => {
   }, []);
 
   const hideDetails = useCallback(() => {
+    navigate('/surveys');
     setShowDetails(false);
-  }, [setShowDetails]);
+  }, [navigate, setShowDetails]);
 
   const handleAccept = useCallback(async () => {
     await updateHappeningSurvey({

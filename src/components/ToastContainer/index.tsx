@@ -1,4 +1,4 @@
-import React, {useCallback} from 'react';
+import React, {useCallback, useRef} from 'react';
 import {useSelector} from 'react-redux';
 
 import List from '@ra/components/List';
@@ -13,6 +13,7 @@ export default function ToastContainer() {
       toasts,
     },
   } = useSelector((state: rootState) => state);
+  const ref = useRef();
 
   const renderToasts = useCallback(
     ({item}) => <Toast key={item.id} id={item.id} type={item.type} message={item.message} />,
@@ -23,15 +24,19 @@ export default function ToastContainer() {
     () => <p className='w-0 h-0 hidden'>Empty component</p>,
     [],
   );
+  const Props = {
+    data: toasts,
+    className: 'max-w-xl mx-auto',
+    renderItem: renderToasts,
+    EmptyComponent: renderEmpty,
+    keyExtractor,
+  };
 
   return (
     <div className='absolute top-10 w-full z-50'>
       <List
-        data={toasts}
-        className='max-w-xl mx-auto'
-        renderItem={renderToasts}
-        EmptyComponent={renderEmpty}
-        keyExtractor={keyExtractor}
+        {...Props}
+        ref={ref}
       />
     </div>
   );
