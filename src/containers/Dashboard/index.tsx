@@ -9,7 +9,8 @@ import {gql, useQuery} from '@apollo/client';
 
 import DashboardHeader from '@components/DashboardHeader';
 import DashboardLayout from '@components/DashboardLayout';
-import Button from '@components/Button';
+import Dropdown from '@components/Dropdown';
+
 import SelectInput from '@ra/components/Form/SelectInput'; // eslint-disable-line no-eval
 
 import {GET_SURVEY_DATA as GET_HAPPENING_SURVEY_DATA} from '@containers/Surveys';
@@ -18,10 +19,17 @@ import {GET_SURVEY_DATA} from '@containers/CustomForms';
 import {Parser} from 'json2csv';
 import JSZip from 'jszip';
 import {saveAs} from 'file-saver';
+import {toCanvas} from 'html-to-image';
+import jsPDF from 'jspdf';
+
 
 import cs from '@utils/cs';
 import {formatDate} from '@utils/formatDate';
 import {findPropertyAnywhere} from '@utils/searchTree';
+
+import pdfIcon from '@images/icons/pdf.svg';
+import csvIcon from '@images/icons/csv.svg';
+import pngIcon from '@images/icons/image.svg';
 
 import {
   clusterLayer,
@@ -36,6 +44,13 @@ import {
 } from './layers';
 import surveyCategory from '../../data/surveyCategory';
 import classes from './styles';
+
+const ExportOption = ({onClick, icon, title} : {onClick(): void, icon: string, title: string}) => (
+  <div className={classes.exportOption} onClick={onClick}>
+    <img src={icon} alt={title} />
+    <p className={classes.exportOptionTitle}>{title}</p>
+  </div>
+);
 
 export const flattenObject = (obj) => {
   const flattened = {};
@@ -107,6 +122,7 @@ const happeningSurveyBoundaryParser = new Parser({
 const customSurveyParser = new Parser();
 
 const Dashboard = () => {
+  const contentRef =  useRef<any>();
   const mapRef = useRef<MapRef>(null);
   const [popup, setPopUp] = React.useState(null);
   const [filteredData, setFilteredData] = React.useState([]);
@@ -318,7 +334,7 @@ const Dashboard = () => {
     ));
   }, []);
 
-  const handleCSVClick = useCallback(() => {
+  const onExportCSV = useCallback(() => {
     const dateVal = new Date().toISOString();
     const happeningSurveyLocationCSV = happeningSurveyLocationParser.parse(
       filteredData.filter((data) => data.location !== null),
@@ -338,6 +354,27 @@ const Dashboard = () => {
     });
   }, [filteredData, flatCustomForms]);
 
+  const onExportPDF = useCallback(async () => {
+    const element = contentRef.current;
+    await toCanvas(element).then((canvas) => {
+      const imgData = canvas.toDataURL('img/png');
+      // eslint-disable-next-line new-cap
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      pdf.addImage(imgData, 'JPEG', 0, 0, 210, 135);
+      pdf.save(`${new Date().toISOString()}.pdf`);
+    });
+  }, []);
+
+  const onExportImage = useCallback(async () => {
+    const element = contentRef.current;
+    await toCanvas(element).then((canvas) => {
+      const a = document.createElement('a');
+      a.href = canvas.toDataURL('img/png');
+      a.download = `${new Date().toISOString()}.png`;
+      a.click();
+    });
+  }, []);
+
   const regionOptions = useMemo(
     () => regions?.regions.map(({
       name: title,
@@ -349,37 +386,52 @@ const Dashboard = () => {
     , [regions],
   );
 
+  const renderLabel = useCallback(
+    () => (
+      <div className={classes.exportButton}>
+        <span className='material-symbols-rounded'>ios_share</span>
+        <p className={classes.exportButtonTitle}>Export </p>
+      </div>
+    ),
+    [],
+  );
+
   return (
     <DashboardLayout>
       <DashboardHeader title='Dashboard' />
       <h2 className={classes.title}>Dashboard</h2>
       <div className={classes.header}>
-        <SelectInput
-          className='h-[44px] min-w-[12em] w-max rounded-lg border-[#CCDCE8]'
-          valueExtractor={titleExtractor}
-          keyExtractor={keyExtractor}
-          options={regionOptions}
-          placeholder='Province'
-          onChange={handleRegionChange}
-        />
-        <SelectInput
-          className={cs('h-[44px]', 'min-w-[12em] w-max', 'rounded-lg', 'border-[#CCDCE8]')}
-          valueExtractor={titleExtractor}
-          keyExtractor={keyExtractor}
-          options={category?.protectedAreaCategories}
-          placeholder='Category'
-          onChange={handleCategoryChange}
-        />
-        {filteredData && (
-          <Button
-            className={classes.csvLink}
-            textClassName={classes.csvLinkText}
-            onClick={handleCSVClick}
-            text='Export to CSV'
+        <div className={classes.filterWrapper}>
+          <SelectInput
+            className='h-[44px] min-w-[12em] w-max rounded-lg border-[#CCDCE8]'
+            valueExtractor={titleExtractor}
+            keyExtractor={keyExtractor}
+            options={regionOptions}
+            placeholder='Province'
+            onChange={handleRegionChange}
           />
+          <SelectInput
+            className={cs('h-[44px]', 'min-w-[12em] w-max', 'rounded-lg', 'border-[#CCDCE8]')}
+            valueExtractor={titleExtractor}
+            keyExtractor={keyExtractor}
+            options={category?.protectedAreaCategories}
+            placeholder='Category'
+            onChange={handleCategoryChange}
+          />
+        </div>
+        {filteredData && (
+          <div className={classes.exportDropdown}>
+          <Dropdown renderLabel={renderLabel}>
+            <div className={classes.exportOptions}>
+              <ExportOption icon={pdfIcon} title='PDF' onClick={onExportPDF} />
+              <ExportOption icon={pngIcon} title='Image (PNG)' onClick={onExportImage} />
+              <ExportOption icon={csvIcon} title='Data (CSV)' onClick={onExportCSV} />
+            </div>
+          </Dropdown>
+        </div>
         )}
       </div>
-      <div className={classes.mapWrapper}>
+      <div className={classes.mapWrapper} ref={contentRef}>
         <Map
           initialViewState={{
             longitude: 150,
@@ -398,6 +450,7 @@ const Dashboard = () => {
             polygon.id,
           ]}
           onLoad={onLoad}
+          preserveDrawingBuffer={true}
         >
           <Source
             id='surveyPolySource'

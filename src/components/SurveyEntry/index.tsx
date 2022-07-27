@@ -10,6 +10,11 @@ import bbox from '@turf/bbox';
 import {
   HiOutlineX, HiTrendingDown, HiTrendingUp, HiMenuAlt4,
 } from 'react-icons/hi';
+import {parse} from 'json2csv';
+import JSZip from 'jszip';
+import {saveAs} from 'file-saver';
+import {toCanvas} from 'html-to-image';
+import jsPDF from 'jspdf';
 
 import cs from '@utils/cs';
 import {formatDate} from '@utils/formatDate';
@@ -19,9 +24,14 @@ import {rootState} from '@store/rootReducer';
 import Button from '@components/Button';
 import {SurveyDataType} from '@components/SurveyTable';
 import {GET_SURVEY_DATA} from '@containers/Surveys';
+import Dropdown from '@components/Dropdown';
 
 import tree from '@images/category-tree.png';
 import marker from '@images/marker.png';
+
+import pdfIcon from '@images/icons/pdf.svg';
+import csvIcon from '@images/icons/csv.svg';
+import pngIcon from '@images/icons/image.svg';
 
 import {polygon, polygonTitle} from './layers';
 
@@ -86,9 +96,17 @@ const UPDATE_SURVEY_STATUS = gql`
   }
 `;
 
+const ExportOption = ({onClick, icon, title} : {onClick(): void, icon: string, title: string}) => (
+  <div className={classes.exportOption} onClick={onClick}>
+    <img src={icon} alt={title} />
+    <p className={classes.exportOptionTitle}>{title}</p>
+  </div>
+);
+
 const SurveyEntry: React.FC<Props> = ({data, setShowDetails}) => {
   const navigate = useNavigate();
   const mapRef = useRef<MapRef>(null);
+  const entryRef = useRef<any>();
   const [updateHappeningSurvey] = useMutation(UPDATE_SURVEY_STATUS, {
     refetchQueries: [GET_SURVEY_DATA, 'happeningSurveys'],
   });
@@ -197,14 +215,68 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails}) => {
     );
   }, [data.boundary?.coordinates, surveyPolyGeoJSON]);
 
+  const renderLabel = useCallback(
+    () => (
+      <div className={classes.exportButton}>
+        <span className='material-symbols-rounded'>ios_share</span>
+        <p className={classes.exportButtonTitle}>Export </p>
+      </div>
+    ),
+    [],
+  );
+
+  const onExportPDF = useCallback(async () => {
+    const element = entryRef.current;
+    await toCanvas(element).then((canvas) => {
+      const imgData = canvas.toDataURL('img/png');
+      // eslint-disable-next-line new-cap
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      pdf.addImage(imgData, 'JPEG', 0, 0, 210, 297);
+      pdf.save(`${new Date().toISOString()}.pdf`);
+    });
+  }, []);
+
+  const onExportImage = useCallback(async () => {
+    const element = entryRef.current;
+    await toCanvas(element).then((canvas) => {
+      const a = document.createElement('a');
+      a.href = canvas.toDataURL('img/png');
+      a.download = `${new Date().toISOString()}.png`;
+      a.click();
+    });
+  }, []);
+
+  const onExportCSV = useCallback(() => {
+    const dateVal = new Date().toISOString();
+    const zip = new JSZip();
+    const csv = parse(data);
+    zip.file(`${data?.title}-${dateVal}.csv`, csv);
+    zip.generateAsync({type: 'blob'}).then((content) => {
+      saveAs(content, `${data?.title}-${dateVal}.zip`);
+    });
+  }, [data]);
+
   return (
     <div>
       <div className={classes.detailsContainer}>
         <div className={classes.detailsModal}>
           <div className={classes.headerWrapper}>
-            <div className={classes.iconWrapper} onClick={hideDetails}>
-              <HiOutlineX size={14} />
+            <div className={classes.iconWrapper}>
+              <div className={classes.closeModalIcon} onClick={hideDetails}>
+                <HiOutlineX size={14} />
+              </div>
+              <div className={classes.exportDropdown}>
+                <Dropdown renderLabel={renderLabel}>
+                  <div className={classes.exportOptions}>
+                    <ExportOption icon={pdfIcon} title='PDF' onClick={onExportPDF} />
+                    <ExportOption icon={pngIcon} title='Image (PNG)' onClick={onExportImage} />
+                    <ExportOption icon={csvIcon} title='Data (CSV)' onClick={onExportCSV} />
+                  </div>
+                </Dropdown>
+              </div>
             </div>
+          </div>
+          <div ref={entryRef} className={classes.entryWrapper}>
             <div className={classes.header}>
               <h2 className={classes.headerTitle}>{data?.title}</h2>
               <p
@@ -218,78 +290,79 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails}) => {
                 {data.status}
               </p>
             </div>
-          </div>
-          <p className={classes.date}>{formatDate(data.createdAt)}</p>
-          <Title text='category' />
-          <div className={classes.categoryWrapper}>
-            <img
-              src={categoryIcon || tree}
-              alt='category'
-              className={classes.categoryImg}
-            />
-            <p className={classes.categoryTitle}>{data.category.title}</p>
-          </div>
-          <Title text='photos' />
-          <div className={classes.photosWrapper}>
-            {data.attachment.length
-              ? data.attachment.map((item: {media: string}) => (
-                <img
-                  key={item.media}
-                  src={item.media}
-                  alt=''
-                  className={classes.photo}
-                />
-              ))
-              : 'No Photos Found'}
-          </div>
-          <Title text='feels' />
-          <div>
-            <Feel sentiment={data.sentiment || '-'} />
-          </div>
-          <Title text='Improvement' />
-          <div className={classes.wrapper}>
-            <Improvement improvement={data.improvement} />
-          </div>
-          <Title text='Description' />
-          <div>
-            <p className={classes.info}>
-              {data.description || 'No Description Found'}
-            </p>
-          </div>
-          <Title text='Location' />
-          <div>
-            <p className={classes.info}>{locationName || ''}</p>
-          </div>
-          <div className={classes.mapWrapper}>
-            <Map
-              ref={mapRef}
-              initialViewState={{
-                longitude: data?.location?.coordinates[0] || 150,
-                latitude: data?.location?.coordinates[1] || -5,
-                zoom: 5,
-              }}
-              mapStyle='mapbox://styles/mapbox/outdoors-v11'
-              mapboxAccessToken={process.env.REACT_APP_MAPBOX_TOKEN}
-              onLoad={onMapLoad}
-            >
-              <Source
-                id='surveyPolySource'
-                type='geojson'
-                data={surveyPolyGeoJSON}
+            <p className={classes.date}>{formatDate(data.createdAt)}</p>
+            <Title text='category' />
+            <div className={classes.categoryWrapper}>
+              <img
+                src={categoryIcon || tree}
+                alt='category'
+                className={classes.categoryImg}
+              />
+              <p className={classes.categoryTitle}>{data.category.title}</p>
+            </div>
+            <Title text='photos' />
+            <div className={classes.photosWrapper}>
+              {data.attachment.length
+                ? data.attachment.map((item: {media: string}) => (
+                  <img
+                    key={item.media}
+                    src={item.media}
+                    alt=''
+                    className={classes.photo}
+                  />
+                ))
+                : 'No Photos Found'}
+            </div>
+            <Title text='feels' />
+            <div>
+              <Feel sentiment={data.sentiment || '-'} />
+            </div>
+            <Title text='Improvement' />
+            <div className={classes.wrapper}>
+              <Improvement improvement={data.improvement} />
+            </div>
+            <Title text='Description' />
+            <div>
+              <p className={classes.info}>
+                {data.description || 'No Description Found'}
+              </p>
+            </div>
+            <Title text='Location' />
+            <div>
+              <p className={classes.info}>{locationName || ''}</p>
+            </div>
+            <div className={classes.mapWrapper}>
+              <Map
+                ref={mapRef}
+                initialViewState={{
+                  longitude: data?.location?.coordinates[0] || 150,
+                  latitude: data?.location?.coordinates[1] || -5,
+                  zoom: 5,
+                }}
+                mapStyle='mapbox://styles/mapbox/outdoors-v11'
+                mapboxAccessToken={process.env.REACT_APP_MAPBOX_TOKEN}
+                onLoad={onMapLoad}
+                preserveDrawingBuffer={true}
               >
-                <Layer {...polygon} />
-                <Layer {...polygonTitle} />
-              </Source>
-              {data?.location?.coordinates
-                && (
-                  <Marker
-                    longitude={data?.location?.coordinates[0]}
-                    latitude={data?.location?.coordinates[1]}
-                  >
-                    <img src={marker} alt='marker' />
-                  </Marker>
-                )}
-            </Map>
+                <Source
+                  id='surveyPolySource'
+                  type='geojson'
+                  data={surveyPolyGeoJSON}
+                >
+                  <Layer {...polygon} />
+                  <Layer {...polygonTitle} />
+                </Source>
+                {data?.location?.coordinates
+                  && (
+                    <Marker
+                      longitude={data?.location?.coordinates[0]}
+                      latitude={data?.location?.coordinates[1]}
+                    >
+                      <img src={marker} alt='marker' />
+                    </Marker>
+                  )}
+              </Map>
+            </div>
           </div>
           <div className={cs(classes.buttons, ['hidden', !isStaff])}>
             <Button
