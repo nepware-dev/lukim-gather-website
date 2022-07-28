@@ -100,7 +100,7 @@ const FormValueRenderer = ({
         {Object.entries(value).map(([key, val]) => {
           if (key === 'location_gps') {
             const mapTitle = key?.replace(/_/g, ' ');
-            const mapValue = val.split(' ');
+            const mapValue = val ? val.split(' ') : null;
             return (
               <div className={classes.formItem}>
                 <span className={classes.formKey}>
