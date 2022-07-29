@@ -342,7 +342,7 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails}) => {
                 mapStyle='mapbox://styles/mapbox/outdoors-v11'
                 mapboxAccessToken={process.env.REACT_APP_MAPBOX_TOKEN}
                 onLoad={onMapLoad}
-                preserveDrawingBuffer={true}
+                preserveDrawingBuffer
               >
                 <Source
                   id='surveyPolySource'
