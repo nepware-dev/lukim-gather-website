@@ -5,6 +5,7 @@ import React, {
 } from 'react';
 import Map, {Source, Layer, Popup} from 'react-map-gl';
 import type {MapRef} from 'react-map-gl';
+import {Link} from 'react-router-dom';
 import {gql, useQuery} from '@apollo/client';
 
 import DashboardHeader from '@components/DashboardHeader';
@@ -199,6 +200,7 @@ const Dashboard = () => {
             type: 'Feature',
             properties: {
               customForm: {
+                id: survey.id,
                 title: survey.title,
                 formAnswers,
               },
@@ -296,6 +298,9 @@ const Dashboard = () => {
         <div>
           <h6 className='text-[14px] font-medium mb-[4]'>{item.title}</h6>
           {popUpData}
+          <div className='pt-[14px]'>
+            <Link className='cursor-pointer underline' to={`/custom-forms/${item.id}`}>View Details</Link>
+          </div>
         </div>,
       );
     }
@@ -322,6 +327,10 @@ const Dashboard = () => {
         Created At:
         {' '}
         {formatDate(item.createdAt)}
+        <br />
+        <div className='pt-[14px]'>
+          <Link className='cursor-pointer underline' to={`/surveys/${item.id}`}>View Details</Link>
+        </div>
       </div>,
     );
   }, []);
