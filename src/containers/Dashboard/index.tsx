@@ -450,7 +450,7 @@ const Dashboard = () => {
             polygon.id,
           ]}
           onLoad={onLoad}
-          preserveDrawingBuffer={true}
+          preserveDrawingBuffer
         >
           <Source
             id='surveyPolySource'
