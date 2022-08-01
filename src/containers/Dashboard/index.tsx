@@ -365,11 +365,14 @@ const Dashboard = () => {
 
   const onExportPDF = useCallback(async () => {
     const element = contentRef.current;
+    console.log(element.scrollHeight);
+    console.log(element.scrollWidth);
+    return;
     await toCanvas(element).then((canvas) => {
-      const imgData = canvas.toDataURL('img/png');
+      const imgData = canvas.toDataURL('img/png', {height: element.scrollHeight, width: element.scrollWidth});
       // eslint-disable-next-line new-cap
       const pdf = new jsPDF('p', 'mm', 'a4');
-      pdf.addImage(imgData, 'JPEG', 0, 0, 210, 135);
+      pdf.addImage(imgData, 'PNG', 0, 0, 210, 135);
       pdf.save(`${new Date().toISOString()}.pdf`);
     });
   }, []);
@@ -378,7 +381,7 @@ const Dashboard = () => {
     const element = contentRef.current;
     await toCanvas(element).then((canvas) => {
       const a = document.createElement('a');
-      a.href = canvas.toDataURL('img/png');
+      a.href = canvas.toDataURL('img/png', {height: element.scrollHeight, width: element.scrollWidth});
       a.download = `${new Date().toISOString()}.png`;
       a.click();
     });

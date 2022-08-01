@@ -22,7 +22,7 @@ export default {
   photosWrapper: 'flex gap-[12px] overflow-x-auto max-w-[calc(100vw-40px)]',
   photo: 'h-[143px] w-[187px] rounded-lg',
   info: 'font-inter text-[16px] text-[#282F3E] leading-[24px]',
-  mapWrapper: 'h-[229px] mt-[8px] mb-[52px] rounded-lg',
+  mapWrapper: 'h-[229px] mt-[8px] mb-[32px] rounded-lg',
   buttons: 'flex justify-between gap-[16px] mb-[52px] px-[18px]',
   acceptBtn: 'w-[100%]',
   declineBtn: 'w-[100%] bg-[#E7E8EA]',
@@ -46,5 +46,5 @@ export default {
   exportOptions: 'cursor-pointer ml-[-90px] w-[190px] shadow-[0_5px_40px_0_rgba(0,0,0,0.16)] z-10 px-[11px] py-[13px] rounded-lg bg-[#fff]',
   exportOption: 'text-[#282F3E] px-[13px] py-[11px] hover:bg-[#F0F3F6] flex items-center rounded-lg',
   exportOptionTitle: 'text-[16px] ml-[12px] font-inter',
-  entryWrapper: 'bg-[#fff] px-[18px]',
+  entryWrapper: 'bg-[#fff] px-[18px] py-[20px]',
 };

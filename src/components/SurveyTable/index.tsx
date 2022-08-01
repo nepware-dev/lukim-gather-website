@@ -22,6 +22,8 @@ export type SurveyDataType = {
   status: string;
   boundary: {coordinates: [[[number, number][]]]} | null;
   improvement: string | null;
+  region: {id: number};
+  createdBy: {id: number};
 };
 
 interface Props {
