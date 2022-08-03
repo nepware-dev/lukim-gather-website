@@ -11,8 +11,6 @@ import {
   HiOutlineX, HiTrendingDown, HiTrendingUp, HiMenuAlt4,
 } from 'react-icons/hi';
 import {parse} from 'json2csv';
-import JSZip from 'jszip';
-import {saveAs} from 'file-saver';
 import {toCanvas} from 'html-to-image';
 import jsPDF from 'jspdf';
 
@@ -107,6 +105,7 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails}) => {
   const navigate = useNavigate();
   const mapRef = useRef<MapRef>(null);
   const entryRef = useRef<any>();
+  const currentDate = new Date().toISOString();
   const [updateHappeningSurvey] = useMutation(UPDATE_SURVEY_STATUS, {
     refetchQueries: [GET_SURVEY_DATA, 'happeningSurveys'],
   });
@@ -228,33 +227,48 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails}) => {
   const onExportPDF = useCallback(async () => {
     const element = entryRef.current;
     await toCanvas(element).then((canvas) => {
-      const imgData = canvas.toDataURL('img/png');
+      const imgData = canvas.toDataURL('img/png', {height: element.scrollHeight, width: element.scrollWidth});
       // eslint-disable-next-line new-cap
       const pdf = new jsPDF('p', 'mm', 'a4');
-      pdf.addImage(imgData, 'JPEG', 0, 0, 210, 297);
-      pdf.save(`${new Date().toISOString()}.pdf`);
+      const width = pdf.internal.pageSize.getWidth();
+      const height = pdf.internal.pageSize.getHeight();
+      pdf.addImage(imgData, 'PNG', 0, 0, width, height);
+      pdf.save(`${data?.title}-${currentDate}.pdf`);
     });
-  }, []);
+  }, [data, currentDate]);
 
   const onExportImage = useCallback(async () => {
     const element = entryRef.current;
     await toCanvas(element).then((canvas) => {
       const a = document.createElement('a');
-      a.href = canvas.toDataURL('img/png');
-      a.download = `${new Date().toISOString()}.png`;
+      a.href = canvas.toDataURL('img/png', {height: element.scrollHeight, width: element.scrollWidth});
+      a.download = `${data?.title}-${currentDate}.png`;
       a.click();
     });
-  }, []);
+  }, [data, currentDate]);
 
   const onExportCSV = useCallback(() => {
-    const dateVal = new Date().toISOString();
-    const zip = new JSZip();
-    const csv = parse(data);
-    zip.file(`${data?.title}-${dateVal}.csv`, csv);
-    zip.generateAsync({type: 'blob'}).then((content) => {
-      saveAs(content, `${data?.title}-${dateVal}.zip`);
-    });
-  }, [data]);
+    const csvData = {
+      ID: data.id,
+      Title: data?.title,
+      Description: data?.description,
+      Category: data?.category?.title,
+      Location: data?.location?.coordinates,
+      Boundary: data?.boundary?.coordinates,
+      Region: data?.region?.id,
+      Improvement: data?.improvement,
+      Sentiment: data?.sentiment,
+      'Created By': data?.createdBy?.id,
+      'Created At': formatDate(data?.createdAt),
+      Status: data?.status,
+    };
+    const csv = parse(csvData);
+    const url = window.URL.createObjectURL(new Blob([csv]));
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${data?.title}-${currentDate}.csv`;
+    a.click();
+  }, [data, currentDate]);
 
   return (
     <div>
