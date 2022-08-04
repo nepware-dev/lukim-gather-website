@@ -57,6 +57,14 @@
         line-height: 1.5;
         transition: 0.3s;
         color: var(--color-text-dark-alt);
+        overflow-x: auto;
+
+        table, th, td {
+          border: 1px solid #f4f4f4;
+        }
+        th, td {
+          padding: 0.5em;
+        }
       }
     }
   }

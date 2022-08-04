@@ -1,5 +1,6 @@
 import React, {useState, useRef} from 'react';
 import {FiChevronRight} from 'react-icons/fi';
+import parse from 'html-react-parser';
 
 import './styles.scss';
 
@@ -31,7 +32,7 @@ const FaqAccordion = ({question, answer}: {question: string, answer: string}) =>
           <div
             className='accordion-text font-inter'
           >
-            <div>{answer}</div>
+            {parse(answer)}
           </div>
         </div>
       </div>

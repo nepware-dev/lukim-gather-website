@@ -365,9 +365,6 @@ const Dashboard = () => {
 
   const onExportPDF = useCallback(async () => {
     const element = contentRef.current;
-    console.log(element.scrollHeight);
-    console.log(element.scrollWidth);
-    return;
     await toCanvas(element).then((canvas) => {
       const imgData = canvas.toDataURL('img/png', {height: element.scrollHeight, width: element.scrollWidth});
       // eslint-disable-next-line new-cap
