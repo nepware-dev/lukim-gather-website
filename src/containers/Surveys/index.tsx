@@ -57,6 +57,9 @@ export const GET_SURVEY_DATA = gql`
       region {
         id
       }
+      protectedArea {
+        id
+      }
       improvement
       sentiment
       status
@@ -92,6 +95,9 @@ export const GET_SURVEY = gql`
       region {
         id
       }
+      protectedArea {
+        id
+      }
       improvement
       sentiment
       status
@@ -121,6 +127,15 @@ export const GET_REGION_DATA = gql`
   }
 `;
 
+export const GET_PROTECTED_AREA_DATA = gql`
+  query {
+    protectedAreas(parent: 1, ordering: "id") {
+      id
+      name
+    }
+  }
+`;
+
 export type OptionDataType = {
     id: number,
     title: string
@@ -134,6 +149,10 @@ export type SelectInputDataType = {
   region?: {
     id: number,
     title: string
+  } | null,
+  protectedArea?: {
+    id: number,
+    title: string,
   } | null,
   status?: {
     id: number,
@@ -180,6 +199,7 @@ const Surveys = () => {
   const {data} = useQuery(GET_SURVEY_DATA);
   const {data: category} = useQuery(GET_CATEGORY_DATA);
   const {data: regions} = useQuery(GET_REGION_DATA);
+  const {data: protectedAreas} = useQuery(GET_PROTECTED_AREA_DATA);
   const [status, setStatus] = useState<string>('All');
   const [surveyData, setSurveyData] = useState<SurveyDataType[]>([]);
   const [activePage, setActivePage] = useState<number>(1);
@@ -192,10 +212,11 @@ const Surveys = () => {
   const [maxDate, setMaxDate] = useState<Date>();
   const [minDate, setMinDate] = useState<Date>();
   const [startDate, endDate] = dateRange;
-  const [selectInputData, setSelectInputData] = useState< SelectInputDataType| null>({
+  const [selectInputData, setSelectInputData] = useState<SelectInputDataType| null>({
     category: null,
     region: null,
     status: null,
+    protectedArea: null,
   });
   const [toggleFilter, setToggleFilter] = useState<boolean>(false);
 
@@ -243,6 +264,7 @@ const Surveys = () => {
     const filterData = data.happeningSurveys.filter((item: {createdAt: string,
               category: OptionDataType,
               region: OptionDataType,
+              protectedArea: OptionDataType,
               status: string,
               createdBy: {id: string}
               }) => {
@@ -253,6 +275,10 @@ const Surveys = () => {
         return false;
       }
       if (selectInputData?.status && (item.status !== selectInputData.status.title)) {
+        return false;
+      }
+      if (selectInputData?.protectedArea
+          && (item.protectedArea?.id !== selectInputData.protectedArea.id)) {
         return false;
       }
       if (status === 'My Entries' && (item.createdBy.id !== userId)) {
@@ -373,11 +399,24 @@ const Surveys = () => {
     setActivePage(1);
   }, [selectInputData]);
 
+  const handleProtectedAreaChange = useCallback(({option}) => {
+    setSelectInputData({...selectInputData, protectedArea: option});
+    setActivePage(1);
+  }, [selectInputData]);
+
   const handleToggle = useCallback(() => {
     setToggleFilter(!toggleFilter);
   }, [toggleFilter]);
 
   const regionOptions = regions?.regions.map(({
+    name: title,
+    ...item
+  }: {name: string}) => ({
+    title,
+    ...item,
+  }));
+
+  const protectedAreaOptions = protectedAreas?.protectedAreas.map(({
     name: title,
     ...item
   }: {name: string}) => ({
@@ -501,6 +540,15 @@ const Surveys = () => {
                 options={category?.protectedAreaCategories}
                 placeholder='Category'
                 onChange={handleCategoryChange}
+              />
+              <SelectInput
+                className={classes.selectInput}
+                defaultValue={selectInputData?.protectedArea}
+                valueExtractor={titleExtractor}
+                keyExtractor={keyExtractor}
+                options={protectedAreaOptions}
+                placeholder='Protected Area'
+                onChange={handleProtectedAreaChange}
               />
             </div>
             <span className={classes.clear} onClick={handleClearClick}>
