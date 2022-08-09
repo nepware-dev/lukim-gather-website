@@ -14,7 +14,9 @@ import Dropdown from '@components/Dropdown';
 
 import SelectInput from '@ra/components/Form/SelectInput'; // eslint-disable-line no-eval
 
-import {GET_SURVEY_DATA as GET_HAPPENING_SURVEY_DATA} from '@containers/Surveys';
+import {
+  GET_SURVEY_DATA as GET_HAPPENING_SURVEY_DATA, GET_CATEGORY_DATA, GET_REGION_DATA, GET_PROTECTED_AREA_DATA,
+} from '@containers/Surveys';
 import {GET_SURVEY_DATA} from '@containers/CustomForms';
 
 import {Parser} from 'json2csv';
@@ -22,7 +24,6 @@ import JSZip from 'jszip';
 import {saveAs} from 'file-saver';
 import {toCanvas} from 'html-to-image';
 import jsPDF from 'jspdf';
-
 
 import cs from '@utils/cs';
 import {formatDate} from '@utils/formatDate';
@@ -77,24 +78,6 @@ export type SelectInputType = {
 const titleExtractor = (item: SelectInputType) => item?.title;
 const keyExtractor = (item: SelectInputType) => item?.id;
 
-export const GET_CATEGORY_DATA = gql`
-  query {
-    protectedAreaCategories (ordering: "id") {
-      id
-      title
-    }
-  }
-`;
-
-export const GET_REGION_DATA = gql`
-  query {
-    regions (parent: 1) {
-      id
-      name
-    }
-  }
-`;
-
 const headers = [
   {label: 'UUID', value: 'id'},
   {label: 'Category', value: 'category.title'},
@@ -123,26 +106,31 @@ const happeningSurveyBoundaryParser = new Parser({
 const customSurveyParser = new Parser();
 
 const Dashboard = () => {
-  const contentRef =  useRef<any>();
+  const contentRef = useRef<any>();
   const mapRef = useRef<MapRef>(null);
   const [popup, setPopUp] = React.useState(null);
   const [filteredData, setFilteredData] = React.useState([]);
   const [popupLngLat, setPopUpLngLat] = React.useState<any>(null);
   const [selectInputCategory, setSelectInputCategory] = useState<SelectInputType | null>(null);
   const [selectInputRegion, setSelectInputRegion] = useState<SelectInputType | null>(null);
+  const [selectInputProtectedArea, setSelectInputProtectedArea] = useState<SelectInputType | null>(null);
   const {data} = useQuery(GET_HAPPENING_SURVEY_DATA);
   const {data: customSurveyData} = useQuery(GET_SURVEY_DATA);
   const {data: category} = useQuery(GET_CATEGORY_DATA);
   const {data: regions} = useQuery(GET_REGION_DATA);
+  const {data: protected_areas} = useQuery(GET_PROTECTED_AREA_DATA);
 
   useEffect(() => {
     if (!data) return;
     const _filteredData = data.happeningSurveys?.filter(
-      (item: {createdAt: string, category: SelectInputType, region: SelectInputType}) => {
+      (item: {createdAt: string, category: SelectInputType, region: SelectInputType, protectedArea: SelectInputType}) => {
         if (selectInputCategory && (item.category.id !== selectInputCategory.id)) {
           return false;
         }
         if (selectInputRegion && (item.region?.id !== selectInputRegion.id)) {
+          return false;
+        }
+        if (selectInputProtectedArea && (item.protectedArea?.id !== selectInputProtectedArea.id)) {
           return false;
         }
         return true;
@@ -150,7 +138,7 @@ const Dashboard = () => {
     ) || [];
 
     setFilteredData(_filteredData);
-  }, [data, selectInputCategory, selectInputRegion]);
+  }, [data, selectInputCategory, selectInputRegion, selectInputProtectedArea]);
 
   const handleCategoryChange = useCallback(({option}) => {
     setSelectInputCategory(option);
@@ -158,6 +146,10 @@ const Dashboard = () => {
 
   const handleRegionChange = useCallback(({option}) => {
     setSelectInputRegion(option);
+  }, []);
+
+  const handleProtectedAreaChange = useCallback(({option}) => {
+    setSelectInputProtectedArea(option);
   }, []);
 
   const surveyGeoJSON: any = useMemo(() => {
@@ -184,7 +176,7 @@ const Dashboard = () => {
     if (customSurveyData?.survey?.length > 0) {
       shape = customSurveyData?.survey.reduce((features, survey) => {
         const formAnswers = JSON.parse(survey.answer);
-        if (selectInputCategory) {
+        if (selectInputCategory || selectInputProtectedArea) {
           return features;
         }
         if (selectInputRegion) {
@@ -219,7 +211,7 @@ const Dashboard = () => {
       type: 'FeatureCollection',
       features: [...shape],
     };
-  }, [customSurveyData, selectInputRegion, selectInputCategory]);
+  }, [customSurveyData, selectInputRegion, selectInputCategory, selectInputProtectedArea]);
 
   const flatCustomForms = useMemo(() => customFormGeoJSON.features.map(
     (feat) => flattenObject(feat.properties.customForm.formAnswers?.data),
@@ -395,6 +387,17 @@ const Dashboard = () => {
     , [regions],
   );
 
+  const protectedAreasOptions = useMemo(
+    () => protected_areas?.protectedAreas.map(({
+      name: title,
+      ...item
+    }: {name: string}) => ({
+      title,
+      ...item,
+    }))
+    , [protected_areas],
+  );
+
   const renderLabel = useCallback(
     () => (
       <div className={classes.exportButton}>
@@ -427,17 +430,25 @@ const Dashboard = () => {
             placeholder='Category'
             onChange={handleCategoryChange}
           />
+          <SelectInput
+            className={cs('h-[44px]', 'min-w-[12em] w-max', 'rounded-lg', 'border-[#CCDCE8]')}
+            valueExtractor={titleExtractor}
+            keyExtractor={keyExtractor}
+            options={protectedAreasOptions}
+            placeholder='Protected Areas'
+            onChange={handleProtectedAreaChange}
+          />
         </div>
         {filteredData && (
           <div className={classes.exportDropdown}>
-          <Dropdown renderLabel={renderLabel}>
-            <div className={classes.exportOptions}>
-              <ExportOption icon={pdfIcon} title='PDF' onClick={onExportPDF} />
-              <ExportOption icon={pngIcon} title='Image (PNG)' onClick={onExportImage} />
-              <ExportOption icon={csvIcon} title='Data (CSV)' onClick={onExportCSV} />
-            </div>
-          </Dropdown>
-        </div>
+            <Dropdown renderLabel={renderLabel}>
+              <div className={classes.exportOptions}>
+                <ExportOption icon={pdfIcon} title='PDF' onClick={onExportPDF} />
+                <ExportOption icon={pngIcon} title='Image (PNG)' onClick={onExportImage} />
+                <ExportOption icon={csvIcon} title='Data (CSV)' onClick={onExportCSV} />
+              </div>
+            </Dropdown>
+          </div>
         )}
       </div>
       <div className={classes.mapWrapper} ref={contentRef}>
