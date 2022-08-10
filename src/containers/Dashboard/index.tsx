@@ -1,12 +1,12 @@
 // @ts-nocheck
 // @ts-ignore
 import React, {
-  useCallback, useEffect, useState, useMemo, useRef,
+  useCallback, useEffect, useState, useMemo, useRef, ReactElement,
 } from 'react';
 import Map, {Source, Layer, Popup} from 'react-map-gl';
 import type {MapRef} from 'react-map-gl';
 import {Link} from 'react-router-dom';
-import {gql, useQuery} from '@apollo/client';
+import {useQuery} from '@apollo/client';
 
 import DashboardHeader from '@components/DashboardHeader';
 import DashboardLayout from '@components/DashboardLayout';
@@ -15,15 +15,21 @@ import Dropdown from '@components/Dropdown';
 import SelectInput from '@ra/components/Form/SelectInput'; // eslint-disable-line no-eval
 
 import {
-  GET_SURVEY_DATA as GET_HAPPENING_SURVEY_DATA, GET_CATEGORY_DATA, GET_REGION_DATA, GET_PROTECTED_AREA_DATA,
+  GET_SURVEY_DATA as GET_HAPPENING_SURVEY_DATA,
+  GET_CATEGORY_DATA,
+  GET_REGION_DATA,
+  GET_PROTECTED_AREA_DATA,
 } from '@containers/Surveys';
 import {GET_SURVEY_DATA} from '@containers/CustomForms';
 
+import {formatISO} from 'date-fns';
 import {Parser} from 'json2csv';
 import JSZip from 'jszip';
 import {saveAs} from 'file-saver';
 import {toCanvas} from 'html-to-image';
 import jsPDF from 'jspdf';
+
+import {SurveyDataType} from '@components/SurveyTable';
 
 import cs from '@utils/cs';
 import {formatDate} from '@utils/formatDate';
@@ -33,6 +39,7 @@ import pdfIcon from '@images/icons/pdf.svg';
 import csvIcon from '@images/icons/csv.svg';
 import pngIcon from '@images/icons/image.svg';
 
+import mapboxgl from 'mapbox-gl';
 import {
   clusterLayer,
   clusterCountLayer,
@@ -46,6 +53,11 @@ import {
 } from './layers';
 import surveyCategory from '../../data/surveyCategory';
 import classes from './styles';
+
+export type CoordinateType = {
+  lng: number;
+  lat: number;
+};
 
 const ExportOption = ({onClick, icon, title} : {onClick(): void, icon: string, title: string}) => (
   <div className={classes.exportOption} onClick={onClick}>
@@ -106,24 +118,35 @@ const happeningSurveyBoundaryParser = new Parser({
 const customSurveyParser = new Parser();
 
 const Dashboard = () => {
-  const contentRef = useRef<any>();
-  const mapRef = useRef<MapRef>(null);
-  const [popup, setPopUp] = React.useState(null);
-  const [filteredData, setFilteredData] = React.useState([]);
-  const [popupLngLat, setPopUpLngLat] = React.useState<any>(null);
+  const contentRef = useRef();
+  const mapRef = useRef<MapRef | null>(null);
+  const [popup, setPopUp] = useState<ReactElement | null>(null);
+  const [filteredData, setFilteredData] = useState([]);
+  const [popupLngLat, setPopUpLngLat] = useState<CoordinateType | null>(null);
   const [selectInputCategory, setSelectInputCategory] = useState<SelectInputType | null>(null);
   const [selectInputRegion, setSelectInputRegion] = useState<SelectInputType | null>(null);
-  const [selectInputProtectedArea, setSelectInputProtectedArea] = useState<SelectInputType | null>(null);
+  const [
+    selectInputProtectedArea,
+    setSelectInputProtectedArea,
+  ] = useState<SelectInputType | null>(null);
   const {data} = useQuery(GET_HAPPENING_SURVEY_DATA);
   const {data: customSurveyData} = useQuery(GET_SURVEY_DATA);
   const {data: category} = useQuery(GET_CATEGORY_DATA);
   const {data: regions} = useQuery(GET_REGION_DATA);
-  const {data: protected_areas} = useQuery(GET_PROTECTED_AREA_DATA);
+  const {data: protectedAreas} = useQuery(GET_PROTECTED_AREA_DATA);
+
+  const currentDate = formatISO(new Date(), {format: 'basic'}).replace(/\+|:/g, '');
 
   useEffect(() => {
     if (!data) return;
+    // eslint-disable-next-line no-underscore-dangle
     const _filteredData = data.happeningSurveys?.filter(
-      (item: {createdAt: string, category: SelectInputType, region: SelectInputType, protectedArea: SelectInputType}) => {
+      (item: {
+              createdAt: string,
+              category: SelectInputType,
+              region: SelectInputType,
+              protectedArea: SelectInputType
+            }) => {
         if (selectInputCategory && (item.category.id !== selectInputCategory.id)) {
           return false;
         }
@@ -152,17 +175,17 @@ const Dashboard = () => {
     setSelectInputProtectedArea(option);
   }, []);
 
-  const surveyGeoJSON: any = useMemo(() => {
+  const surveyGeoJSON = useMemo(() => {
     const shape = filteredData
-      .filter((survey) => survey.location)
-      .map((survey) => ({
+      .filter((survey: SurveyDataType) => survey?.location)
+      .map((survey: SurveyDataType) => ({
         type: 'Feature',
         properties: {
           surveyItem: survey,
         },
         geometry: {
-          type: survey.location.type,
-          coordinates: survey.location.coordinates,
+          type: survey?.location?.type,
+          coordinates: survey?.location?.coordinates,
         },
       })) || [];
     return {
@@ -214,20 +237,20 @@ const Dashboard = () => {
   }, [customSurveyData, selectInputRegion, selectInputCategory, selectInputProtectedArea]);
 
   const flatCustomForms = useMemo(() => customFormGeoJSON.features.map(
-    (feat) => flattenObject(feat.properties.customForm.formAnswers?.data),
+    ({properties: {customForm: {formAnswers: {data}}}}) => flattenObject(data),
   ), [customFormGeoJSON]);
 
-  const surveyPolyGeoJSON: any = useMemo(() => {
+  const surveyPolyGeoJSON = useMemo(() => {
     const shapePoly = filteredData
-      .filter((survey) => survey.boundary)
-      .map((survey) => ({
+      .filter((survey: SurveyDataType) => survey.boundary)
+      .map((survey: SurveyDataType) => ({
         type: 'Feature',
         properties: {
           surveyItem: survey,
         },
         geometry: {
-          type: survey.boundary.type,
-          coordinates: survey.boundary.coordinates,
+          type: survey?.boundary?.type,
+          coordinates: survey?.boundary?.coordinates,
         },
       })) || [];
     return {
@@ -241,21 +264,21 @@ const Dashboard = () => {
       (feat) => feat.layer.id === 'clusters' || feat.layer.id === 'clusters-form',
     );
     if (cluster) {
-      const features = mapRef.current.queryRenderedFeatures(event.point, {
+      const features = mapRef?.current?.queryRenderedFeatures(event.point, {
         layers: [cluster.layer.id],
       });
       const clusterId = cluster.properties.cluster_id;
-      return mapRef.current
-        .getSource(cluster.source)
-        .getClusterExpansionZoom(clusterId, (err, zoom) => {
-          if (err) return;
+      const source: mapboxgl.GeoJSONSource = mapRef?.current
+        ?.getSource(cluster.source) as mapboxgl.GeoJSONSource;
+      return source?.getClusterExpansionZoom(clusterId, (err, zoom) => {
+        if (err) return;
 
-          mapRef.current.easeTo({
-            center: features[0].geometry.coordinates,
-            zoom,
-            duration: 1500,
-          });
+        mapRef?.current?.easeTo({
+          center: features ? features[0]?.geometry?.coordinates : [],
+          zoom,
+          duration: 1500,
         });
+      });
     }
     let item;
     if (
@@ -298,7 +321,7 @@ const Dashboard = () => {
     }
 
     setPopUpLngLat(event.lngLat);
-    setPopUp(
+    return setPopUp(
       <div>
         Category:
         {' '}
@@ -329,31 +352,30 @@ const Dashboard = () => {
 
   const onLoad = useCallback(() => {
     surveyCategory.filter((cat) => cat.childs.filter(
-      (categoryIcon) => mapRef.current.loadImage(categoryIcon.icon, (error, res) => {
-        mapRef.current.addImage(categoryIcon.id, res);
+      (categoryIcon) => mapRef?.current?.loadImage(categoryIcon.icon, (error, res) => {
+        mapRef?.current?.addImage(categoryIcon?.id.toString(), res);
       }),
     ));
   }, []);
 
   const onExportCSV = useCallback(() => {
-    const dateVal = new Date().toISOString();
     const happeningSurveyLocationCSV = happeningSurveyLocationParser.parse(
-      filteredData.filter((data) => data.location !== null),
+      filteredData.filter((locationData: SurveyDataType) => locationData?.location !== null),
     );
     const happeningSurveyBoundaryCSV = happeningSurveyBoundaryParser.parse(
-      filteredData.filter((data) => data.boundary !== null),
+      filteredData.filter((boundaryData: SurveyDataType) => boundaryData?.boundary !== null),
     );
     const zip = new JSZip();
-    zip.file(`Happening_survey_report_location_${dateVal}.csv`, happeningSurveyLocationCSV);
-    zip.file(`Happening_survey_report_boundary_${dateVal}.csv`, happeningSurveyBoundaryCSV);
+    zip.file(`Happening_survey_report_location_${currentDate}.csv`, happeningSurveyLocationCSV);
+    zip.file(`Happening_survey_report_boundary_${currentDate}.csv`, happeningSurveyBoundaryCSV);
     if (flatCustomForms?.length > 0) {
       const customFormCSV = customSurveyParser.parse(flatCustomForms);
-      zip.file(`Custom_survey_report_${dateVal}.csv`, customFormCSV);
+      zip.file(`Custom_survey_report_${currentDate}.csv`, customFormCSV);
     }
     zip.generateAsync({type: 'blob'}).then((content) => {
-      saveAs(content, `Survey_report_${dateVal}.zip`);
+      saveAs(content, `Survey_report_${currentDate}.zip`);
     });
-  }, [filteredData, flatCustomForms]);
+  }, [currentDate, filteredData, flatCustomForms]);
 
   const onExportPDF = useCallback(async () => {
     const element = contentRef.current;
@@ -362,19 +384,19 @@ const Dashboard = () => {
       // eslint-disable-next-line new-cap
       const pdf = new jsPDF('p', 'mm', 'a4');
       pdf.addImage(imgData, 'PNG', 0, 0, 210, 135);
-      pdf.save(`${new Date().toISOString()}.pdf`);
+      pdf.save(`Survey_report_${currentDate}.pdf`);
     });
-  }, []);
+  }, [currentDate]);
 
   const onExportImage = useCallback(async () => {
     const element = contentRef.current;
     await toCanvas(element).then((canvas) => {
       const a = document.createElement('a');
       a.href = canvas.toDataURL('img/png', {height: element.scrollHeight, width: element.scrollWidth});
-      a.download = `${new Date().toISOString()}.png`;
+      a.download = `Survey_report_${currentDate}.png`;
       a.click();
     });
-  }, []);
+  }, [currentDate]);
 
   const regionOptions = useMemo(
     () => regions?.regions.map(({
@@ -388,14 +410,14 @@ const Dashboard = () => {
   );
 
   const protectedAreasOptions = useMemo(
-    () => protected_areas?.protectedAreas.map(({
+    () => protectedAreas?.protectedAreas.map(({
       name: title,
       ...item
     }: {name: string}) => ({
       title,
       ...item,
     }))
-    , [protected_areas],
+    , [protectedAreas],
   );
 
   const renderLabel = useCallback(
@@ -500,8 +522,8 @@ const Dashboard = () => {
           </Source>
           {popup && (
             <Popup
-              longitude={popupLngLat.lng}
-              latitude={popupLngLat.lat}
+              longitude={popupLngLat!.lng}
+              latitude={popupLngLat!.lat}
               anchor='bottom'
               onClose={() => setPopUp(null)}
             >

@@ -11,6 +11,7 @@ import {gql, useQuery} from '@apollo/client';
 import {BsCalendar4Event, BsArrowUpRight} from 'react-icons/bs';
 import {RiArrowDownSLine} from 'react-icons/ri';
 
+import {formatISO} from 'date-fns';
 import {Parser} from 'json2csv';
 import JSZip from 'jszip';
 import {saveAs} from 'file-saver';
@@ -425,7 +426,7 @@ const Surveys = () => {
   }));
 
   const handleCSVClick = useCallback(() => {
-    const dateVal = new Date().toISOString();
+    const dateVal = formatISO(new Date(), {format: 'basic'}).replace(/\+|:/g, '');
     const happeningSurveyLocationCSV = happeningSurveyLocationParser.parse(
       surveyData.filter((surveyLocation) => surveyLocation.location !== null),
     );
