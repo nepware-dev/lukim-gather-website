@@ -78,7 +78,7 @@ const Navbar: React.FC<Props> = ({hideButton = false}) => {
       >
         <NavItem
           to='/resource'
-          title='Resource'
+          title='Resources'
         />
         <NavItem
           to='/faq'

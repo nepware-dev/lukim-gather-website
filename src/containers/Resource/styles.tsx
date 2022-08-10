@@ -7,5 +7,5 @@ export default {
   card: 'shadow-[0px_2px_4px_rgba(0,0,0,0.18)] px-6 py-10 w-[97%] sm:w-[47%] md:w-[30.33%]  m-[1.5%] bg-color-white rounded-xl flex flex-col justify-between',
   cardTitle: 'text-xl font-interSemibold text-color-blue',
   cardDescription: 'mt-3 font-inter text-sm',
-  cardButton: 'rounded-lg font-interMedium px-8 py-2 border border-[#EC6D25] text-[#EC6D25] hover:text-color-white hover:bg-[#EC6D25]',
+  cardButton: 'cursor-pointer rounded-lg font-interMedium px-8 py-2 border border-[#EC6D25] text-[#EC6D25] hover:text-color-white hover:bg-[#EC6D25] w-fit',
 };

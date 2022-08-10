@@ -5,6 +5,7 @@ import parse from 'html-react-parser';
 
 import List from '@ra/components/List';
 import Layout from '@components/Layout';
+import VideoModal from '@components/VideoModal';
 
 import classes from './styles';
 
@@ -24,9 +25,11 @@ const GET_RESOURCE = gql`
 `;
 
 const Resource = () => {
-  const ref = useRef();
+  const ref = useRef<any>();
   const {data} = useQuery(GET_RESOURCE);
   const [searchedData, setSearchedData] = useState();
+  const [openVideoModal, setOpenVideoModal] = useState(false);
+  const [videoData, setVideoData] = useState({title: '', videoUrl: ''});
 
   const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     // eslint-disable-next-line max-len
@@ -36,6 +39,8 @@ const Resource = () => {
       .includes(e.target.value.toLowerCase()));
     setSearchedData(filteredData);
   }, [data?.resource]);
+
+  const toggleVideoModal = useCallback(() => setOpenVideoModal(!openVideoModal), [openVideoModal]);
 
   const renderItems = useCallback(
     ({item}) => (
@@ -50,11 +55,21 @@ const Resource = () => {
           {item?.attachment ? (
             <a href={item.attachment} className={classes.cardButton} target='_blank' rel='noreferrer' download>Download</a>
           )
-            : <a href={item.videoUrl} className={classes.cardButton} target='_blank' rel='noreferrer'>Watch Video</a>}
+            : (
+              <div
+                onClick={() => {
+                  toggleVideoModal();
+                  setVideoData(item);
+                }}
+                className={classes.cardButton}
+              >
+                Watch Video
+              </div>
+            )}
         </div>
       </div>
     ),
-    [],
+    [toggleVideoModal],
   );
 
   const Props = {
@@ -64,23 +79,30 @@ const Resource = () => {
     keyExtractor,
   };
   return (
-    <Layout>
-      <section className={classes.content}>
-        <div>
-          <h2 className={classes.backgroundTitle}>
-            Resource
-          </h2>
-          <input className={classes.input} onChange={handleSearchChange} placeholder='Search ...' />
-        </div>
-        <div className={classes.bgContentWrapper}>
-          <List
-            {...Props}
-            ref={ref}
-          />
-        </div>
-      </section>
-    </Layout>
-
+    <>
+      <Layout>
+        <section className={classes.content}>
+          <div>
+            <h2 className={classes.backgroundTitle}>
+              Resources
+            </h2>
+            <input className={classes.input} onChange={handleSearchChange} placeholder='Search ...' />
+          </div>
+          <div className={classes.bgContentWrapper}>
+            <List
+              {...Props}
+              ref={ref}
+            />
+          </div>
+        </section>
+      </Layout>
+      <VideoModal
+        isVisible={openVideoModal}
+        title={videoData?.title}
+        videoUrl={videoData?.videoUrl}
+        toggleModal={toggleVideoModal}
+      />
+    </>
   );
 };
 
