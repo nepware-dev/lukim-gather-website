@@ -270,6 +270,39 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails}) => {
     a.click();
   }, [data, currentDate]);
 
+  const RenderMap = useCallback(() => (
+    <Map
+      ref={mapRef}
+      initialViewState={{
+        longitude: data?.location?.coordinates[0] || 150,
+        latitude: data?.location?.coordinates[1] || -5,
+        zoom: 5,
+      }}
+      mapStyle='mapbox://styles/mapbox/outdoors-v11'
+      mapboxAccessToken={process.env.REACT_APP_MAPBOX_TOKEN}
+      onLoad={onMapLoad}
+      preserveDrawingBuffer
+    >
+      <Source
+        id='surveyPolySource'
+        type='geojson'
+        data={surveyPolyGeoJSON}
+      >
+        <Layer {...polygon} />
+        <Layer {...polygonTitle} />
+      </Source>
+      {data?.location?.coordinates
+                  && (
+                    <Marker
+                      longitude={data?.location?.coordinates[0]}
+                      latitude={data?.location?.coordinates[1]}
+                    >
+                      <img src={marker} alt='marker' />
+                    </Marker>
+                  )}
+    </Map>
+  ), [data.location?.coordinates, onMapLoad, surveyPolyGeoJSON]);
+
   return (
     <div>
       <div className={classes.detailsContainer}>
@@ -346,36 +379,7 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails}) => {
               <p className={classes.info}>{locationName || ''}</p>
             </div>
             <div className={classes.mapWrapper}>
-              <Map
-                ref={mapRef}
-                initialViewState={{
-                  longitude: data?.location?.coordinates[0] || 150,
-                  latitude: data?.location?.coordinates[1] || -5,
-                  zoom: 5,
-                }}
-                mapStyle='mapbox://styles/mapbox/outdoors-v11'
-                mapboxAccessToken={process.env.REACT_APP_MAPBOX_TOKEN}
-                onLoad={onMapLoad}
-                preserveDrawingBuffer
-              >
-                <Source
-                  id='surveyPolySource'
-                  type='geojson'
-                  data={surveyPolyGeoJSON}
-                >
-                  <Layer {...polygon} />
-                  <Layer {...polygonTitle} />
-                </Source>
-                {data?.location?.coordinates
-                  && (
-                    <Marker
-                      longitude={data?.location?.coordinates[0]}
-                      latitude={data?.location?.coordinates[1]}
-                    >
-                      <img src={marker} alt='marker' />
-                    </Marker>
-                  )}
-              </Map>
+              <RenderMap />
             </div>
           </div>
           <div className={cs(classes.buttons, ['hidden', !isStaff])}>

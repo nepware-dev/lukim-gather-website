@@ -344,14 +344,14 @@ const Dashboard = () => {
       filteredData.filter((data) => data.boundary !== null),
     );
     const zip = new JSZip();
-    zip.file(`Happening-Survey-Report-Location-${dateVal}.csv`, happeningSurveyLocationCSV);
-    zip.file(`Happening-Survey-Report-Boundary-${dateVal}.csv`, happeningSurveyBoundaryCSV);
+    zip.file(`Happening_survey_report_location_${dateVal}.csv`, happeningSurveyLocationCSV);
+    zip.file(`Happening_survey_report_boundary_${dateVal}.csv`, happeningSurveyBoundaryCSV);
     if (flatCustomForms?.length > 0) {
       const customFormCSV = customSurveyParser.parse(flatCustomForms);
-      zip.file(`Custom-Survey-Report-${dateVal}.csv`, customFormCSV);
+      zip.file(`Custom_survey_report_${dateVal}.csv`, customFormCSV);
     }
     zip.generateAsync({type: 'blob'}).then((content) => {
-      saveAs(content, `Survey-Report-${dateVal}.zip`);
+      saveAs(content, `Survey_report_${dateVal}.zip`);
     });
   }, [filteredData, flatCustomForms]);
 
