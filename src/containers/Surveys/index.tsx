@@ -433,10 +433,10 @@ const Surveys = () => {
       surveyData.filter((surveyBoundary) => surveyBoundary.boundary !== null),
     );
     const zip = new JSZip();
-    zip.file(`Happening-Survey-Report-Location-${dateVal}.csv`, happeningSurveyLocationCSV);
-    zip.file(`Happening-Survey-Report-Boundary-${dateVal}.csv`, happeningSurveyBoundaryCSV);
+    zip.file(`Happening_survey_report_location_${dateVal}.csv`, happeningSurveyLocationCSV);
+    zip.file(`Happening_survey_report_boundary_${dateVal}.csv`, happeningSurveyBoundaryCSV);
     zip.generateAsync({type: 'blob'}).then((content) => {
-      saveAs(content, `Survey-Report-${dateVal}.zip`);
+      saveAs(content, `Survey_report_${dateVal}.zip`);
     });
   }, [surveyData]);
 
