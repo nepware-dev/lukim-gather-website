@@ -1,5 +1,5 @@
 export default {
-  navbar: 'w-full max-w-[1440px] mx-auto px-[5vw] py-[22px] sm:flex sm:justify-between z-[10] sm:bg-color-bg bg-[#fff] mb-[20px] fixed sm:static',
+  navbar: 'w-full max-w-[1440px] mx-auto px-[5vw] py-[22px] sm:flex sm:justify-between z-[9] sm:bg-color-bg bg-[#fff] mb-[20px] fixed sm:static',
   toggle: 'absolute right-[20px] top-[30px] py-2 px-2 cursor-pointers',
   logoWrapper: '',
   logo: 'h-[66px]',

@@ -43,13 +43,13 @@ const Navbar: React.FC<Props> = ({hideButton = false}) => {
   const toggleMenu = useCallback(() => setOpen(!open), [open]);
   const screenWidth = useMemo(() => (width || 0), [width]);
   // eslint-disable-next-line consistent-return
-  const bb = 'fixed w-full pt-[10vh] px-[5vw] pb-[20px] left-0 top-[100px] shadow z-10 transition-transform bg-[#fff]';
+  const mobileMenuStyle = 'fixed w-full pt-[10vh] px-[5vw] pb-[20px] left-0 top-[120px] shadow z-10 transition-transform bg-[#fff]';
   const isMobile = useMemo(() => {
     if (screenWidth < 640) {
       if (open) {
-        return `${bb} translate-x-0`;
+        return `${mobileMenuStyle} translate-x-0`;
       }
-      return `${bb} translate-x-full`;
+      return `${mobileMenuStyle} translate-x-full`;
     }
     return 'translate-x-0';
   }, [open, screenWidth]);
