@@ -5,6 +5,6 @@ export default {
   iconContainer: 'flex justify-center cursor-pointer',
   icon: 'mr-[12px] text-[white] w-[2.5em] h-[2.5em] bg-[#0A52A1] rounded-[50%] text-[16px] p-[8px]',
   itemWrapper: 'w-[338px] bg-[#fff] z-auto px-[16px] py-[12px] rounded-lg right-0',
-  description: 'font-inter text-[16px] text-[#585D69]',
+  description: 'font-inter self-start text-[16px] text-[#585D69]',
   date: 'self-start text-[12px] text-[#9FA3A9]',
 };

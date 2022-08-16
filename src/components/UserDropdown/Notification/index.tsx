@@ -5,6 +5,7 @@ import {BsCheck} from 'react-icons/bs';
 import {MdClose} from 'react-icons/md';
 import {formatDistance} from 'date-fns';
 import {gql, useMutation, useQuery} from '@apollo/client';
+import parse from 'html-react-parser';
 
 import useInterval from '@ra/hooks/useInterval';
 import List from '@ra/components/List';
@@ -74,7 +75,7 @@ const NotificationCard = React.forwardRef<RefType, PropsType>(({openNotification
 
   const handleNotificationPress = useCallback((item) => {
     markAsRead({variables: {id: Number(item.id)}});
-    navigate(`/surveys/${item.actionObjectObjectId}`, {replace: true});
+    if (item?.notificationType.startsWith('happening_survey')) navigate(`/surveys/${item.actionObjectObjectId}`, {replace: true});
   }, [markAsRead, navigate]);
 
   const renderNotification = useCallback(({item}) => {
@@ -85,7 +86,7 @@ const NotificationCard = React.forwardRef<RefType, PropsType>(({openNotification
           {icon}
         </div>
         <div className={styles.notification} key={item.id}>
-          <p className={styles.description}>{item.description}</p>
+          <p className={styles.description}>{parse(item.description)}</p>
           <span className={styles.date}>
             {formatDistance(new Date(item.createdAt), new Date(), {addSuffix: true})}
           </span>
