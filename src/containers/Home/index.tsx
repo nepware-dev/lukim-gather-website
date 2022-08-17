@@ -75,15 +75,14 @@ const Home = () => (
                   Papua New Guinea’s Natural Resource Hub
                 </span>
               </a>
-              , the second phase of the Lukim Gather mobile data collection
-              application is currently being developed. Supporting the
-              collection of geo-located conservation and biodiversity data,
-              including threats and benefits, Lukim Gather App improves
-              biodiversity and management effectiveness monitoring in PNG
-              protected areas. This innovative mobile technology is helping
-              to overcome many of the geographical, infrastructural, and
-              technological challenges that prevent the effective tracking
-              and management of natural resources within the region.
+              , the second phase of Lukim Gather is under development.
+              Supporting the collection of conservation and biodiversity
+              data, the Lukim Gather App improves biodiversity and management
+              effectiveness monitoring in PNG protected areas. This
+              innovative mobile technology is helping to overcome many of
+              the geographical, infrastructural, and technological challenges
+              that prevent the effective tracking and management of natural
+              resources within the region.
             </p>
             <p className={cs(classes.bgInfo, 'mt-[30px] mb-[25px]')}>
               Because it is able to function offline and out of range of
@@ -97,11 +96,11 @@ const Home = () => (
               />
               <InfoCard
                 img={upload}
-                text='Make automatic data uploads to reduce errors in data collection'
+                text='Make automatic data uploads via a centralized server which can save time and reduce errors in data collection'
               />
               <InfoCard
                 img={flag}
-                text='Quickly and anonymously report on local environmental incidents, including illicit activities such as illegal logging.'
+                text='Quickly and anonymously report on local environmental incidents, including illicit activities such as illegal logging'
               />
             </div>
           </div>
@@ -113,8 +112,8 @@ const Home = () => (
         </h2>
         <div className={classes.appInfoCards}>
           <Card img={members} text='Local community members' />
-          <Card img={membersAlt} text='Protected area managers' />
-          <Card img={civilSociety} text='Civil society organizations ' />
+          <Card img={membersAlt} text='Community members of protected areas' />
+          <Card img={civilSociety} text='Civil society organizations' />
         </div>
       </div>
     </div>
