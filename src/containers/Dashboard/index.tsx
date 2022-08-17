@@ -1,5 +1,3 @@
-// @ts-nocheck
-// @ts-ignore
 import React, {
   useCallback, useEffect, useState, useMemo, useRef, ReactElement,
 } from 'react';
@@ -29,6 +27,7 @@ import {saveAs} from 'file-saver';
 import {toCanvas} from 'html-to-image';
 import jsPDF from 'jspdf';
 
+import {FormDataType} from '@components/FormTable';
 import {SurveyDataType} from '@components/SurveyTable';
 
 import cs from '@utils/cs';
@@ -54,11 +53,6 @@ import {
 import surveyCategory from '../../data/surveyCategory';
 import classes from './styles';
 
-export type CoordinateType = {
-  lng: number;
-  lat: number;
-};
-
 const ExportOption = ({onClick, icon, title} : {onClick(): void, icon: string, title: string}) => (
   <div className={classes.exportOption} onClick={onClick}>
     <img src={icon} alt={title} />
@@ -66,8 +60,17 @@ const ExportOption = ({onClick, icon, title} : {onClick(): void, icon: string, t
   </div>
 );
 
-export const flattenObject = (obj) => {
-  const flattened = {};
+export type FlattenObjectType = {
+  [key: string]: string
+}
+
+export type SelectInputType = {
+  id: number,
+  title: string
+}
+
+export const flattenObject = (obj: FlattenObjectType) => {
+  const flattened: FlattenObjectType = {};
 
   Object.keys(obj).forEach((key) => {
     const value = obj[key];
@@ -81,11 +84,6 @@ export const flattenObject = (obj) => {
 
   return flattened;
 };
-
-export type SelectInputType = {
-  id: number,
-  title: string
-}
 
 const titleExtractor = (item: SelectInputType) => item?.title;
 const keyExtractor = (item: SelectInputType) => item?.id;
@@ -118,11 +116,11 @@ const happeningSurveyBoundaryParser = new Parser({
 const customSurveyParser = new Parser();
 
 const Dashboard = () => {
-  const contentRef = useRef();
+  const contentRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapRef | null>(null);
   const [popup, setPopUp] = useState<ReactElement | null>(null);
   const [filteredData, setFilteredData] = useState([]);
-  const [popupLngLat, setPopUpLngLat] = useState<CoordinateType | null>(null);
+  const [popupLngLat, setPopUpLngLat] = useState<mapboxgl.LngLat | null>(null);
   const [selectInputCategory, setSelectInputCategory] = useState<SelectInputType | null>(null);
   const [selectInputRegion, setSelectInputRegion] = useState<SelectInputType | null>(null);
   const [
@@ -175,7 +173,7 @@ const Dashboard = () => {
     setSelectInputProtectedArea(option);
   }, []);
 
-  const surveyGeoJSON = useMemo(() => {
+  const surveyGeoJSON: any = useMemo(() => {
     const shape = filteredData
       .filter((survey: SurveyDataType) => survey?.location)
       .map((survey: SurveyDataType) => ({
@@ -194,21 +192,21 @@ const Dashboard = () => {
     };
   }, [filteredData]);
 
-  const customFormGeoJSON = useMemo(() => {
+  const customFormGeoJSON: any = useMemo(() => {
     let shape = [];
     if (customSurveyData?.survey?.length > 0) {
-      shape = customSurveyData?.survey.reduce((features, survey) => {
+      shape = customSurveyData?.survey.reduce((features: any, survey: FormDataType) => {
         const formAnswers = JSON.parse(survey.answer);
         if (selectInputCategory || selectInputProtectedArea) {
           return features;
         }
         if (selectInputRegion) {
-          const provinceData = findPropertyAnywhere(formAnswers, 'province');
+          const provinceData: any = findPropertyAnywhere(formAnswers, 'province');
           if (provinceData?.replace(/_/g, ' ')?.toLowerCase() !== selectInputRegion.title.toLowerCase()) {
             return features;
           }
         }
-        const locationGPS = findPropertyAnywhere(formAnswers, 'location_gps');
+        const locationGPS: string = findPropertyAnywhere(formAnswers, 'location_gps') || '';
         if (locationGPS) {
           const [lat, lng] = locationGPS.split(' ');
           features.push({
@@ -237,10 +235,10 @@ const Dashboard = () => {
   }, [customSurveyData, selectInputRegion, selectInputCategory, selectInputProtectedArea]);
 
   const flatCustomForms = useMemo(() => customFormGeoJSON.features.map(
-    ({properties: {customForm: {formAnswers: {data}}}}) => flattenObject(data),
+    ({properties: {customForm: {formAnswers: {data: formData}}}}: any) => flattenObject(formData),
   ), [customFormGeoJSON]);
 
-  const surveyPolyGeoJSON = useMemo(() => {
+  const surveyPolyGeoJSON : any = useMemo(() => {
     const shapePoly = filteredData
       .filter((survey: SurveyDataType) => survey.boundary)
       .map((survey: SurveyDataType) => ({
@@ -261,10 +259,10 @@ const Dashboard = () => {
 
   const onClick = useCallback((event) => {
     const cluster = event.features.find(
-      (feat) => feat.layer.id === 'clusters' || feat.layer.id === 'clusters-form',
+      (feat: mapboxgl.EventData) => feat.layer.id === 'clusters' || feat.layer.id === 'clusters-form',
     );
     if (cluster) {
-      const features = mapRef?.current?.queryRenderedFeatures(event.point, {
+      const features: any = mapRef?.current?.queryRenderedFeatures(event.point, {
         layers: [cluster.layer.id],
       });
       const clusterId = cluster.properties.cluster_id;
@@ -282,7 +280,7 @@ const Dashboard = () => {
     }
     let item;
     if (
-      !event.features.some((feat) => feat.layer?.id === 'unclustered-point' || feat.layer?.id === 'unclustered-form-point')
+      !event.features.some((feat: mapboxgl.MapboxGeoJSONFeature) => feat.layer?.id === 'unclustered-point' || feat.layer?.id === 'unclustered-form-point')
     ) {
       item = JSON.parse(
         event.features[event.features.length - 1].properties?.surveyItem
@@ -352,7 +350,7 @@ const Dashboard = () => {
 
   const onLoad = useCallback(() => {
     surveyCategory.filter((cat) => cat.childs.filter(
-      (categoryIcon) => mapRef?.current?.loadImage(categoryIcon.icon, (error, res) => {
+      (categoryIcon) => mapRef?.current?.loadImage(categoryIcon.icon, (error, res: any) => {
         mapRef?.current?.addImage(categoryIcon?.id.toString(), res);
       }),
     ));
@@ -378,7 +376,7 @@ const Dashboard = () => {
   }, [currentDate, filteredData, flatCustomForms]);
 
   const onExportPDF = useCallback(async () => {
-    const element = contentRef.current;
+    const element: any = contentRef.current;
     await toCanvas(element).then((canvas) => {
       const imgData = canvas.toDataURL('img/png', {height: element.scrollHeight, width: element.scrollWidth});
       // eslint-disable-next-line new-cap
@@ -389,7 +387,7 @@ const Dashboard = () => {
   }, [currentDate]);
 
   const onExportImage = useCallback(async () => {
-    const element = contentRef.current;
+    const element: any = contentRef.current;
     await toCanvas(element).then((canvas) => {
       const a = document.createElement('a');
       a.href = canvas.toDataURL('img/png', {height: element.scrollHeight, width: element.scrollWidth});
