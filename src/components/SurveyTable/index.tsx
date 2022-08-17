@@ -20,7 +20,7 @@ export type SurveyDataType = {
   location: {type: string; coordinates: [number, number]};
   sentiment: string;
   status: string;
-  boundary: {coordinates: [[[number, number][]]]} | null;
+  boundary: {type?: string; coordinates: [[[number, number][]]]} | null;
   improvement: string | null;
   region: {id: number};
   createdBy: {id: number};

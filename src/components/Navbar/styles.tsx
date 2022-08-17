@@ -1,7 +1,7 @@
 export default {
   navbar: 'w-full max-w-[1440px] mx-auto px-[5vw] py-[22px] sm:flex sm:justify-between z-[9] sm:bg-color-bg bg-[#fff] mb-[20px] fixed sm:static',
   toggle: 'absolute right-[20px] top-[30px] py-2 px-2 cursor-pointers',
-  logoWrapper: '',
+  logoWrapper: 'cursor-pointer',
   logo: 'h-[66px]',
   menuList: 'overflow-hidden sm:items-center bg-color-bg',
   linkWrapper: 'w-[100%] my-4 sm:my-0 flex justify-items-center text-center',
