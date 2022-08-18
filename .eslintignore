@@ -7,5 +7,4 @@
 node_modules
 build
 src/components/Map/index.tsx
-src/containers/Dashboard/index.tsx
 src/vendor/

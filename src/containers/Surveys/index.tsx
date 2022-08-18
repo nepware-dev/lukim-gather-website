@@ -228,9 +228,10 @@ const Surveys = () => {
 
   useEffect(() => {
     if (!uuid) return;
-    if (surveyData[activeIndex]) {
+    const index = data?.happeningSurveys?.map((value: SurveyDataType) => value.id).indexOf(uuid);
+    if (index) {
       setShowDetails(true);
-      setSurveyEntryData(surveyData[activeIndex]);
+      setSurveyEntryData(data?.happeningSurveys?.[index]);
       return;
     }
     refetch({id: uuid}).then((res) => {
