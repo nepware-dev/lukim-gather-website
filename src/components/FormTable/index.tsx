@@ -47,10 +47,15 @@ const FormItem: React.FC<ItemProps> = ({
     [formAnswers],
   );
 
+  const title = useMemo(
+    () => findPropertyAnywhere(formAnswers, 'village_name'),
+    [formAnswers],
+  );
+
   return (
     <tr className={classes.tableItemRow}>
       <td>
-        <p className={classes.itemTitle}>{item.title}</p>
+        <p className={classes.itemTitle}>{title || item.title}</p>
       </td>
       <td>
         <p className={classes.tableText}>{interviewerName}</p>
@@ -73,7 +78,7 @@ const FormTable: React.FC<Props> = ({data, setActiveIndex, setShowDetails}) => (
       <thead>
         <tr className={classes.tableHeadRow}>
           <th>
-            <p className={cs(classes.headingTitle, 'pl-[20px]')}>Title</p>
+            <p className={cs(classes.headingTitle, 'pl-[20px]')}>Village/Community</p>
           </th>
           <th>
             <p className={classes.headingTitle}>Interviewer</p>
