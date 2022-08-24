@@ -7,19 +7,24 @@ import MailChimpForm from '@components/MailChimp';
 
 import useGaTracker from '@hooks/useGaTracker';
 
+import cs from '@utils/cs';
+
 import mobile from '@images/mobile.png';
 
 import classes from './styles';
 
 const Layout = (
-  {children, showAppInfo}: {children: JSX.Element, showAppInfo?: boolean},
+  {
+    children, showAppInfo, isContainer = true, isDarkNavbar = false,
+  }:
+  {children: JSX.Element, showAppInfo?: boolean, isContainer?: boolean, isDarkNavbar?: boolean},
 ) => {
   useGaTracker();
   return (
     <main>
       <div className={classes.mainContainer}>
-        <Navbar />
-        <div className={classes.container}>
+        <Navbar isDark={isDarkNavbar} />
+        <div className={cs(isContainer ? classes.container : '')}>
           {children}
         </div>
       </div>
