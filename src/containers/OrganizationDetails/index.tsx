@@ -7,6 +7,7 @@ import DashboardHeader from '@components/DashboardHeader';
 import DashboardLayout from '@components/DashboardLayout';
 
 import organizationPlaceholder from '@images/organization-placeholder.svg';
+import {RiShareBoxLine} from 'react-icons/ri';
 
 import classes from './styles';
 
@@ -60,9 +61,10 @@ const OrganizationDetails = () => {
                   <h5 className={classes.infoHeading}>FOCAL POINT</h5>
                   <p className={classes.infoData}>{data?.organizations[0]?.pointOfContact || 'N/A'}</p>
                 </div>
+                <hr className={classes.seperator} />
                 <div className={classes.info}>
                   <h5 className={classes.infoHeading}>NUMBER OF MEMBER</h5>
-                  <p className={classes.infoData}>{data?.organizations[0]?.memberCount || 'N/A'}</p>
+                  <p className={classes.infoData}>{data?.organizations[0]?.membersCount}</p>
                 </div>
               </div>
             </div>
@@ -72,7 +74,10 @@ const OrganizationDetails = () => {
           </p>
           <div className='mb-6'>
             <h4 className={classes.contactHeading}>WEBSITE</h4>
-            <a href={data?.organizations[0]?.website} className={classes.website} target='_blank' rel='noreferrer'>{data?.organizations[0]?.website || 'N/A'}</a>
+            <a href={data?.organizations[0]?.website} className={classes.website} target='_blank' rel='noreferrer'>
+              {data?.organizations[0]?.website || 'N/A'}
+              <RiShareBoxLine color='#EC6D25' size={20} />
+            </a>
           </div>
           <h4 className={classes.contactHeading}>CONTACT</h4>
           <div className={classes.contactWrapper}>

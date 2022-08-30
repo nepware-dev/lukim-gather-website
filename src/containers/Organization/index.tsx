@@ -1,19 +1,25 @@
 import React, {useCallback, useRef} from 'react';
 import {Link} from 'react-router-dom';
 import {gql, useQuery} from '@apollo/client';
+import {useSelector} from 'react-redux';
 
 import DashboardHeader from '@components/DashboardHeader';
 import DashboardLayout from '@components/DashboardLayout';
 
 import List from '@ra/components/List';
 
+import cs from '@utils/cs';
+import {rootState} from '@store/rootReducer';
+
 import organizationPlaceholder from '@images/organization-placeholder.svg';
+
+import classes from './styles';
 
 const keyExtractor = (item: {id: string}) => item.id;
 
 const GET_ORGANIZATIONS = gql`
-  query {
-    organizations {
+  query Organizations($id: Float) {
+    organizations(members_Id: $id) {
       id
       title
       logo
@@ -22,8 +28,16 @@ const GET_ORGANIZATIONS = gql`
 `;
 
 const Organization = () => {
+  const {
+    auth: {
+      user: {id: userId},
+    },
+  } = useSelector((state: rootState) => state);
   const ref = useRef();
   const {data} = useQuery(GET_ORGANIZATIONS);
+  const {data: myOrganizations} = useQuery(GET_ORGANIZATIONS, {
+    variables: {id: Number(userId)},
+  });
   const renderItems = useCallback(
     ({item}) => (
       <Link
@@ -44,20 +58,37 @@ const Organization = () => {
     [],
   );
   const Props = {
-    className: 'w-[100%] px-[20px] mt-[24px] mb-[150px] flex flex-wrap gap-y-3 gap-x-[1%] md:gap-x-[2%] lg:gap-x-[2%] xl:gap-x-[1.33%]',
-    data: data?.organizations || [],
+    className: 'w-[100%] flex flex-wrap gap-y-3 gap-x-[1%] mt-[16px] md:gap-x-[2%] lg:gap-x-[2%] xl:gap-x-[1.33%]',
     renderItem: renderItems,
     keyExtractor,
   };
+  const MyOrganizationProps = {...Props, data: myOrganizations?.organizations || []};
+  const AllOrganizationProps = {...Props, data: data?.organizations || []};
   return (
     <DashboardLayout>
       <DashboardHeader title='Organization' />
-      <section className='w-screen md:w-[100%] '>
-        <List
-          ref={ref}
-          {...Props}
-        />
-      </section>
+      <div className={classes.section}>
+        <div className={classes.header}>
+          <h1 className={classes.title}>My Organization</h1>
+        </div>
+        <section className='w-screen md:w-[100%] '>
+          <List
+            ref={ref}
+            {...MyOrganizationProps}
+          />
+        </section>
+      </div>
+      <div className={cs(classes.section, 'mb-[150px]')}>
+        <div className={classes.header}>
+          <h1 className={classes.title}>All Organization</h1>
+        </div>
+        <section className='w-screen md:w-[100%] '>
+          <List
+            ref={ref}
+            {...AllOrganizationProps}
+          />
+        </section>
+      </div>
     </DashboardLayout>
   );
 };
