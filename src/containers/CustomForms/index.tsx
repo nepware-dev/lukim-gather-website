@@ -58,6 +58,7 @@ const GET_FORMS = gql`
       id
       title
       xform
+      questionMapping
     }
   }
 `;
@@ -151,6 +152,14 @@ const CustomForms = () => {
       const xmlModel = formObj.xform.model;
       const parser = new XMLParser();
       return parser.parse(xmlModel);
+    }
+    return {};
+  }, [formData]);
+
+  const formQuestion = useMemo(() => {
+    const formObj = formData?.surveyForm?.[0];
+    if (formObj) {
+      return JSON.parse(formObj?.questionMapping);
     }
     return {};
   }, [formData]);
@@ -289,6 +298,7 @@ const CustomForms = () => {
           data={activeSurveyFormData}
           setShowDetails={setShowDetails}
           formModel={formModel}
+          formQuestion={formQuestion}
         />
       )}
     </>

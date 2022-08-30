@@ -35,8 +35,13 @@ type FormModelType = {
   model: { instance: FormModelInstanceType[] };
 };
 
+interface QuestionObject {
+    [x: string]: string;
+}
+
 interface Props {
   formModel: FormModelType;
+  formQuestion: QuestionObject;
   data: FormDataType;
   setShowDetails(value: boolean): void;
 }
@@ -45,6 +50,7 @@ interface FormValueRendererProps {
   name: string;
   value: string | number | object;
   formModel: FormModelType;
+  formQuestion: QuestionObject;
   level: number;
 }
 
@@ -58,6 +64,7 @@ const FormValueRenderer = ({
   name,
   value,
   formModel,
+  formQuestion,
   level,
 }: FormValueRendererProps) => {
   const formattedValue = useMemo(() => {
@@ -87,7 +94,12 @@ const FormValueRenderer = ({
     return value;
   }, [value, formModel, name]);
 
-  const formattedName = useMemo(() => name?.replace(/_/g, ' '), [name]);
+  const formattedName = useMemo(() => {
+    if (Object.prototype.hasOwnProperty.call(formQuestion, name)) {
+      return formQuestion[name];
+    }
+    return name?.replace(/_/g, ' ');
+  }, [formQuestion, name]);
 
   if (value && typeof value === 'object') {
     return (
@@ -137,6 +149,7 @@ const FormValueRenderer = ({
               value={val}
               level={level + 1}
               formModel={formModel}
+              formQuestion={formQuestion}
             />
           );
         })}
@@ -163,7 +176,9 @@ const FormValueRenderer = ({
   );
 };
 
-const FormEntry: React.FC<Props> = ({data, setShowDetails, formModel}) => {
+const FormEntry: React.FC<Props> = ({
+  data, setShowDetails, formModel, formQuestion,
+}) => {
   const navigate = useNavigate();
   const answers: Entries<AnswerItemType> = useMemo(() => {
     const dataObject: object = JSON.parse(data.answer)?.data ?? {};
@@ -211,6 +226,7 @@ const FormEntry: React.FC<Props> = ({data, setShowDetails, formModel}) => {
               value={value}
               level={0}
               formModel={formModel}
+              formQuestion={formQuestion}
             />
           ))}
         </div>
