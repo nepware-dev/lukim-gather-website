@@ -7,7 +7,7 @@ import InfoCard from '@components/InfoCard';
 import Card from '@components/Card';
 
 import HeroImage from '@images/lukim-hero.webp';
-import BgArt from '@images/bg-art.png';
+// import BgArt from '@images/bg-art.png';
 import circle from '@images/circle.svg';
 import upload from '@images/upload.svg';
 import flag from '@images/flag.svg';
@@ -55,11 +55,15 @@ const Home = () => (
           Background
         </h2>
         <div className={classes.bgContentWrapper}>
-          <div>
-            <img
-              src={BgArt}
-              alt='lukim-mobile-app'
-              className={classes.bgImage}
+          <div className='h-[200px] w-[100%] sm:h-[350px] md:h-[300px] md:w-[70%] lg:h-[315px] lg:w-[560px]'>
+            <iframe
+              width='100%'
+              height='100%'
+              src='https://www.youtube.com/embed/IZMr4o7KJhc'
+              title='YouTube video player'
+              frameBorder='0'
+              allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
+              allowFullScreen
             />
           </div>
           <div className={classes.bgContent}>
