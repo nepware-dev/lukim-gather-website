@@ -20,6 +20,7 @@ import ResetPassword from '@containers/ResetPassword';
 import Resource from '@containers/Resource';
 import Surveys from '@containers/Surveys';
 import TermsAndConditions from '@containers/TermsAndConditions';
+import Tutorial from '@containers/Tutorial';
 
 interface Props {
   isAuthenticated: boolean;
@@ -48,6 +49,7 @@ const AppRoutes = () => {
         <Route path='/reset-password' element={<ResetPassword />} />
         <Route path='/resource' element={<Resource />} />
         <Route path='/terms' element={<TermsAndConditions />} />
+        <Route path='/tutorial' element={<Tutorial />} />
         <Route
           path='/'
           element={<PrivateRoute isAuthenticated={isAuthenticated} />}

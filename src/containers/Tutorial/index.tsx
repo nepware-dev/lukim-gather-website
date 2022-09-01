@@ -9,13 +9,15 @@ import FaqAccordion from '@components/FaqAccordion';
 import cs from '@ra/cs';
 import List from '@ra/components/List';
 
+import {CategoryType, GET_SUPPORT_CATEGORY} from '@containers/FAQ';
+
 import classes from './styles';
 
 const keyExtractor = (item: {id: string}) => item.id;
 
-const GET_FAQ = gql`
+const GET_TUTORAL = gql`
   query{
-    frequentlyAskedQuestion {
+    tutorial {
       id
       question
       answer
@@ -25,20 +27,6 @@ const GET_FAQ = gql`
     }
   }
 `;
-
-export const GET_SUPPORT_CATEGORY = gql`
-  query SupportCategory($id: ID){
-    supportCategory (parent: $id) {
-      id
-      title
-    }
-  }
-`;
-
-export type CategoryType = {
-  id: string | number;
-  title: string;
-};
 
 const topicIcon = [
   {id: 2, icon: 'flag'},
@@ -50,52 +38,52 @@ const topicIcon = [
 const Tutorial = () => {
   const contentRef = useRef<HTMLElement>();
   const topicRef = useRef();
-  const {data} = useQuery(GET_FAQ);
+  const {data} = useQuery(GET_TUTORAL);
   const {data: category} = useQuery(GET_SUPPORT_CATEGORY, {
-    variables: {id: Number(1)},
+    variables: {id: Number(6)},
   });
-  const [faqTopicId, setFaqTopicId] = useState<number | null>(null);
+  const [tutorialTopicId, setTutorialTopicId] = useState<number | null>(null);
   const [searchedData, setSearchedData] = useState<string>('');
 
   const filteredData = useMemo(() => (
-    faqTopicId
-      ? data?.frequentlyAskedQuestion.filter(
-        (el: { category: {id: string} }) => el?.category?.id === faqTopicId.toString(),
+    tutorialTopicId
+      ? data?.tutorial.filter(
+        (el: { category: {id: string} }) => el?.category?.id === tutorialTopicId.toString(),
       )
-      : data?.frequentlyAskedQuestion.filter((el: {
+      : data?.tutorial.filter((el: {
     [s: string]: unknown;
   } | ArrayLike<unknown>) => Object.values(el)
         .join('')
         .toLowerCase()
-        .includes(searchedData))), [data, faqTopicId, searchedData]);
+        .includes(searchedData))), [data, tutorialTopicId, searchedData]);
 
   const handleClickSearch = useCallback(() => {
     contentRef?.current?.scrollIntoView({behavior: 'smooth'});
   }, []);
 
   const handleSearchChange = useCallback((e) => {
-    setFaqTopicId(null);
+    setTutorialTopicId(null);
     setSearchedData(e.target.value.toLowerCase());
   }, []);
 
   const renderTopic = useCallback(({item}) => (
     <div
-      className={cs(classes.topicCard, faqTopicId === item.id ? 'bg-[#00518B] border-[#fff]' : 'bg-[#0B4570] border-[#3B75B4]')}
+      className={cs(classes.topicCard, tutorialTopicId === item.id ? 'bg-[#00518B] border-[#fff]' : 'bg-[#0B4570] border-[#3B75B4]')}
       onClick={() => {
-        if (faqTopicId === item.id) {
-          setFaqTopicId(null);
+        if (tutorialTopicId === item.id) {
+          setTutorialTopicId(null);
         } else {
-          setFaqTopicId(item.id);
+          setTutorialTopicId(item.id);
           handleClickSearch();
         }
       }}
     >
-      <span className={cs('material-symbols-rounded text-[28px] group-hover:text-color-white', faqTopicId === item.id ? 'text-[#fff]' : 'text-[#C7E5FB]')}>
+      <span className={cs('material-symbols-rounded text-[28px] group-hover:text-color-white', tutorialTopicId === item.id ? 'text-[#fff]' : 'text-[#C7E5FB]')}>
         {item.icon}
       </span>
       <h6 className={classes.topicTitle}>{item.title}</h6>
     </div>
-  ), [faqTopicId, handleClickSearch]);
+  ), [tutorialTopicId, handleClickSearch]);
 
   const renderContent = useCallback(
     ({item}) => <FaqAccordion key={item.id} question={item.question} answer={item.answer || 'N/A'} />,
@@ -117,7 +105,7 @@ const Tutorial = () => {
   };
 
   const contentProps = {
-    data: filteredData || data?.frequentlyAskedQuestion,
+    data: filteredData || data?.tutorial,
     className: classes.bgContent,
     renderItem: renderContent,
     keyExtractor,
@@ -125,13 +113,13 @@ const Tutorial = () => {
   return (
     <Layout isContainer={false} isDarkNavbar>
       <section className={classes.content}>
-        <div className={classes.faqHeader}>
+        <div className={classes.tutorialHeader}>
           <h2 className={classes.heading}>
-            Frequently Asked Questions
+            Tutorials
           </h2>
           <div className={classes.inputWrapper}>
             <input
-              placeholder='Ask any questions'
+              placeholder='Search any tutorials'
               onChange={handleSearchChange}
               className={classes.input}
             />

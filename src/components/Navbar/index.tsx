@@ -90,6 +90,11 @@ const Navbar: React.FC<Props> = ({hideButton = false, isDark = false}) => {
             title='FAQs'
             isDarkNav={isDark}
           />
+          <NavItem
+            to='/tutorial'
+            title='Tutorial'
+            isDarkNav={isDark}
+          />
           <div className={cs(classes.buttonWrapper, ['pt-[2vh]', open])}>
             {isAuthenticated ? (
               <Button text='Dashboard' onClick={onDashboardClick} />
