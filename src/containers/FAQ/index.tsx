@@ -30,6 +30,7 @@ export const GET_SUPPORT_CATEGORY = gql`
   query SupportCategory($id: ID){
     supportCategory (parent: $id) {
       id
+      icon
       title
     }
   }
@@ -39,13 +40,6 @@ export type CategoryType = {
   id: string | number;
   title: string;
 };
-
-const topicIcon = [
-  {id: 2, icon: 'flag'},
-  {id: 3, icon: 'description'},
-  {id: 4, icon: 'build'},
-  {id: 5, icon: 'person'},
-];
 
 const Tutorial = () => {
   const contentRef = useRef<HTMLElement>();
@@ -102,15 +96,8 @@ const Tutorial = () => {
     [],
   );
 
-  const topic = category?.supportCategory.map(
-    (item: CategoryType) => {
-      const icon = topicIcon.find((iconItem) => (iconItem.id === Number(item.id)));
-      return {...item, icon: icon?.icon};
-    },
-  );
-
   const topicProps = {
-    data: topic || [],
+    data: category?.supportCategory || [],
     className: classes.topicList,
     renderItem: renderTopic,
     keyExtractor,

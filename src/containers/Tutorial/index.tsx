@@ -9,7 +9,7 @@ import FaqAccordion from '@components/FaqAccordion';
 import cs from '@ra/cs';
 import List from '@ra/components/List';
 
-import {CategoryType, GET_SUPPORT_CATEGORY} from '@containers/FAQ';
+import {GET_SUPPORT_CATEGORY} from '@containers/FAQ';
 
 import classes from './styles';
 
@@ -27,13 +27,6 @@ const GET_TUTORAL = gql`
     }
   }
 `;
-
-const topicIcon = [
-  {id: 2, icon: 'flag'},
-  {id: 3, icon: 'description'},
-  {id: 4, icon: 'build'},
-  {id: 5, icon: 'person'},
-];
 
 const Tutorial = () => {
   const contentRef = useRef<HTMLElement>();
@@ -90,15 +83,8 @@ const Tutorial = () => {
     [],
   );
 
-  const topic = category?.supportCategory.map(
-    (item: CategoryType) => {
-      const icon = topicIcon.find((iconItem) => (iconItem.id === Number(item.id)));
-      return {...item, icon: icon?.icon};
-    },
-  );
-
   const topicProps = {
-    data: topic || [],
+    data: category?.supportCategory || [],
     className: classes.topicList,
     renderItem: renderTopic,
     keyExtractor,
