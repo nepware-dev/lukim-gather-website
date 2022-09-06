@@ -23,13 +23,13 @@ import Button from '@components/Button';
 import {SurveyDataType} from '@components/SurveyTable';
 import {GET_SURVEY_DATA} from '@containers/Surveys';
 import Dropdown from '@components/Dropdown';
+import Gallery from '@components/Gallery';
 
-import tree from '@images/category-tree.png';
-import marker from '@images/marker.png';
-
-import pdfIcon from '@images/icons/pdf.svg';
 import csvIcon from '@images/icons/csv.svg';
+import marker from '@images/marker.png';
+import pdfIcon from '@images/icons/pdf.svg';
 import pngIcon from '@images/icons/image.svg';
+import tree from '@images/category-tree.png';
 
 import {polygon, polygonTitle} from './layers';
 
@@ -112,6 +112,7 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails}) => {
   const [categoryIcon] = useCategoryIcon(data?.category?.id);
   const [showDeclineModal, setShowDeclineModal] = useState<boolean>(false);
   const [locationName, setLocationName] = useState<string>('');
+  const [showGallery, setShowGallery] = useState<boolean>(false);
   const {
     auth: {
       user: {isStaff},
@@ -139,6 +140,10 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails}) => {
   const escapeListener = useCallback(
     (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
+        if (showGallery) {
+          setShowGallery(false);
+          return;
+        }
         if (showDeclineModal) {
           setShowDeclineModal(false);
         } else {
@@ -147,7 +152,7 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails}) => {
         }
       }
     },
-    [navigate, setShowDetails, showDeclineModal],
+    [navigate, setShowDetails, showDeclineModal, showGallery],
   );
 
   useEffect(() => {
@@ -185,6 +190,13 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails}) => {
     setShowDeclineModal(false);
     setShowDetails(false);
   }, [data.id, setShowDetails, updateHappeningSurvey]);
+
+  const [galleryIndex, setGalleryIndex] = useState<number>(0);
+
+  const handleShowGallery = useCallback((media) => {
+    setShowGallery(!showGallery);
+    setGalleryIndex(data?.attachment.findIndex((item) => item.media === media));
+  }, [showGallery, setShowGallery, setGalleryIndex, data?.attachment]);
 
   const surveyPolyGeoJSON: any = useMemo(() => ({
     type: 'FeatureCollection',
@@ -351,14 +363,17 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails}) => {
             <div className={classes.photosWrapper}>
               {data.attachment.length
                 ? data.attachment.map((item: {media: string}) => (
-                  <img
-                    key={item.media}
-                    src={item.media}
-                    alt=''
-                    className={classes.photo}
-                  />
+                  <div className='cursor-pointer' onClick={() => handleShowGallery(item.media)}>
+                    <img
+                      key={item.media}
+                      src={item.media}
+                      alt=''
+                      className={classes.photo}
+                    />
+                  </div>
                 ))
                 : 'No Photos Found'}
+              {data.attachment.length ? <Gallery images={data?.attachment} galleryIndex={galleryIndex} showGallery={showGallery} toggleGalleryVisibility={setShowGallery} /> : ''}
             </div>
             <Title text='feels' />
             <div>
