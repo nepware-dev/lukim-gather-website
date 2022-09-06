@@ -13,7 +13,7 @@ import {setContext} from '@apollo/client/link/context';
 import {onError} from '@apollo/client/link/error';
 
 import {store} from '@store/index';
-import {setToken, setRefreshToken} from '@store/slices/auth';
+import {setLogout, setToken, setRefreshToken} from '@store/slices/auth';
 
 const {dispatch} = store;
 
@@ -78,8 +78,11 @@ const errorLink = onError(
                   resolvePendingRequests();
                   return true;
                 })
-                .catch(() => {
+                .catch((error) => {
                   pendingRequests = [];
+                  if(error?.message?.toLowerCase() === "invalid refresh token") {
+                    dispatch(setLogout());
+                  }
                   return false;
                 })
                 .finally(() => {
