@@ -396,6 +396,18 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails}) => {
             <div className={classes.mapWrapper}>
               <RenderMap />
             </div>
+            <Title text='Published Anonymously' />
+            <div className={classes.wrapper}>
+              <p>{data?.createdBy ? 'No' : 'Yes'}</p>
+            </div>
+            <Title text='Public Information' />
+            <div className={classes.wrapper}>
+              <p>{data?.isPublic ? 'Yes' : 'No'}</p>
+            </div>
+            <Title text='Test Data' />
+            <div className={classes.wrapper}>
+              <p>{data?.isTest ? 'Yes' : 'No'}</p>
+            </div>
           </div>
           <div className={cs(classes.buttons, ['hidden', !isStaff])}>
             <Button

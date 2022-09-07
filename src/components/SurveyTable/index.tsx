@@ -23,6 +23,8 @@ export type SurveyDataType = {
   boundary: {type?: string; coordinates: [[[number, number][]]]} | null;
   improvement: string | null;
   region: {id: number};
+  isTest: boolean;
+  isPublic: boolean;
   createdBy: {id: number};
 };
 

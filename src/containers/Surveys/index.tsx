@@ -64,6 +64,8 @@ export const GET_SURVEY_DATA = gql`
       improvement
       sentiment
       status
+      isTest
+      isPublic
       createdAt
       createdBy {
         id
@@ -102,6 +104,8 @@ export const GET_SURVEY = gql`
       improvement
       sentiment
       status
+      isTest
+      isPublic
       createdAt
       createdBy {
         id
