@@ -100,6 +100,7 @@ const headers = [
   {label: 'Latitude', value: 'location.coordinates[1]'},
   {label: 'Boundary', value: 'boundary.coordinates'},
   {label: 'Status', value: 'status'},
+  {label: 'Attachment', value: 'attachment'},
   {label: 'Created Date', value: 'createdAt'},
 ];
 
@@ -357,11 +358,20 @@ const Dashboard = () => {
   }, []);
 
   const onExportCSV = useCallback(() => {
+    const surveyExportData = JSON.parse(JSON.stringify(filteredData));
+    surveyExportData.map((surveyItem: SurveyDataType) => {
+      if (surveyItem.attachment) {
+        surveyItem.attachment = surveyItem.attachment.map( // eslint-disable-line no-param-reassign
+          (_attachment: any) => _attachment.media,
+        );
+      }
+      return surveyItem;
+    });
     const happeningSurveyLocationCSV = happeningSurveyLocationParser.parse(
-      filteredData.filter((locationData: SurveyDataType) => locationData?.location !== null),
+      surveyExportData.filter((locationData: SurveyDataType) => locationData?.location !== null),
     );
     const happeningSurveyBoundaryCSV = happeningSurveyBoundaryParser.parse(
-      filteredData.filter((boundaryData: SurveyDataType) => boundaryData?.boundary !== null),
+      surveyExportData.filter((boundaryData: SurveyDataType) => boundaryData?.boundary !== null),
     );
     const zip = new JSZip();
     zip.file(`Happening_survey_report_location_${currentDate}.csv`, happeningSurveyLocationCSV);
