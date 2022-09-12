@@ -104,7 +104,7 @@ const DashboardLayout = ({
               )}
             >
               <GoListUnordered size={20} />
-              <p className={classes.linkText}>Custom Forms</p>
+              <p className={classes.linkText}>METT</p>
             </Link>
             <Link
               to='/organization'

@@ -268,7 +268,7 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails}) => {
       Location: data?.location?.coordinates,
       Boundary: data?.boundary?.coordinates,
       Region: data?.region?.id,
-      Improvement: data?.improvement,
+      Condition: data?.improvement,
       Sentiment: data?.sentiment,
       'Created By': data?.createdBy?.id,
       'Created At': formatDate(data?.createdAt),
@@ -379,7 +379,7 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails}) => {
             <div>
               <Feel sentiment={data.sentiment || '-'} />
             </div>
-            <Title text='Improvement' />
+            <Title text='Condition' />
             <div className={classes.wrapper}>
               <Improvement improvement={data.improvement} />
             </div>

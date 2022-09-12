@@ -1,0 +1,18 @@
+export default {
+  mainContainer: 'bg-color-bg w-[100%] min-h-[100vh]',
+  container: 'max-w-[1440px] mx-auto px-[5vw]',
+  contentContainer: 'flex items-center justify-center pt-32',
+  contentWrapper: 'max-w-[473px] px-[32px] py-[42px] rounded-3xl bg-[#fff]',
+  header: 'flex items-center gap-[21px] mb-4',
+  title: 'font-interSemibold text-[22px] text-[#101828]',
+  info: 'font-inter text-base text-[#585D69] mb-8',
+  button: 'mt-[28px] mb-[32px]',
+  email: 'font-interSemibold text-[#101828]',
+  textWrapper: 'flex gap-[8px]',
+  text: 'font-inter text-base text-[#585D69]',
+  sendAgain: 'font-interSemibold text-base text-[#00518B]',
+  cursor: 'cursor-pointer',
+  error: 'text-color-red mt-[28px]',
+  otpContainer: 'flex justify-between gap-1 sm:gap-2',
+  otpInput: 'w-1/6 py-2 sm:py-3 border border-[#CCDCE8] rounded-lg font-interMedium text-[18px] sm:text-[24px] text-center',
+};

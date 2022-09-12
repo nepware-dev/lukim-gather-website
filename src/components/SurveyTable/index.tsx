@@ -115,7 +115,7 @@ const SurveyTable: React.FC<Props> = ({
             <p className={classes.headingTitle}>Category</p>
           </th>
           <th>
-            <p className={classes.headingTitle}>Improvement</p>
+            <p className={classes.headingTitle}>Condition</p>
           </th>
           <th>
             <p className={classes.headingTitle}>Date</p>
