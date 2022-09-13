@@ -69,6 +69,8 @@ export const GET_SURVEY_DATA = gql`
       createdAt
       createdBy {
         id
+        firstName
+        lastName
       }
     }
   }
@@ -109,6 +111,8 @@ export const GET_SURVEY = gql`
       createdAt
       createdBy {
         id
+        firstName
+        lastName
       }
     }
   }

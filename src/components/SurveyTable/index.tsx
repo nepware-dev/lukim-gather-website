@@ -25,7 +25,7 @@ export type SurveyDataType = {
   region: {id: number};
   isTest: boolean;
   isPublic: boolean;
-  createdBy: {id: number};
+  createdBy: {id: number, firstName: string, lastName: string};
 };
 
 interface Props {
@@ -91,6 +91,13 @@ const SurveyItem: React.FC<ItemProps> = ({
         </p>
       </td>
       <td>
+        <p>
+          {item.createdBy.firstName}
+          &nbsp;
+          {item.createdBy.lastName}
+        </p>
+      </td>
+      <td>
         <button type='button' className={classes.button} onClick={() => handleClick(item.id)}>
           View entry
         </button>
@@ -122,6 +129,9 @@ const SurveyTable: React.FC<Props> = ({
           </th>
           <th>
             <p className={classes.headingTitle}>Status</p>
+          </th>
+          <th>
+            <p className={classes.headingTitle}>Submitted By</p>
           </th>
         </tr>
       </thead>
