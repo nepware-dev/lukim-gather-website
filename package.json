@@ -21,6 +21,7 @@
     "json2csv": "^5.0.7",
     "jspdf": "^2.5.1",
     "jszip": "^3.10.0",
+    "libphonenumber-js": "^1.10.13",
     "mapbox-gl": "^2.8.0",
     "react": "^17.0.2",
     "react-csv": "^2.2.2",

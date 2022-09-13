@@ -174,7 +174,7 @@ const headers = [
   {label: 'Title', value: 'title'},
   {label: 'Description', value: 'description'},
   {label: 'Sentiment', value: 'sentiment'},
-  {label: 'Improvement', value: 'improvement'},
+  {label: 'Condition', value: 'improvement'},
   {label: 'Location', value: 'location.coordinates'},
   {label: 'Longitude', value: 'location.coordinates[0]'},
   {label: 'Latitude', value: 'location.coordinates[1]'},
@@ -242,7 +242,7 @@ const Surveys = () => {
       setShowDetails(true);
       setSurveyEntryData(res?.data?.happeningSurveys?.[0]);
     });
-  }, [uuid, activeIndex, refetch, surveyData]);
+  }, [uuid, activeIndex, refetch, surveyData, data]);
 
   useEffect(() => {
     if (!data) return;

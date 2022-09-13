@@ -243,9 +243,9 @@ const CustomForms = () => {
   return (
     <>
       <DashboardLayout hideOverflowY={showDetails}>
-        <DashboardHeader title='Custom Forms' />
+        <DashboardHeader title='METT' />
         <div className={classes.container}>
-          <h2 className={classes.title}>Custom Forms</h2>
+          <h2 className={classes.title}>METT</h2>
           <div className={classes.header}>
             <div className='cursor-pointer'>
               <DatePicker

@@ -21,6 +21,7 @@ import Resource from '@containers/Resource';
 import Surveys from '@containers/Surveys';
 import TermsAndConditions from '@containers/TermsAndConditions';
 import Tutorial from '@containers/Tutorial';
+import VerifyPhone from '@containers/VerifyPhone';
 
 interface Props {
   isAuthenticated: boolean;
@@ -45,6 +46,7 @@ const AppRoutes = () => {
         <Route path='/faq' element={<FAQ />} />
         <Route path='/forgot-password' element={<ForgotPassword />} />
         <Route path='/login' element={<Login />} />
+        <Route path='/verify-phone' element={<VerifyPhone />} />
         <Route path='/privacy' element={<PrivacyPolicy />} />
         <Route path='/reset-password' element={<ResetPassword />} />
         <Route path='/resource' element={<Resource />} />
