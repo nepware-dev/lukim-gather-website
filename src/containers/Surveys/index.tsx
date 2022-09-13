@@ -163,6 +163,11 @@ export type SelectInputDataType = {
     id: number,
     title: string,
   } | null,
+  createdBy?: {
+    id: string,
+    firstName: string,
+    lastName: string
+  } | null,
   status?: {
     id: number,
     title: string
@@ -226,6 +231,7 @@ const Surveys = () => {
     region: null,
     status: null,
     protectedArea: null,
+    createdBy: null,
   });
   const [toggleFilter, setToggleFilter] = useState<boolean>(false);
 
@@ -289,6 +295,10 @@ const Surveys = () => {
       }
       if (selectInputData?.protectedArea
           && (item.protectedArea?.id !== selectInputData.protectedArea.id)) {
+        return false;
+      }
+      if (selectInputData?.createdBy
+          && (item.createdBy?.id !== selectInputData.createdBy.id)) {
         return false;
       }
       if (status === 'My Entries' && (item.createdBy.id !== userId)) {
@@ -414,6 +424,11 @@ const Surveys = () => {
     setActivePage(1);
   }, [selectInputData]);
 
+  const handleCreatedByChange = useCallback(({option}) => {
+    setSelectInputData({...selectInputData, createdBy: option});
+    setActivePage(1);
+  }, [selectInputData]);
+
   const handleToggle = useCallback(() => {
     setToggleFilter(!toggleFilter);
   }, [toggleFilter]);
@@ -433,6 +448,16 @@ const Surveys = () => {
     title,
     ...item,
   }));
+
+  const createdByData = data?.happeningSurveys?.map((item: SurveyDataType) => ({
+    title: `${item?.createdBy?.firstName} ${item?.createdBy?.lastName}`,
+    id: item?.createdBy?.id,
+  }));
+
+  const createdByOptionsId = createdByData?.map((item: OptionDataType) => item.id);
+  const createdByOptions = createdByData?.filter(
+    ({id}: OptionDataType, index: number) => !createdByOptionsId.includes(id, index + 1),
+  );
 
   const handleCSVClick = useCallback(() => {
     const dateVal = formatISO(new Date(), {format: 'basic'}).replace(/\+|:/g, '');
@@ -559,6 +584,15 @@ const Surveys = () => {
                 options={protectedAreaOptions}
                 placeholder='Protected Area'
                 onChange={handleProtectedAreaChange}
+              />
+              <SelectInput
+                className={classes.selectInput}
+                defaultValue={selectInputData?.createdBy}
+                valueExtractor={titleExtractor}
+                keyExtractor={keyExtractor}
+                options={createdByOptions}
+                placeholder='User'
+                onChange={handleCreatedByChange}
               />
             </div>
             <span className={classes.clear} onClick={handleClearClick}>
