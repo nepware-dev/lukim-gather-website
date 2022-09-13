@@ -34,6 +34,7 @@ export default {
   closeIcon: 'flex items-center justify-center min-h-[24px] min-w-[24px] bg-[#fff] rounded-full cursor-pointer',
   declineContent: 'px-[20px] mt-[20px] mb-[32px]',
   declineText: 'font-interMedium text-[16px] text-[#404653] mb-[8px]',
+  text: 'ml-[8px]',
   textarea: 'w-[100%] p-[10px] font-interMedium text-[16px] border border-[#CCDCE8] rounded-lg',
   declineButtons: 'flex justify-end gap-[8px] mt-[20px]',
   cancelBtn: 'bg-[#E7E8EA]',

@@ -384,7 +384,7 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails}) => {
               <Improvement improvement={data.improvement} />
             </div>
             <Title text='Description' />
-            <div>
+            <div className={classes.text}>
               <p className={classes.info}>
                 {data.description || 'No Description Found'}
               </p>
@@ -407,6 +407,14 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails}) => {
             <Title text='Test Data' />
             <div className={classes.wrapper}>
               <p>{data?.isTest ? 'Yes' : 'No'}</p>
+            </div>
+            <Title text='Submitted By' />
+            <div className={classes.text}>
+              <p>
+                {data?.createdBy?.firstName}
+                &nbsp;
+                {data?.createdBy?.lastName}
+              </p>
             </div>
           </div>
           <div className={cs(classes.buttons, ['hidden', !isStaff])}>
