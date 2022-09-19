@@ -244,7 +244,10 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails}) => {
       const pdf = new jsPDF('p', 'mm', 'a4');
       const width = pdf.internal.pageSize.getWidth();
       const height = pdf.internal.pageSize.getHeight();
-      pdf.addImage(imgData, 'PNG', 0, 0, width, height);
+      pdf.setFillColor(204, 204, 204, 0);
+      pdf.rect(0, 0, width, height, 'F');
+      const iWidth = (element.scrollWidth * width) / element.scrollHeight + 30;
+      pdf.addImage(imgData, 'PNG', (width - iWidth) / 2, 0, iWidth, height);
       pdf.save(`${data?.title}-${currentDate}.pdf`);
     });
   }, [data, currentDate]);
@@ -410,7 +413,7 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails}) => {
             </div>
             <Title text='Submitted By' />
             <div className={classes.text}>
-              <p>
+              <p className='capitalize'>
                 {data?.createdBy?.firstName}
                 &nbsp;
                 {data?.createdBy?.lastName}
