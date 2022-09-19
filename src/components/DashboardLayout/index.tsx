@@ -74,7 +74,7 @@ const DashboardLayout = ({
               )}
             >
               <BsFillGridFill size={20} />
-              <p className={classes.linkText}>Dashboard</p>
+              <p className={classes.linkText}>Map</p>
             </Link>
             <Link
               to='/surveys'
@@ -85,7 +85,7 @@ const DashboardLayout = ({
               )}
             >
               <FiFileText size={20} />
-              <p className={classes.linkText}>Surveys</p>
+              <p className={classes.linkText}>Surveys List</p>
               <span
                 className={cs(classes.count, [
                   classes.hidden,
@@ -104,7 +104,7 @@ const DashboardLayout = ({
               )}
             >
               <GoListUnordered size={20} />
-              <p className={classes.linkText}>METT</p>
+              <p className={classes.linkText}>METT List</p>
             </Link>
             <Link
               to='/organization'
