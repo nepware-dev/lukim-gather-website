@@ -21,7 +21,7 @@ export default {
   categoryTitle: 'font-interMedium text-[16px] leading-[19.36px]',
   photosWrapper: 'flex gap-[12px] overflow-x-auto max-w-[calc(100vw-40px)]',
   photo: 'h-[143px] w-[187px] rounded-lg object-cover',
-  info: 'font-inter text-[16px] text-[#282F3E] leading-[24px]',
+  info: 'font-inter text-[16px] text-[#282F3E] leading-[24px] ml-[8px]',
   mapWrapper: 'h-[229px] mt-[8px] mb-[32px] rounded-lg',
   buttons: 'flex justify-between gap-[16px] mb-[52px] px-[18px]',
   acceptBtn: 'w-[100%]',
