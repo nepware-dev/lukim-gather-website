@@ -492,9 +492,9 @@ const Surveys = () => {
   return (
     <>
       <DashboardLayout hideOverflowY={showDetails}>
-        <DashboardHeader title='Surveys' />
+        <DashboardHeader title='Surveys List' />
         <div className={classes.container}>
-          <h2 className={classes.title}>Surveys</h2>
+          <h2 className={classes.title}>Surveys List</h2>
           <div className={classes.header}>
             <div className={classes.tabs}>
               <SurveyTab

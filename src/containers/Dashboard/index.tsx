@@ -440,8 +440,8 @@ const Dashboard = () => {
 
   return (
     <DashboardLayout>
-      <DashboardHeader title='Dashboard' />
-      <h2 className={classes.title}>Dashboard</h2>
+      <DashboardHeader title='Map' />
+      <h2 className={classes.title}>Map</h2>
       <div className={classes.header}>
         <div className={classes.filterWrapper}>
           <SelectInput
