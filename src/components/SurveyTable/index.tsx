@@ -91,7 +91,7 @@ const SurveyItem: React.FC<ItemProps> = ({
         </p>
       </td>
       <td>
-        <p>
+        <p className='capitalize'>
           {item.createdBy.firstName}
           &nbsp;
           {item.createdBy.lastName}
