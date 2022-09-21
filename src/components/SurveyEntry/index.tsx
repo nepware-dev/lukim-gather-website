@@ -246,7 +246,7 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails}) => {
       const height = pdf.internal.pageSize.getHeight();
       pdf.setFillColor(204, 204, 204, 0);
       pdf.rect(0, 0, width, height, 'F');
-      const iWidth = (element.scrollWidth * width) / element.scrollHeight + 30;
+      const iWidth = (element.scrollWidth * height) / element.scrollHeight;
       pdf.addImage(imgData, 'PNG', (width - iWidth) / 2, 0, iWidth, height);
       pdf.save(`${data?.title}-${currentDate}.pdf`);
     });
@@ -375,7 +375,7 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails}) => {
                     />
                   </div>
                 ))
-                : 'No Photos Found'}
+                : <p className={classes.text}>No Photos Found</p>}
               {data.attachment.length ? <Gallery images={data?.attachment} galleryIndex={galleryIndex} showGallery={showGallery} toggleGalleryVisibility={setShowGallery} /> : ''}
             </div>
             <Title text='feels' />
@@ -387,7 +387,7 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails}) => {
               <Improvement improvement={data.improvement} />
             </div>
             <Title text='Description' />
-            <div className={classes.text}>
+            <div>
               <p className={classes.info}>
                 {data.description || 'No Description Found'}
               </p>
