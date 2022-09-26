@@ -17,10 +17,10 @@ export default {
   filterWrapper: 'mt-4 flex-none flex flex-col-reverse lg:flex-row flex-wrap',
   selectInputWrapper: 'flex-1 flex flex-col lg:flex-row flex-wrap gap-4',
   clear: 'flex items-center cursor-pointer hover:text-[#585D69] h-[42px] hover:bg-[#E7ECF2] px-3 rounded-lg w-fit mb-4',
-  translate: '-translate-y-56 lg:-translate-y-16',
+  translate: '-translate-y-[38vh] lg:-translate-y-16',
   tranlateNone: '-translate-y-0',
   transition: 'ease-in-out duration-500 lg:duration-300',
   transitionOpacity: 'transition-opacity duration-500 ease-out',
-  opacityNone: 'opacity-0',
-  opacityFull: 'opacity-100',
+  opacityNone: 'opacity-0 invisible',
+  opacityFull: 'opacity-100 visible',
 };
