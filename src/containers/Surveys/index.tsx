@@ -301,7 +301,7 @@ const Surveys = () => {
           && (item.createdBy?.id !== selectInputData.createdBy.id)) {
         return false;
       }
-      if (status === 'My Entries' && (item.createdBy.id !== userId)) {
+      if (status === 'My Entries' && (item?.createdBy?.id !== userId)) {
         return false;
       }
       if (!(new Date(new Date(item.createdAt).toDateString())
@@ -449,10 +449,13 @@ const Surveys = () => {
     ...item,
   }));
 
-  const createdByData = data?.happeningSurveys?.map((item: SurveyDataType) => ({
-    title: `${item?.createdBy?.firstName} ${item?.createdBy?.lastName}`,
-    id: item?.createdBy?.id,
-  }));
+  const createdByData = data?.happeningSurveys?.map((item: SurveyDataType) => {
+    const name = (item?.createdBy?.firstName && item?.createdBy?.lastName) ? `${item?.createdBy?.firstName} ${item?.createdBy?.lastName}` : 'Anonymous';
+    return {
+      title: name,
+      id: item?.createdBy?.id,
+    };
+  });
 
   const createdByOptionsId = createdByData?.map((item: OptionDataType) => item.id);
   const createdByOptions = createdByData?.filter(
