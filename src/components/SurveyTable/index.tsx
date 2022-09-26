@@ -54,6 +54,7 @@ const SurveyItem: React.FC<ItemProps> = ({
     setIndex(index);
     setShowDetails(true);
   }, [index, navigate, setIndex, setShowDetails]);
+  const name = (item?.createdBy?.firstName && item?.createdBy?.lastName) ? `${item?.createdBy?.firstName} ${item?.createdBy?.lastName}` : 'Anonymous';
 
   return (
     <tr className={classes.tableItemRow}>
@@ -92,9 +93,7 @@ const SurveyItem: React.FC<ItemProps> = ({
       </td>
       <td>
         <p className='capitalize'>
-          {item?.createdBy?.firstName}
-          &nbsp;
-          {item?.createdBy?.lastName}
+          {name}
         </p>
       </td>
       <td>
