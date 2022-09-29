@@ -28,6 +28,13 @@
   border-radius: 8px;
 }
 
+.mapboxgl-popup-close-button {
+  font-weight: bold;
+  font-size: 16px;
+  width: 24px;
+  height: 24px;
+}
+
 /* Chrome, Safari, Edge, Opera */
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {

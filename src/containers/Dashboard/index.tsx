@@ -320,8 +320,9 @@ const Dashboard = () => {
     }
 
     setPopUpLngLat(event.lngLat);
+    const submittedBy = (item?.createdBy?.firstName && item?.createdBy?.lastName) ? `${item?.createdBy?.firstName} ${item?.createdBy?.lastName}` : 'Anonymous';
     return setPopUp(
-      <div>
+      <div className='p-[2px]'>
         Category:
         {' '}
         {item.category.title}
@@ -341,6 +342,10 @@ const Dashboard = () => {
         Created At:
         {' '}
         {formatDate(item.createdAt)}
+        <br />
+        Created By:
+        {' '}
+        {submittedBy}
         <br />
         <div className='pt-[14px]'>
           <Link className='cursor-pointer underline' to={`/surveys/${item.id}`}>View Details</Link>
