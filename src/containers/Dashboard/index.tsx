@@ -52,6 +52,8 @@ import {
   unclusteredCustomFormPointTextLayer,
   polygonTitle,
   polygon,
+  protectedAreaLayer,
+  protectedAreaLayerTitle,
 } from './layers';
 import surveyCategory from '../../data/surveyCategory';
 import classes from './styles';
@@ -389,6 +391,9 @@ const Dashboard = () => {
           (_attachment: any) => _attachment.media,
         );
       }
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      surveyItem.attachment = surveyItem.attachment.map((mediaUrl) => JSON.stringify(mediaUrl)).join(','); // eslint-disable-line no-param-reassign
       return surveyItem;
     });
     const happeningSurveyLocationCSV = happeningSurveyLocationParser.parse(
@@ -544,6 +549,10 @@ const Dashboard = () => {
           onLoad={onLoad}
           preserveDrawingBuffer
         >
+          <Source type='vector' tiles={['https://cms.lukimgather.org/protected_area_tiles/{z}/{x}/{y}']}>
+            <Layer {...protectedAreaLayerTitle} />
+            <Layer {...protectedAreaLayer} />
+          </Source>
           <Source
             id='surveyPolySource'
             type='geojson'
