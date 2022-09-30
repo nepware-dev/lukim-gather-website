@@ -37,6 +37,9 @@ export const GET_SURVEY_DATA = gql`
       title
       createdAt
       answer
+      createdBy {
+        id
+      }
     }
   }
 `;

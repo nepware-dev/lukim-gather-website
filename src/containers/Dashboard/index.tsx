@@ -1,6 +1,7 @@
 import React, {
   useCallback, useEffect, useState, useMemo, useRef, ReactElement,
 } from 'react';
+import {useSelector} from 'react-redux';
 import Map, {Source, Layer, Popup} from 'react-map-gl';
 import type {MapRef} from 'react-map-gl';
 import {Link} from 'react-router-dom';
@@ -9,6 +10,7 @@ import {useQuery} from '@apollo/client';
 import DashboardHeader from '@components/DashboardHeader';
 import DashboardLayout from '@components/DashboardLayout';
 import Dropdown from '@components/Dropdown';
+import SurveyTab from '@components/SurveyTab';
 
 import SelectInput from '@ra/components/Form/SelectInput'; // eslint-disable-line no-eval
 
@@ -30,6 +32,7 @@ import jsPDF from 'jspdf';
 import {FormDataType} from '@components/FormTable';
 import {SurveyDataType} from '@components/SurveyTable';
 
+import {rootState} from '@store/rootReducer';
 import cs from '@utils/cs';
 import {formatDate} from '@utils/formatDate';
 import {findPropertyAnywhere} from '@utils/searchTree';
@@ -119,6 +122,13 @@ const customSurveyParser = new Parser();
 const Dashboard = () => {
   const contentRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapRef | null>(null);
+
+  const {
+    auth: {
+      user: {id: userId},
+    },
+  } = useSelector((state: rootState) => state);
+
   const [popup, setPopUp] = useState<ReactElement | null>(null);
   const [filteredData, setFilteredData] = useState([]);
   const [popupLngLat, setPopUpLngLat] = useState<mapboxgl.LngLat | null>(null);
@@ -134,6 +144,8 @@ const Dashboard = () => {
   const {data: regions} = useQuery(GET_REGION_DATA);
   const {data: protectedAreas} = useQuery(GET_PROTECTED_AREA_DATA);
 
+  const [status, setStatus] = useState<string>('All');
+
   const currentDate = formatISO(new Date(), {format: 'basic'}).replace(/\+|:/g, '');
 
   useEffect(() => {
@@ -141,11 +153,12 @@ const Dashboard = () => {
     // eslint-disable-next-line no-underscore-dangle
     const _filteredData = data.happeningSurveys?.filter(
       (item: {
-              createdAt: string,
-              category: SelectInputType,
-              region: SelectInputType,
-              protectedArea: SelectInputType
-            }) => {
+        createdAt: string,
+        category: SelectInputType,
+        region: SelectInputType,
+        protectedArea: SelectInputType,
+        createdBy: {id: string}
+      }) => {
         if (selectInputCategory && (item.category.id !== selectInputCategory.id)) {
           return false;
         }
@@ -155,12 +168,15 @@ const Dashboard = () => {
         if (selectInputProtectedArea && (item.protectedArea?.id !== selectInputProtectedArea.id)) {
           return false;
         }
+        if (status === 'My Entries' && (item?.createdBy?.id !== userId)) {
+          return false;
+        }
         return true;
       },
     ) || [];
 
     setFilteredData(_filteredData);
-  }, [data, selectInputCategory, selectInputRegion, selectInputProtectedArea]);
+  }, [data, selectInputCategory, status, selectInputRegion, selectInputProtectedArea, userId]);
 
   const handleCategoryChange = useCallback(({option}) => {
     setSelectInputCategory(option);
@@ -197,6 +213,9 @@ const Dashboard = () => {
     let shape = [];
     if (customSurveyData?.survey?.length > 0) {
       shape = customSurveyData?.survey.reduce((features: any, survey: FormDataType) => {
+        if (survey?.createdBy?.id !== userId) {
+          return features;
+        }
         const formAnswers = JSON.parse(survey.answer);
         if (selectInputCategory || selectInputProtectedArea) {
           return features;
@@ -233,7 +252,7 @@ const Dashboard = () => {
       type: 'FeatureCollection',
       features: [...shape],
     };
-  }, [customSurveyData, selectInputRegion, selectInputCategory, selectInputProtectedArea]);
+  }, [customSurveyData, selectInputRegion, selectInputCategory, selectInputProtectedArea, userId]);
 
   const flatCustomForms = useMemo(() => customFormGeoJSON.features.map(
     ({properties: {customForm: {formAnswers: {data: formData}}}}: any) => flattenObject(formData),
@@ -289,7 +308,7 @@ const Dashboard = () => {
       );
     } else {
       item = JSON.parse(event.features[0].properties.surveyItem
-      || event.features[0].properties?.customForm);
+        || event.features[0].properties?.customForm);
     }
 
     if (item?.formAnswers?.data?.section_1) {
@@ -433,6 +452,10 @@ const Dashboard = () => {
     , [protectedAreas],
   );
 
+  const handleTab = useCallback((text: string) => {
+    setStatus(text);
+  }, []);
+
   const renderLabel = useCallback(
     () => (
       <div className={classes.exportButton}>
@@ -449,6 +472,20 @@ const Dashboard = () => {
       <h2 className={classes.title}>Map</h2>
       <div className={classes.header}>
         <div className={classes.filterWrapper}>
+          <div className={classes.tabs}>
+            <SurveyTab
+              text='All'
+              onClick={handleTab}
+              isActive={status === 'All'}
+              className='rounded-l-lg'
+            />
+            <SurveyTab
+              text='My Entries'
+              onClick={handleTab}
+              isActive={status === 'My Entries'}
+              className='rounded-r-lg'
+            />
+          </div>
           <SelectInput
             className='h-[44px] min-w-[12em] w-max rounded-lg border-[#CCDCE8]'
             valueExtractor={titleExtractor}
