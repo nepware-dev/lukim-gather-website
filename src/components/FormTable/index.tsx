@@ -12,6 +12,7 @@ export type FormDataType = {
   title: string;
   createdAt: string;
   answer: string;
+  createdBy: {id: string};
 };
 
 interface Props {
