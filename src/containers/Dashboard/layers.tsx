@@ -138,3 +138,26 @@ export const polygon: LayerProps = {
     'fill-opacity': 0.25,
   },
 };
+
+export const protectedAreaLayer: LayerProps = {
+  id: 'protected-area-fill',
+  type: 'fill',
+  'source-layer': 'protected-areas',
+  paint: {
+    'fill-outline-color': 'rgba(59, 117, 180, 0.4)',
+    'fill-color': 'rgba(59, 117, 180, 0.4)',
+  },
+};
+
+export const protectedAreaLayerTitle: LayerProps = {
+  id: 'protected-area-title',
+  type: 'symbol',
+  minzoom: 12,
+  'source-layer': 'protected-areas',
+  layout: {
+    'text-field': ['get', 'name'],
+  },
+  paint: {
+    'text-color': 'rgba(0, 0, 0, 0.8)',
+  },
+};
