@@ -29,12 +29,6 @@ const Home = () => (
             How do we ensure that community data from Papua New Guinea’s
             protected areas is reported and heard?
           </p>
-          <p className={classes.heroInfo}>
-            Pilot phase in May 2022
-          </p>
-          <p className={classes.heroInfo}>
-            Coming to app stores in August 2022
-          </p>
           <div className={classes.heroButtons}>
             <a href='https://apps.apple.com/np/app/lukim-gather/id6443612199' target='_blank' rel='noreferrer'>
               <AppButton boxShadow available beta />
