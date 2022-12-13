@@ -36,7 +36,9 @@ const Home = () => (
             Coming to app stores in August 2022
           </p>
           <div className={classes.heroButtons}>
-            <AppButton boxShadow />
+            <a href='https://apps.apple.com/np/app/lukim-gather/id6443612199' target='_blank' rel='noreferrer'>
+              <AppButton boxShadow available beta />
+            </a>
             <a href='https://play.google.com/store/apps/details?id=org.lukimgather' target='_blank' rel='noreferrer'>
               <AppButton android boxShadow available beta />
             </a>
