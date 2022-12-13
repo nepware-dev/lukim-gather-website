@@ -24,7 +24,9 @@ const Footer = ({hideContent = false}: {hideContent?: boolean}) => (
             </div>
           </div>
           <div className={classes.buttons}>
-            <AppButton bgGrey />
+            <a href='https://apps.apple.com/np/app/lukim-gather/id6443612199' target='_blank' rel='noreferrer'>
+              <AppButton bgGrey available beta />
+            </a>
             <a href='https://play.google.com/store/apps/details?id=org.lukimgather' target='_blank' rel='noreferrer'>
               <AppButton android bgGrey available beta />
             </a>
