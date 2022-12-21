@@ -86,14 +86,6 @@ const DashboardLayout = ({
             >
               <FiFileText size={20} />
               <p className={classes.linkText}>Surveys List</p>
-              <span
-                className={cs(classes.count, [
-                  classes.hidden,
-                  pathname !== '/surveys',
-                ])}
-              >
-                -
-              </span>
             </Link>
             <Link
               to='/custom-forms'
@@ -107,15 +99,15 @@ const DashboardLayout = ({
               <p className={classes.linkText}>METT List</p>
             </Link>
             <Link
-              to='/organization'
+              to='/projects'
               className={cs(
                 classes.link,
-                [classes.activeLink, pathname === '/organization'],
-                [classes.inactiveLink, pathname !== '/organization'],
+                [classes.activeLink, pathname === '/projects'],
+                [classes.inactiveLink, pathname !== '/projects'],
               )}
             >
               <MdWorkspacesOutline size={20} />
-              <p className={classes.linkText}>Organization</p>
+              <p className={classes.linkText}>Projects</p>
             </Link>
             <div className={classes.userDropdown}>
               <UserDropdown />

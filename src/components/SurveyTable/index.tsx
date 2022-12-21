@@ -3,6 +3,7 @@ import {useNavigate} from 'react-router-dom';
 
 import cs from '@utils/cs';
 import {formatDate} from '@utils/formatDate';
+import {formatName} from '@utils/formatName';
 import useCategoryIcon from '@hooks/useCategoryIcon';
 import {Improvement} from '@components/SurveyEntry';
 
@@ -26,6 +27,7 @@ export type SurveyDataType = {
   isTest: boolean;
   isPublic: boolean;
   createdBy: {id: number, firstName: string, lastName: string};
+  project: {id: string | number; title: string}
 };
 
 interface Props {
@@ -54,7 +56,6 @@ const SurveyItem: React.FC<ItemProps> = ({
     setIndex(index);
     setShowDetails(true);
   }, [index, navigate, setIndex, setShowDetails]);
-  const name = (item?.createdBy?.firstName && item?.createdBy?.lastName) ? `${item?.createdBy?.firstName} ${item?.createdBy?.lastName}` : 'Anonymous';
 
   return (
     <tr className={classes.tableItemRow}>
@@ -93,7 +94,7 @@ const SurveyItem: React.FC<ItemProps> = ({
       </td>
       <td>
         <p className='capitalize'>
-          {name}
+          {formatName(item?.createdBy)}
         </p>
       </td>
       <td>

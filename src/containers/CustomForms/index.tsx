@@ -101,7 +101,7 @@ const CustomForms = () => {
   }, [id, activeIndex, refetch, surveyFormData]);
 
   useEffect(() => {
-    if (!data) return;
+    if (!data?.survey.length) return;
     const MaxDate = new Date(
       Math.max(
         ...data.survey.map((el: {createdAt: string}) => new Date(el.createdAt)),
@@ -118,7 +118,7 @@ const CustomForms = () => {
   }, [data]);
 
   useEffect(() => {
-    if (!data) return;
+    if (!data?.survey.length) return;
     if (status === 'All') {
       const filterData = data.survey.filter(
         (item: {createdAt: string}) => new Date(new Date(item.createdAt).toDateString())
