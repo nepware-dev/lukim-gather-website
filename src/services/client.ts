@@ -4,13 +4,13 @@
 import {
   ApolloClient,
   InMemoryCache,
-  createHttpLink,
   ApolloLink,
   fromPromise,
   gql,
 } from '@apollo/client';
 import {setContext} from '@apollo/client/link/context';
 import {onError} from '@apollo/client/link/error';
+import {createUploadLink} from 'apollo-upload-client';
 
 import {store} from '@store/index';
 import {setLogout, setToken, setRefreshToken} from '@store/slices/auth';
@@ -22,7 +22,7 @@ const resolvePendingRequests = () => {
   pendingRequests = [];
 };
 
-const httpLink = createHttpLink({
+const httpLink = createUploadLink({
   uri: process.env.REACT_APP_API_BASE_URL,
 });
 
