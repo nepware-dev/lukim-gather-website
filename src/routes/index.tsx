@@ -12,7 +12,9 @@ import ForgotPassword from '@containers/ForgotPassword';
 import Home from '@containers/Home';
 import Login from '@containers/Login';
 import Organization from '@containers/Organization';
+import Project from '@containers/Project';
 import OrganizationDetails from '@containers/OrganizationDetails';
+import ProjectDetail from '@containers/ProjectDetail';
 import Notice from '@components/NoticeBar';
 import Page404 from '@containers/Page404';
 import PrivacyPolicy from '@containers/PrivacyPolicy';
@@ -61,6 +63,8 @@ const AppRoutes = () => {
           <Route path='/custom-forms/:id' element={<CustomForms />} />
           <Route path='/dashboard' element={<Dashboard />} />
           <Route path='/organization' element={<Organization />} />
+          <Route path='/projects' element={<Project />} />
+          <Route path='/project/:id' element={<ProjectDetail />} />
           <Route path='/organization/:id' element={<OrganizationDetails />} />
           <Route path='/surveys' element={<Surveys />} />
           <Route path='/surveys/:uuid' element={<Surveys />} />

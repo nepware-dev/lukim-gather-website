@@ -19,6 +19,7 @@ import {saveAs} from 'file-saver';
 import {rootState} from '@store/rootReducer';
 import cs from '@utils/cs';
 import {formatDate} from '@utils/formatDate';
+import {formatName} from '@utils/formatName';
 
 import DashboardHeader from '@components/DashboardHeader';
 import DashboardLayout from '@components/DashboardLayout';
@@ -72,6 +73,10 @@ export const GET_SURVEY_DATA = gql`
         firstName
         lastName
       }
+      project {
+        id
+        title
+      }
     }
   }
 `;
@@ -113,6 +118,10 @@ export const GET_SURVEY = gql`
         id
         firstName
         lastName
+      }
+      project {
+        id
+        title
       }
     }
   }
@@ -169,6 +178,10 @@ export type SelectInputDataType = {
     lastName: string
   } | null,
   status?: {
+    id: number,
+    title: string
+  } | null,
+  project?: {
     id: number,
     title: string
   } | null,
@@ -232,6 +245,7 @@ const Surveys = () => {
     status: null,
     protectedArea: null,
     createdBy: null,
+    project: null,
   });
   const [toggleFilter, setToggleFilter] = useState<boolean>(false);
 
@@ -282,7 +296,8 @@ const Surveys = () => {
               region: OptionDataType,
               protectedArea: OptionDataType,
               status: string,
-              createdBy: {id: string}
+              createdBy: {id: string},
+              project: OptionDataType,
               }) => {
       if (selectInputData?.category && (item.category.id !== selectInputData.category.id)) {
         return false;
@@ -299,6 +314,10 @@ const Surveys = () => {
       }
       if (selectInputData?.createdBy
           && (item.createdBy?.id !== selectInputData.createdBy.id)) {
+        return false;
+      }
+      if (selectInputData?.project
+          && (item.project?.id !== selectInputData.project.id)) {
         return false;
       }
       if (status === 'My Entries' && (item?.createdBy?.id !== userId)) {
@@ -429,6 +448,11 @@ const Surveys = () => {
     setActivePage(1);
   }, [selectInputData]);
 
+  const handleProjectChange = useCallback(({option}) => {
+    setSelectInputData({...selectInputData, project: option});
+    setActivePage(1);
+  }, [selectInputData]);
+
   const handleToggle = useCallback(() => {
     setToggleFilter(!toggleFilter);
   }, [toggleFilter]);
@@ -449,13 +473,14 @@ const Surveys = () => {
     ...item,
   }));
 
-  const createdByData = data?.happeningSurveys?.map((item: SurveyDataType) => {
-    const name = (item?.createdBy?.firstName && item?.createdBy?.lastName) ? `${item?.createdBy?.firstName} ${item?.createdBy?.lastName}` : 'Anonymous';
-    return {
-      title: name,
-      id: item?.createdBy?.id,
-    };
-  });
+  const createdByData = data?.happeningSurveys?.map((item: SurveyDataType) => ({
+    title: formatName(item?.createdBy),
+    id: item?.createdBy?.id,
+  }));
+
+  const projectOptions = data?.happeningSurveys?.filter((item: SurveyDataType) => !!item.project)
+    .map((item: SurveyDataType) => item.project)
+    .filter((item: SurveyDataType['project'], index: boolean, self: any) => self.indexOf(item) === index);
 
   const createdByOptionsId = createdByData?.map((item: OptionDataType) => item.id);
   const createdByOptions = createdByData?.filter(
@@ -596,6 +621,15 @@ const Surveys = () => {
                 options={createdByOptions}
                 placeholder='User'
                 onChange={handleCreatedByChange}
+              />
+              <SelectInput
+                className={classes.selectInput}
+                defaultValue={selectInputData?.project}
+                valueExtractor={titleExtractor}
+                keyExtractor={keyExtractor}
+                options={projectOptions}
+                placeholder='Project'
+                onChange={handleProjectChange}
               />
             </div>
             <span className={classes.clear} onClick={handleClearClick}>

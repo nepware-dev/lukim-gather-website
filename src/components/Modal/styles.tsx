@@ -1,0 +1,15 @@
+export default {
+  modal: '!bg-[white] overflow-hidden rounded-md min-w-[400px]',
+  header: 'text-xl px-4 py-5 bg-[#E7ECF2] font-semibold flex flex-row justify-between items-center',
+  closeIcon: 'w-8 h-8 rounded-full bg-[white] flex items-center justify-center cursor-pointer',
+  content: 'p-4',
+  Warning: 'w-auto',
+  textWarning: '',
+  Danger: 'w-auto bg-[#F04438]',
+  textDanger: 'text-[white]',
+  Neutral: 'w-auto bg-[white] border-[#EC6D2530] border',
+  textNeutral: 'text-[#EC6D25]',
+  Primary: 'w-auto',
+  textPrimary: '',
+  actions: 'p-3 pb-6 gap-2 flex flex-row justify-end',
+};

@@ -1,7 +1,7 @@
 import React, {useState, useCallback, useEffect} from 'react';
 import {gql, useMutation} from '@apollo/client';
 import {Link, useNavigate} from 'react-router-dom';
-import parsePhoneNumber from 'libphonenumber-js';
+import {parsePhoneNumber} from 'libphonenumber-js';
 
 import {dispatchLogin} from '@services/dispatch';
 import useToast from '@hooks/useToast';

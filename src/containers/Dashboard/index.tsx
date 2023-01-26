@@ -136,6 +136,7 @@ const Dashboard = () => {
   const [popupLngLat, setPopUpLngLat] = useState<mapboxgl.LngLat | null>(null);
   const [selectInputCategory, setSelectInputCategory] = useState<SelectInputType | null>(null);
   const [selectInputRegion, setSelectInputRegion] = useState<SelectInputType | null>(null);
+  const [selectInputProject, setSelectInputProject] = useState<SelectInputType | null>(null);
   const [
     selectInputProtectedArea,
     setSelectInputProtectedArea,
@@ -159,7 +160,8 @@ const Dashboard = () => {
         category: SelectInputType,
         region: SelectInputType,
         protectedArea: SelectInputType,
-        createdBy: {id: string}
+        createdBy: {id: string},
+        project: {id: number},
       }) => {
         if (selectInputCategory && (item.category.id !== selectInputCategory.id)) {
           return false;
@@ -170,6 +172,9 @@ const Dashboard = () => {
         if (selectInputProtectedArea && (item.protectedArea?.id !== selectInputProtectedArea.id)) {
           return false;
         }
+        if (selectInputProject && (item.project?.id !== selectInputProject.id)) {
+          return false;
+        }
         if (status === 'My Entries' && (item?.createdBy?.id !== userId)) {
           return false;
         }
@@ -178,7 +183,15 @@ const Dashboard = () => {
     ) || [];
 
     setFilteredData(_filteredData);
-  }, [data, selectInputCategory, status, selectInputRegion, selectInputProtectedArea, userId]);
+  }, [
+    data,
+    selectInputCategory,
+    status,
+    selectInputRegion,
+    selectInputProtectedArea,
+    selectInputProject,
+    userId,
+  ]);
 
   const handleCategoryChange = useCallback(({option}) => {
     setSelectInputCategory(option);
@@ -190,6 +203,10 @@ const Dashboard = () => {
 
   const handleProtectedAreaChange = useCallback(({option}) => {
     setSelectInputProtectedArea(option);
+  }, []);
+
+  const handleProjectChange = useCallback(({option}) => {
+    setSelectInputProject(option);
   }, []);
 
   const surveyGeoJSON: any = useMemo(() => {
@@ -457,6 +474,11 @@ const Dashboard = () => {
     , [protectedAreas],
   );
 
+  const projectOptions = data?.happeningSurveys
+    .filter((item: SurveyDataType) => !!item.project)
+    .map((item: SurveyDataType) => item.project)
+    .filter((item: SurveyDataType['project'], index: boolean, self: any) => self.indexOf(item) === index);
+
   const handleTab = useCallback((text: string) => {
     setStatus(text);
   }, []);
@@ -514,6 +536,14 @@ const Dashboard = () => {
             options={protectedAreasOptions}
             placeholder='Protected Areas'
             onChange={handleProtectedAreaChange}
+          />
+          <SelectInput
+            className={cs('h-[44px]', 'min-w-[12em] w-max', 'rounded-lg', 'border-[#CCDCE8]')}
+            valueExtractor={titleExtractor}
+            keyExtractor={keyExtractor}
+            options={projectOptions}
+            placeholder='Project'
+            onChange={handleProjectChange}
           />
         </div>
         {filteredData && (

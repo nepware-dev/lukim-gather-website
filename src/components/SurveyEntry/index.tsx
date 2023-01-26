@@ -16,6 +16,7 @@ import jsPDF from 'jspdf';
 
 import cs from '@utils/cs';
 import {formatDate} from '@utils/formatDate';
+import {formatName} from '@utils/formatName';
 import useCategoryIcon from '@hooks/useCategoryIcon';
 import {rootState} from '@store/rootReducer';
 
@@ -353,6 +354,12 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails}) => {
               </p>
             </div>
             <p className={classes.date}>{formatDate(data.createdAt)}</p>
+            {data.project && (
+              <>
+                <Title text='project' />
+                <p>{data.project.title}</p>
+              </>
+            )}
             <Title text='category' />
             <div className={classes.categoryWrapper}>
               <img
@@ -414,9 +421,7 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails}) => {
             <Title text='Submitted By' />
             <div className={classes.text}>
               <p className='capitalize'>
-                {data?.createdBy?.firstName}
-                &nbsp;
-                {data?.createdBy?.lastName}
+                {formatName(data?.createdBy)}
               </p>
             </div>
           </div>
