@@ -18,7 +18,7 @@ export default {
   selectInputWrapper: 'flex-1 flex flex-col lg:flex-row flex-wrap gap-4',
   clear: 'flex items-center cursor-pointer hover:text-[#585D69] h-[42px] hover:bg-[#E7ECF2] px-3 rounded-lg w-fit mb-4',
   translate: '-translate-y-[38vh] lg:-translate-y-16',
-  tranlateNone: '-translate-y-0',
+  translateNone: '-translate-y-0',
   transition: 'ease-in-out duration-500 lg:duration-300',
   transitionOpacity: 'transition-opacity duration-500 ease-out',
   opacityNone: 'opacity-0 invisible',

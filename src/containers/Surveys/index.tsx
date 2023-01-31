@@ -28,8 +28,10 @@ import SurveyTab from '@components/SurveyTab';
 import Pagination from '@components/Pagination';
 import Dropdown from '@components/Dropdown';
 import SurveyEntry from '@components/SurveyEntry';
+import EditSurveyModal from '@components/EditSurveyModal';
 import SurveyFilter from '@components/SurveyFilter';
 import SelectInput from '@ra/components/Form/SelectInput'; // eslint-disable-line no-eval
+import useToggle from '@ra/hooks/useToggle';
 
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -227,6 +229,9 @@ const Surveys = () => {
   const {data: category} = useQuery(GET_CATEGORY_DATA);
   const {data: regions} = useQuery(GET_REGION_DATA);
   const {data: protectedAreas} = useQuery(GET_PROTECTED_AREA_DATA);
+
+  const [visibleEditModal, toggleEditModal] = useToggle();
+
   const [status, setStatus] = useState<string>('All');
   const [surveyData, setSurveyData] = useState<SurveyDataType[]>([]);
   const [activePage, setActivePage] = useState<number>(1);
@@ -517,6 +522,11 @@ const Surveys = () => {
   },
   ];
 
+  const handleOpenEditModal = useCallback(() => {
+    setShowDetails(false);
+    toggleEditModal();
+  }, [toggleEditModal]);
+
   return (
     <>
       <DashboardLayout hideOverflowY={showDetails}>
@@ -640,7 +650,7 @@ const Surveys = () => {
             classes.surveyTable,
             classes.transition,
             [classes.translate, !toggleFilter],
-            [classes.tranlateNone, toggleFilter],
+            [classes.translateNone, toggleFilter],
           )}
           >
             <SurveyTable
@@ -670,7 +680,11 @@ const Surveys = () => {
         <SurveyEntry
           data={surveyEntryData}
           setShowDetails={setShowDetails}
+          handleEditClick={handleOpenEditModal}
         />
+      )}
+      {visibleEditModal && (
+        <EditSurveyModal onClose={toggleEditModal} data={surveyEntryData} />
       )}
     </>
   );

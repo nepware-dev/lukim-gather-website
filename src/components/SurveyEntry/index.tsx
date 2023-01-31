@@ -40,6 +40,7 @@ import classes from './styles';
 interface Props {
   data: SurveyDataType;
   setShowDetails(value: boolean): void;
+  handleEditClick: React.MouseEventHandler;
 }
 
 const Title = ({text}: {text: string}) => (
@@ -54,23 +55,26 @@ const Feel = ({sentiment}: {sentiment: string}) => (
   </div>
 );
 
-export const Improvement = ({improvement}: {improvement: string | null}) => {
+export const Improvement = ({
+  improvement,
+  iconColor = '#EC6D25',
+}: {improvement: string | null; iconColor?: string}) => {
   const status = improvement?.toLowerCase();
 
   const renderImprovementIcon = useCallback(
     () => {
       switch (status) {
       case 'increasing':
-        return <HiTrendingUp size={25} color='#EC6D25' />;
+        return <HiTrendingUp size={25} color={iconColor} />;
       case 'decreasing':
-        return <HiTrendingDown size={25} color='#EC6D25' />;
+        return <HiTrendingDown size={25} color={iconColor} />;
       case 'same':
-        return <HiMenuAlt4 size={25} color='#EC6D25' />;
+        return <HiMenuAlt4 size={25} color={iconColor} />;
       default:
         return <p className='ml-2'>-</p>;
       }
     },
-    [status],
+    [iconColor, status],
   );
 
   return (
@@ -102,7 +106,7 @@ const ExportOption = ({onClick, icon, title} : {onClick(): void, icon: string, t
   </div>
 );
 
-const SurveyEntry: React.FC<Props> = ({data, setShowDetails}) => {
+const SurveyEntry: React.FC<Props> = ({data, setShowDetails, handleEditClick}) => {
   const navigate = useNavigate();
   const mapRef = useRef<MapRef>(null);
   const entryRef = useRef<any>();
@@ -230,8 +234,7 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails}) => {
   const renderLabel = useCallback(
     () => (
       <div className={classes.exportButton}>
-        <span className='material-symbols-rounded'>ios_share</span>
-        <p className={classes.exportButtonTitle}>Export </p>
+        <span className='material-symbols-rounded text-[32px] text-[#70747e]'>ios_share</span>
       </div>
     ),
     [],
@@ -326,16 +329,21 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails}) => {
           <div className={classes.headerWrapper}>
             <div className={classes.iconWrapper}>
               <div className={classes.closeModalIcon} onClick={hideDetails}>
-                <HiOutlineX size={14} />
+                <HiOutlineX size={24} />
               </div>
-              <div className={classes.exportDropdown}>
-                <Dropdown renderLabel={renderLabel}>
-                  <div className={classes.exportOptions}>
-                    <ExportOption icon={pdfIcon} title='PDF' onClick={onExportPDF} />
-                    <ExportOption icon={pngIcon} title='Image (PNG)' onClick={onExportImage} />
-                    <ExportOption icon={csvIcon} title='Data (CSV)' onClick={onExportCSV} />
-                  </div>
-                </Dropdown>
+              <div className={classes.rightContent}>
+                <div onClick={handleEditClick} className='cursor-pointer'>
+                  <span className='material-symbols-rounded text-[32px] text-[#70747e]'>edit</span>
+                </div>
+                <div className={classes.exportDropdown}>
+                  <Dropdown renderLabel={renderLabel}>
+                    <div className={classes.exportOptions}>
+                      <ExportOption icon={pdfIcon} title='PDF' onClick={onExportPDF} />
+                      <ExportOption icon={pngIcon} title='Image (PNG)' onClick={onExportImage} />
+                      <ExportOption icon={csvIcon} title='Data (CSV)' onClick={onExportCSV} />
+                    </div>
+                  </Dropdown>
+                </div>
               </div>
             </div>
           </div>
