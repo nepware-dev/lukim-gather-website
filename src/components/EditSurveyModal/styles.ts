@@ -17,7 +17,9 @@ export default {
   changeButton: 'text-[#0A52A1] text-[14px] cursor-pointer',
   categoryModalOverlay: 'flex justify-center items-center fixed top-0 bottom-0 left-0 right-0 bg-[#10182880] z-20',
   photosWrapper: 'flex h-[143px] gap-[12px] overflow-x-auto max-w-[calc(100vw-40px)]',
+  photoList: 'flex gap-[12px]',
   photo: 'min-h-[143px] min-w-[187px] max-w-[187px] max-h-[143px] rounded-lg object-cover',
+  emptyComponent: 'bg-[#cfc] grid place-items-center bg-[#f4f4f4]',
   imageDeleteIcon: 'cursor-pointer drop-shadow-sm bg-[#fff] absolute right-[6px] top-[6px] z-10 rounded-full h-[20px] w-[20px] grid place-items-center',
   textarea: 'w-[100%] p-[10px] font-interMedium text-[16px] border border-[#CCDCE8] rounded-lg',
 };

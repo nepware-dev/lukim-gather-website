@@ -4,21 +4,21 @@ import React, {
 import {useMutation} from '@apollo/client';
 import {HiOutlineX} from 'react-icons/hi';
 import {BsXLg} from 'react-icons/bs';
+import {AiOutlinePlus} from 'react-icons/ai';
+
+import {SurveyDataType} from '@components/SurveyTable';
 
 import useCategoryIcon from '@hooks/useCategoryIcon';
 import useToast from '@hooks/useToast';
 import {UPDATE_HAPPENING_SURVEY} from '@services/queries';
-
-import {SurveyDataType} from '@components/SurveyTable';
-import useToggle from '@ra/hooks/useToggle';
 import usePrevious from '@hooks/usePrevious';
 import cs from '@utils/cs';
 
 import FileInput from '@ra/components/Form/FileInput';
+import useToggle from '@ra/hooks/useToggle';
 
 import tree from '@images/category-tree.png';
 
-import {AiOutlinePlus} from 'react-icons/ai';
 import CategorySelect from './CategorySelect';
 import SentimentInput from './SentimentInput';
 import ImprovementInput from './ImprovementInput';
@@ -32,16 +32,16 @@ interface Props {
     onClose: () => void;
 }
 
-const ImageItem = ({item, onRemove} : {item: string; onRemove: any}) => {
-  const handleRemove = useCallback(() => onRemove(item), [item, onRemove]);
+const ImageItem = ({item, index, onRemove} : {item: string; index?: number; onRemove: any}) => {
+  const handleRemove = useCallback(() => onRemove(index), [index, onRemove]);
   return (
     <div className='relative'>
       <img
         src={item}
-        alt='img'
+        alt={`img-${index}`}
         className={classes.photo}
       />
-      <div onClick={handleRemove} className={cs(classes.imageDeleteIcon, 'hidden')}>
+      <div onClick={handleRemove} className={classes.imageDeleteIcon}>
         <BsXLg size={10} />
       </div>
     </div>
@@ -63,12 +63,13 @@ const EditSurveyModal: React.FC<Props> = ({data, onClose}) => {
   const [description, setDescription] = useState(data?.description || '');
   const [locationName, setLocationName] = useState<string>('');
   const [category, setCategory] = useState<any>(data?.category);
-  const [photos, setPhotos] = useState<any>();
+  const [attachmentLink, setAttachmentLink] = useState(data?.attachment || []);
+  const [photos, setPhotos] = useState<any>([]);
 
   const toast = useToast();
   const prevCategory = usePrevious(category || data?.category);
   const [categoryIcon] = useCategoryIcon(category?.id || data?.category?.id);
-  const [isDisableTitleInput, toggleDisableTitleInput] = useToggle(false);
+  const [isDisableTitleInput, toggleDisableTitleInput] = useToggle(true);
   const [isPublic, toggleIsPublic] = useToggle(data?.isPublic || false);
   const [isTest, toggleIsTest] = useToggle(data?.isTest || false);
   const [showCategoryModal, toggleCategoryModal] = useToggle(false);
@@ -90,6 +91,7 @@ const EditSurveyModal: React.FC<Props> = ({data, onClose}) => {
       categoryId: parseInt(category?.id, 10),
       sentiment: activeFeel,
       attachment: photos || null,
+      attachmentLink: attachmentLink?.flatMap((e) => e.id),
       improvement: activeImprovement || null,
       description,
       isPublic,
@@ -104,6 +106,7 @@ const EditSurveyModal: React.FC<Props> = ({data, onClose}) => {
   }, [
     activeFeel,
     activeImprovement,
+    attachmentLink,
     category?.id,
     data?.id,
     description,
@@ -129,16 +132,18 @@ const EditSurveyModal: React.FC<Props> = ({data, onClose}) => {
         images.push(URL.createObjectURL(photos[i]));
       }
       return images;
-    } return null;
+    } return [];
   }, [photos]);
 
-  const handleRemoveImage = useCallback(() => {
-    // todo remove image
-  }, []);
+  const handleRemoveImage = useCallback((index) => {
+    const newImages = [...photos];
+    newImages.splice(index, 1);
+    setPhotos(newImages);
+  }, [photos]);
 
-  const handleDeleteImage = useCallback(() => {
-    // todo delete image
-  }, []);
+  const handleDeleteImage = useCallback((index) => {
+    setAttachmentLink(attachmentLink?.filter((el) => el !== attachmentLink[index]));
+  }, [attachmentLink]);
 
   const handleTitleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -219,12 +224,15 @@ const EditSurveyModal: React.FC<Props> = ({data, onClose}) => {
           </div>
           <Title title='PHOTOS' />
           <div className={classes.photosWrapper}>
-            {data?.attachment?.length ? data.attachment.map((item: {media: string}) => (
-              <ImageItem item={item.media} onRemove={handleDeleteImage} />
+            {attachmentLink?.length > 0 ? attachmentLink.map((item, index) => (
+              <ImageItem index={index} item={item.media} onRemove={handleDeleteImage} />
             )) : ''}
-            {allImages?.map((item) => (
-              <ImageItem item={item} onRemove={handleRemoveImage} />
+            {allImages?.map((item, index) => (
+              <ImageItem index={index} item={item} onRemove={handleRemoveImage} />
             ))}
+            {attachmentLink?.length === 0 && allImages?.length === 0 && (
+              <div className={cs(classes.photo, classes.emptyComponent)}>No photos found</div>
+            )}
             <div className={classes.uploadButton}>
               <FileInput
                 id='surveyPhoto'

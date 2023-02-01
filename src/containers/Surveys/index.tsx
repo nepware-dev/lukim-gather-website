@@ -44,6 +44,7 @@ export const GET_SURVEY_DATA = gql`
       title
       description
       attachment {
+        id
         media
       }
       category {
@@ -90,6 +91,7 @@ export const GET_SURVEY = gql`
       title
       description
       attachment {
+        id
         media
       }
       category {
