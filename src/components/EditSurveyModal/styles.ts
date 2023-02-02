@@ -6,7 +6,7 @@ export default {
   header: 'mb-[24px] flex w-full justify-between items-center',
   closeModalIcon: 'bg-[#E7E8EA] flex items-center justify-center h-[40px] w-[40px] rounded-full cursor-pointer',
   button: 'flex gap-2 px-3 py-2 rounded-lg border text-[#0a52a1] border-[#0a52a1] hover:bg-[#0a52a1] hover:text-[#ffffff] duration-300',
-  surveyTitle: 'font-interSemibold text-[24px] text-[#282F3E] w-min px-2 py-1 rounded mb-[-8px]',
+  surveyTitle: 'font-interSemibold text-[24px] text-[#282F3E] max-w-[355px] px-2 py-1 rounded mb-[-8px]',
   fieldValue: 'text-[#282F3E]',
   imageInput: 'hidden',
   uploadButton: 'mt-[51.5px] ml-2 bg-[#9DBAD9] h-[40px] w-[40px] min-h-[40px] min-w-[40px] rounded-full flex justify-center items-center',
