@@ -206,6 +206,8 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails, handleEditClick}) =
     } = await response.json();
     if (resData.features[0]?.place_name) {
       setLocationName(resData.features[0].place_name);
+    } else {
+      setLocationName('');
     }
   }, []);
 

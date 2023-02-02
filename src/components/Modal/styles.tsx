@@ -2,7 +2,7 @@ export default {
   modal: '!bg-[white] overflow-hidden rounded-md min-w-[400px]',
   header: 'text-xl px-4 py-5 bg-[#E7ECF2] font-semibold flex flex-row justify-between items-center',
   closeIcon: 'w-8 h-8 rounded-full bg-[white] flex items-center justify-center cursor-pointer',
-  content: 'p-4',
+  content: 'p-4 h-[100%]',
   Warning: 'w-auto',
   textWarning: '',
   Danger: 'w-auto bg-[#F04438]',

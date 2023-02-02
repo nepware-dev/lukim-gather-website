@@ -107,3 +107,18 @@ export const GET_HAPPENING_SURVEY_HISTORY_ITEM = gql`
         }
     }
 `;
+
+export const UPDATE_SURVEY = gql`
+    mutation UpdateSurvey($id: ID!, $answer: JSONString!) {
+        updateSurvey(id: $id, answer: $answer) {
+            result {
+              answer
+            }
+            ok
+            errors {
+              field
+              messages
+            }
+        }
+    }
+`;

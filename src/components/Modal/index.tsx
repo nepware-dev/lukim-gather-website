@@ -24,13 +24,14 @@ interface Props {
   children: React.ReactElement;
   actions: modalActions[];
   isVisible: boolean;
+  className?: string;
   onClose: () => void;
 }
 
 const Component: React.FC<Props> = ({
-  title, children, actions, isVisible, onClose,
+  title, children, actions, isVisible, className, onClose,
 }) => (
-  <Modal isVisible={isVisible} className={classes.modal}>
+  <Modal isVisible={isVisible} className={`${classes.modal} ${className}`}>
     <div className={classes.header}>
       {title}
       <div className={classes.closeIcon} onClick={onClose}>

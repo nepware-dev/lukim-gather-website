@@ -5,6 +5,7 @@ import {useMutation} from '@apollo/client';
 import {HiOutlineX} from 'react-icons/hi';
 import {BsXLg} from 'react-icons/bs';
 import {AiOutlinePlus} from 'react-icons/ai';
+import {useNavigate} from 'react-router-dom';
 
 import {SurveyDataType} from '@components/SurveyTable';
 
@@ -75,9 +76,12 @@ const EditSurveyModal: React.FC<Props> = ({data, onClose, onCompleteUpdate}) => 
   const [isTest, toggleIsTest] = useToggle(data?.isTest || false);
   const [showCategoryModal, toggleCategoryModal] = useToggle(false);
 
+  const navigate = useNavigate();
+
   const [editHappeningSurvey, {loading}] = useMutation(EDIT_HAPPENING_SURVEY, {
     onCompleted: () => {
       toast('success', 'Survey has been successfully updated !!');
+      navigate('/surveys');
       onCompleteUpdate();
       onClose();
     },
@@ -154,6 +158,11 @@ const EditSurveyModal: React.FC<Props> = ({data, onClose, onCompleteUpdate}) => 
     [],
   );
 
+  const handleClose = useCallback(() => {
+    navigate('/surveys');
+    onClose();
+  }, [navigate, onClose]);
+
   const handleDescriptionChange = useCallback((event) => setDescription(event.target.value), []);
 
   const getLocationName = useCallback(async () => {
@@ -182,7 +191,7 @@ const EditSurveyModal: React.FC<Props> = ({data, onClose, onCompleteUpdate}) => 
     <div className={classes.modal}>
       <div className={classes.wrapper}>
         <div className={classes.header}>
-          <div className={classes.closeModalIcon} onClick={onClose}>
+          <div className={classes.closeModalIcon} onClick={handleClose}>
             <HiOutlineX size={24} />
           </div>
           <button onClick={handleUpdateSurvey} className={classes.button} type='button' disabled={!error && loading}>

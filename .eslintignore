@@ -8,3 +8,4 @@ node_modules
 build
 src/components/Map/index.tsx
 src/vendor/
+public/xforms
