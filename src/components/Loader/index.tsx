@@ -1,9 +1,12 @@
 import React from 'react';
+
+import cs from '@ra/cs';
+
 import classes from './styles';
 
-const Loader = () => (
+const Loader = ({className}: {className?: string}) => (
   <div className={classes.container}>
-    <svg className={classes.svg} viewBox='0 0 24 24' />
+    <svg className={cs(classes.svg, className)} viewBox='0 0 24 24' />
   </div>
 );
 

@@ -10,7 +10,7 @@ import {SurveyDataType} from '@components/SurveyTable';
 
 import useCategoryIcon from '@hooks/useCategoryIcon';
 import useToast from '@hooks/useToast';
-import {UPDATE_HAPPENING_SURVEY} from '@services/queries';
+import {EDIT_HAPPENING_SURVEY} from '@services/queries';
 import usePrevious from '@hooks/usePrevious';
 import cs from '@utils/cs';
 
@@ -74,7 +74,7 @@ const EditSurveyModal: React.FC<Props> = ({data, onClose}) => {
   const [isTest, toggleIsTest] = useToggle(data?.isTest || false);
   const [showCategoryModal, toggleCategoryModal] = useToggle(false);
 
-  const [updateHappeningSurvey, {loading}] = useMutation(UPDATE_HAPPENING_SURVEY, {
+  const [editHappeningSurvey, {loading}] = useMutation(EDIT_HAPPENING_SURVEY, {
     onCompleted: () => {
       toast('success', 'Survey has been successfully updated !!');
       onClose();
@@ -97,7 +97,7 @@ const EditSurveyModal: React.FC<Props> = ({data, onClose}) => {
       isPublic,
       isTest,
     };
-    await updateHappeningSurvey({
+    await editHappeningSurvey({
       variables: {
         input: surveyInput,
         id: data?.id,
@@ -114,7 +114,7 @@ const EditSurveyModal: React.FC<Props> = ({data, onClose}) => {
     isTest,
     photos,
     title,
-    updateHappeningSurvey,
+    editHappeningSurvey,
   ]);
 
   useEffect(() => prevCategory?.id !== category?.id && toggleCategoryModal(false), [
