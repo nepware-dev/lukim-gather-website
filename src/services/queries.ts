@@ -5,7 +5,7 @@ export const UPDATE_HAPPENING_SURVEY = gql`
         $input: UpdateHappeningSurveyInput!
         $id: UUID!
     ) {
-        updateHappeningSurvey(data: $input, id: $id) {
+        editHappeningSurvey(data: $input, id: $id) {
             __typename
             errors
             ok
