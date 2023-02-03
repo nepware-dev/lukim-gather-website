@@ -6,12 +6,13 @@ import React, {
   useState,
   useMemo,
 } from 'react';
-import {useParams} from 'react-router-dom';
+import {useParams, useNavigate} from 'react-router-dom';
 import DatePicker from 'react-datepicker';
 import {gql, useQuery} from '@apollo/client';
 import {BsCalendar4Event} from 'react-icons/bs';
 import {RiArrowDownSLine} from 'react-icons/ri';
 import {CSVLink} from 'react-csv';
+import {XMLParser} from 'fast-xml-parser';
 
 import cs from '@utils/cs';
 import {formatDate} from '@utils/formatDate';
@@ -22,7 +23,7 @@ import FormTable, {FormDataType} from '@components/FormTable';
 import Pagination from '@components/Pagination';
 import Dropdown from '@components/Dropdown';
 import FormEntry from '@components/FormEntry';
-import {XMLParser} from 'fast-xml-parser';
+import EditCustomSurveyModal from '@components/EditCustomSurveyModal';
 
 import {flattenObject} from '@containers/Dashboard';
 
@@ -86,6 +87,9 @@ const CustomForms = () => {
   const [maxDate, setMaxDate] = useState<Date>();
   const [minDate, setMinDate] = useState<Date>();
   const [startDate, endDate] = dateRange;
+  const [showEditSurvey, setShowEditSurvey] = useState(false);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!id) return;
@@ -166,6 +170,15 @@ const CustomForms = () => {
     }
     return {};
   }, [formData]);
+
+  const handleEditClick = useCallback(() => {
+    setShowEditSurvey(true);
+  }, []);
+
+  const handleCloseEditSurvey = useCallback(() => {
+    navigate('/custom-forms');
+    setShowEditSurvey(false);
+  }, [navigate]);
 
   const handlePage = useCallback((num: number) => {
     setActivePage(num);
@@ -302,6 +315,14 @@ const CustomForms = () => {
           setShowDetails={setShowDetails}
           formModel={formModel}
           formQuestion={formQuestion}
+          onEditClick={handleEditClick}
+        />
+      )}
+      {showEditSurvey && formData?.surveyForm?.[0] && surveyFormData[activeIndex] && (
+        <EditCustomSurveyModal
+          onClose={handleCloseEditSurvey}
+          formData={surveyFormData[activeIndex]}
+          formObj={formData?.surveyForm?.[0]}
         />
       )}
     </>
