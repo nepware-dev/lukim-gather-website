@@ -31,7 +31,6 @@ import SurveyEntry from '@components/SurveyEntry';
 import EditSurveyModal from '@components/EditSurveyModal';
 import SurveyFilter from '@components/SurveyFilter';
 import SelectInput from '@ra/components/Form/SelectInput'; // eslint-disable-line no-eval
-import useToggle from '@ra/hooks/useToggle';
 
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -235,7 +234,20 @@ const Surveys = () => {
   const {data: regions} = useQuery(GET_REGION_DATA);
   const {data: protectedAreas} = useQuery(GET_PROTECTED_AREA_DATA);
 
-  const [visibleEditModal, toggleEditModal] = useToggle();
+  const [updateMode, setUpdateMode] = useState<boolean>(false);
+  const [showDetails, setShowDetails] = useState<boolean>(false);
+  const [visibleEditModal, setEditModalVisible] = useState<boolean>(false);
+  const handleOpenEditModal = useCallback((isUpdateMode = false) => {
+    setShowDetails(false);
+    setEditModalVisible(true);
+    setUpdateMode(isUpdateMode);
+    navigate('/surveys');
+  }, [navigate]);
+  const handleCloseEditModal = useCallback(() => {
+    setEditModalVisible(false);
+    setUpdateMode(false);
+    navigate('/surveys');
+  }, [navigate]);
 
   const [status, setStatus] = useState<string>('All');
   const [surveyData, setSurveyData] = useState<SurveyDataType[]>([]);
@@ -243,7 +255,6 @@ const Surveys = () => {
   const [totalPages, setTotalPages] = useState<number>(0);
   const [rows, setRows] = useState<number>(10);
   const [activeIndex, setActiveIndex] = useState<number>(0);
-  const [showDetails, setShowDetails] = useState<boolean>(false);
   const [surveyEntryData, setSurveyEntryData] = useState<SurveyDataType | null>(null);
   const [dateRange, setDateRange] = useState([new Date(), new Date()]);
   const [maxDate, setMaxDate] = useState<Date>();
@@ -527,12 +538,6 @@ const Surveys = () => {
   },
   ];
 
-  const handleOpenEditModal = useCallback(() => {
-    setShowDetails(false);
-    toggleEditModal();
-    navigate('/surveys');
-  }, [navigate, toggleEditModal]);
-
   return (
     <>
       <DashboardLayout hideOverflowY={showDetails}>
@@ -686,13 +691,14 @@ const Surveys = () => {
         <SurveyEntry
           data={surveyEntryData}
           setShowDetails={setShowDetails}
-          handleEditClick={handleOpenEditModal}
+          onEditClick={handleOpenEditModal}
         />
       )}
       {visibleEditModal && (
         <EditSurveyModal
           onCompleteUpdate={refetchSurveyData}
-          onClose={toggleEditModal}
+          updateMode={updateMode}
+          onClose={handleCloseEditModal}
           data={surveyEntryData}
         />
       )}

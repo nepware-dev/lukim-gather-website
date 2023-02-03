@@ -8,13 +8,15 @@ import classes from './styles';
 interface InputProps {
     optionItem: boolean;
     activeOptionItem: boolean;
-    onClick: React.MouseEventHandler;
+    onClick?: React.MouseEventHandler;
     title: string;
+    disabled?: boolean;
 }
 
 interface Props {
   activeOptionItem: boolean;
-  onClick: React.MouseEventHandler;
+  onClick?: React.MouseEventHandler;
+  disabled?: boolean;
 }
 
 const DataOptionIcon = ({
@@ -43,7 +45,11 @@ const DataOptionIcon = ({
 
 const Input: React.FC<InputProps> = (
   {
-    optionItem, activeOptionItem, onClick, title,
+    optionItem,
+    activeOptionItem,
+    onClick,
+    title,
+    disabled,
   },
 ) => {
   const isActive = useMemo(() => activeOptionItem === optionItem, [activeOptionItem, optionItem]);
@@ -52,6 +58,7 @@ const Input: React.FC<InputProps> = (
       className={cs(
         classes.optionItem,
         [classes.activeOptionItem, isActive],
+        [classes.disabledOptionItem, Boolean(disabled)],
       )}
       onClick={onClick}
     >
@@ -75,12 +82,12 @@ const Input: React.FC<InputProps> = (
 };
 
 const DataOptionInput: React.FC<Props> = (props) => {
-  const {activeOptionItem, onClick} = props;
+  const {activeOptionItem, onClick, disabled} = props;
 
   return (
     <div className={classes.optionWrapper}>
-      <Input optionItem={false} activeOptionItem={activeOptionItem} onClick={onClick} title='Real Data' />
-      <Input optionItem activeOptionItem={activeOptionItem} onClick={onClick} title='Test Data' />
+      <Input optionItem={false} activeOptionItem={activeOptionItem} onClick={onClick} title='Real Data' disabled={disabled} />
+      <Input optionItem activeOptionItem={activeOptionItem} onClick={onClick} title='Test Data' disabled={disabled} />
     </div>
   );
 };
