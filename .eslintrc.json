@@ -110,7 +110,8 @@
     "jsx-a11y/click-events-have-key-events": "off",
     "react/jsx-props-no-spreading": "off",
     "@typescript-eslint/no-explicit-any": "off",
-    "no-shadow": "off"
+    "no-shadow": "off",
+    "no-nested-ternary": "off"
   },
   "settings": {
     "import/resolver": {

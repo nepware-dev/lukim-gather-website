@@ -19,6 +19,7 @@ export type SurveyDataType = {
     id: string;media: string
 }[];
   category: {id: string | number; title: string};
+  modifiedAt: string;
   createdAt: string;
   location: {type: string; coordinates: [number, number]};
   sentiment: string;

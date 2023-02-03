@@ -71,6 +71,7 @@ export const GET_SURVEY_DATA = gql`
       isTest
       isPublic
       createdAt
+      modifiedAt
       createdBy {
         id
         firstName
@@ -118,6 +119,7 @@ export const GET_SURVEY = gql`
       isTest
       isPublic
       createdAt
+      modifiedAt
       createdBy {
         id
         firstName

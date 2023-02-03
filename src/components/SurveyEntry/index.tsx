@@ -3,7 +3,9 @@ import React, {
 } from 'react';
 import {useSelector} from 'react-redux';
 import {useNavigate} from 'react-router-dom';
-import {gql, useMutation} from '@apollo/client';
+import {
+  gql, useMutation, useQuery, useLazyQuery,
+} from '@apollo/client';
 import Map, {Marker, Source, Layer} from 'react-map-gl';
 import type {MapRef} from 'react-map-gl';
 import bbox from '@turf/bbox';
@@ -13,18 +15,26 @@ import {
 import {parse} from 'json2csv';
 import {toCanvas} from 'html-to-image';
 import jsPDF from 'jspdf';
+import {format} from 'date-fns';
 
 import cs from '@utils/cs';
+import _cs from '@ra/cs';
 import {formatDate} from '@utils/formatDate';
 import {formatName} from '@utils/formatName';
 import useCategoryIcon from '@hooks/useCategoryIcon';
 import {rootState} from '@store/rootReducer';
 
 import Button from '@components/Button';
+import Loader from '@components/Loader';
 import {SurveyDataType} from '@components/SurveyTable';
 import {GET_SURVEY_DATA} from '@containers/Surveys';
 import Dropdown from '@components/Dropdown';
 import Gallery from '@components/Gallery';
+
+import {
+  GET_HAPPENING_SURVEY_HISTORY,
+  GET_HAPPENING_SURVEY_HISTORY_ITEM,
+} from '@services/queries';
 
 import csvIcon from '@images/icons/csv.svg';
 import marker from '@images/marker.png';
@@ -32,10 +42,18 @@ import pdfIcon from '@images/icons/pdf.svg';
 import pngIcon from '@images/icons/image.svg';
 import tree from '@images/category-tree.png';
 
+import HistoryTabs from './HistoryTabs';
 import {polygon, polygonTitle} from './layers';
 
 import 'mapbox-gl/dist/mapbox-gl.css';
 import classes from './styles';
+
+type SurveyHistoryType = {
+  id: number | string,
+  serializedData?: {
+    fields?: SurveyDataType
+  }
+};
 
 interface Props {
   data: SurveyDataType;
@@ -124,10 +142,63 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails, handleEditClick}) =
     },
   } = useSelector((state: rootState) => state);
 
-  const getLocationName = useCallback(async () => {
+  const [activeVersionId, setActiveVersionId] = useState<string | number>('current');
+
+  const {data: surveyHistoryData} = useQuery(GET_HAPPENING_SURVEY_HISTORY, {
+    variables: {surveyId: data.id},
+  });
+  const versionsData = useMemo(() => {
+    if (surveyHistoryData?.happeningSurveysHistory) {
+      const historyData = surveyHistoryData.happeningSurveysHistory.filter(
+        (hss: SurveyHistoryType) => hss?.serializedData?.fields?.modifiedAt,
+      );
+      if (historyData.length > 1) {
+        return historyData.map((hd: SurveyHistoryType, idx: number) => {
+          if (idx === 0) {
+            return {id: 'current', title: 'Current'};
+          }
+          const dateObj = new Date(hd?.serializedData?.fields?.modifiedAt as string);
+          return {
+            id: hd.id,
+            title: format(dateObj, 'MMM d'),
+          };
+        });
+      }
+    }
+    return [];
+  }, [surveyHistoryData]);
+
+  const [getHappeningSurveyHistoryItem, {
+    data: historyItemData,
+    loading,
+  }] = useLazyQuery(GET_HAPPENING_SURVEY_HISTORY_ITEM);
+
+  const handleChangeVersion = useCallback((tabItem: {id: number | string}) => {
+    if (tabItem.id !== 'current') {
+      getHappeningSurveyHistoryItem({
+        variables: {
+          surveyId: data?.id,
+          id: Number(tabItem.id),
+        },
+      });
+    }
+    setActiveVersionId(tabItem.id);
+  }, [getHappeningSurveyHistoryItem, data]);
+
+  const surveyData = useMemo(() => {
+    if (activeVersionId !== 'current') {
+      return {
+        ...(historyItemData?.happeningSurveysHistory?.[0]?.serializedData?.fields || {}),
+        id: data?.id,
+      };
+    }
+    return data;
+  }, [activeVersionId, historyItemData, data]);
+
+  const getLocationName = useCallback(async (survey: SurveyDataType) => {
     const response = await fetch(
-      `https://api.mapbox.com/geocoding/v5/mapbox.places/${data?.location?.coordinates[0] || 0
-      },${data?.location?.coordinates[1] || 0}.json?types=place&access_token=${process.env.REACT_APP_MAPBOX_TOKEN
+      `https://api.mapbox.com/geocoding/v5/mapbox.places/${survey?.location?.coordinates[0] || 0
+      },${survey?.location?.coordinates[1] || 0}.json?types=place&access_token=${process.env.REACT_APP_MAPBOX_TOKEN
       }`,
     );
     const resData: {
@@ -136,11 +207,11 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails, handleEditClick}) =
     if (resData.features[0]?.place_name) {
       setLocationName(resData.features[0].place_name);
     }
-  }, [data?.location?.coordinates]);
+  }, []);
 
   useEffect(() => {
-    getLocationName();
-  }, [getLocationName]);
+    getLocationName(surveyData);
+  }, [getLocationName, surveyData]);
 
   const escapeListener = useCallback(
     (event: KeyboardEvent) => {
@@ -198,10 +269,10 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails, handleEditClick}) =
 
   const [galleryIndex, setGalleryIndex] = useState<number>(0);
 
-  const handleShowGallery = useCallback((media) => {
+  const handleShowGallery = useCallback((media: any) => {
     setShowGallery(!showGallery);
-    setGalleryIndex(data?.attachment.findIndex((item) => item.media === media));
-  }, [showGallery, setShowGallery, setGalleryIndex, data?.attachment]);
+    setGalleryIndex(surveyData?.attachment.findIndex((item: any) => item.media === media));
+  }, [showGallery, setShowGallery, setGalleryIndex, surveyData?.attachment]);
 
   const surveyPolyGeoJSON: any = useMemo(() => ({
     type: 'FeatureCollection',
@@ -209,18 +280,18 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails, handleEditClick}) =
       {
         type: 'Feature',
         properties: {
-          surveyItem: data,
+          surveyItem: surveyData,
         },
         geometry: {
           type: 'MultiPolygon',
-          coordinates: data?.boundary?.coordinates || [],
+          coordinates: surveyData?.boundary?.coordinates || [],
         },
       },
     ],
-  }), [data]);
+  }), [surveyData]);
 
   const onMapLoad = useCallback(() => {
-    if (!mapRef.current || !data.boundary?.coordinates) return;
+    if (!mapRef.current || !surveyData.boundary?.coordinates) return;
     const [minLng, minLat, maxLng, maxLat] = bbox(surveyPolyGeoJSON);
     mapRef.current.fitBounds(
       [
@@ -229,7 +300,7 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails, handleEditClick}) =
       ],
       {padding: 20, duration: 1000},
     );
-  }, [data.boundary?.coordinates, surveyPolyGeoJSON]);
+  }, [surveyData.boundary?.coordinates, surveyPolyGeoJSON]);
 
   const renderLabel = useCallback(
     () => (
@@ -293,8 +364,8 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails, handleEditClick}) =
     <Map
       ref={mapRef}
       initialViewState={{
-        longitude: data?.location?.coordinates[0] || 150,
-        latitude: data?.location?.coordinates[1] || -5,
+        longitude: surveyData?.location?.coordinates[0] || 150,
+        latitude: surveyData?.location?.coordinates[1] || -5,
         zoom: 5,
       }}
       mapStyle='mapbox://styles/mapbox/outdoors-v11'
@@ -310,23 +381,26 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails, handleEditClick}) =
         <Layer {...polygon} />
         <Layer {...polygonTitle} />
       </Source>
-      {data?.location?.coordinates
+      {surveyData?.location?.coordinates
                   && (
                     <Marker
-                      longitude={data?.location?.coordinates[0]}
-                      latitude={data?.location?.coordinates[1]}
+                      longitude={surveyData.location.coordinates?.[0]}
+                      latitude={surveyData.location.coordinates?.[1]}
                     >
                       <img src={marker} alt='marker' />
                     </Marker>
                   )}
     </Map>
-  ), [data.location?.coordinates, onMapLoad, surveyPolyGeoJSON]);
+  ), [surveyData.location?.coordinates, onMapLoad, surveyPolyGeoJSON]);
 
   return (
     <div>
       <div className={classes.detailsContainer}>
         <div className={classes.detailsModal}>
-          <div className={classes.headerWrapper}>
+          <div className={_cs(classes.headerWrapper, {
+            [classes.headerWrapperBackground]: showGallery,
+          })}
+          >
             <div className={classes.iconWrapper}>
               <div className={classes.closeModalIcon} onClick={hideDetails}>
                 <HiOutlineX size={24} />
@@ -347,105 +421,125 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails, handleEditClick}) =
               </div>
             </div>
           </div>
-          <div ref={entryRef} className={classes.entryWrapper}>
-            <div className={classes.header}>
-              <h2 className={classes.headerTitle}>{data?.title}</h2>
-              <p
-                className={cs(
-                  classes.status,
-                  [classes.pending, data.status.toLowerCase() === 'pending'],
-                  [classes.rejected, data.status.toLowerCase() === 'rejected'],
-                  [classes.approved, data.status.toLowerCase() === 'approved'],
+          {versionsData.length > 1 && (
+            <HistoryTabs
+              className={_cs(classes.versionTabsContainer, {
+                [classes.versionTabsContainerBackground]: showGallery,
+              })}
+              tabsData={versionsData}
+              onChangeTab={handleChangeVersion}
+              activeTabId={activeVersionId}
+            />
+          )}
+          {loading ? (
+            <Loader className={classes.loader} />
+          ) : surveyData?.title ? (
+            <>
+              <div ref={entryRef} className={classes.entryWrapper}>
+                <div className={classes.header}>
+                  <h2 className={classes.headerTitle}>{data?.title}</h2>
+                  <p
+                    className={cs(
+                      classes.status,
+                      [classes.pending, data.status.toLowerCase() === 'pending'],
+                      [classes.rejected, data.status.toLowerCase() === 'rejected'],
+                      [classes.approved, data.status.toLowerCase() === 'approved'],
+                    )}
+                  >
+                    {data.status}
+                  </p>
+                </div>
+                <p className={classes.date}>{formatDate(data.createdAt)}</p>
+                {surveyData.project && (
+                  <>
+                    <Title text='project' />
+                    <p>{surveyData.project.title}</p>
+                  </>
                 )}
-              >
-                {data.status}
-              </p>
-            </div>
-            <p className={classes.date}>{formatDate(data.createdAt)}</p>
-            {data.project && (
-              <>
-                <Title text='project' />
-                <p>{data.project.title}</p>
-              </>
-            )}
-            <Title text='category' />
-            <div className={classes.categoryWrapper}>
-              <img
-                src={categoryIcon || tree}
-                alt='category'
-                className={classes.categoryImg}
-              />
-              <p className={classes.categoryTitle}>{data.category.title}</p>
-            </div>
-            <Title text='photos' />
-            <div className={classes.photosWrapper}>
-              {data.attachment.length
-                ? data.attachment.map((item: {media: string}) => (
-                  <div className='cursor-pointer' onClick={() => handleShowGallery(item.media)}>
-                    <img
-                      key={item.media}
-                      src={item.media}
-                      alt=''
-                      className={classes.photo}
-                    />
-                  </div>
-                ))
-                : <p className={classes.text}>No Photos Found</p>}
-              {data.attachment.length ? <Gallery images={data?.attachment} galleryIndex={galleryIndex} showGallery={showGallery} toggleGalleryVisibility={setShowGallery} /> : ''}
-            </div>
-            <Title text='feels' />
-            <div>
-              <Feel sentiment={data.sentiment || '-'} />
-            </div>
-            <Title text='Condition' />
-            <div className={classes.wrapper}>
-              <Improvement improvement={data.improvement} />
-            </div>
-            <Title text='Description' />
-            <div>
-              <p className={classes.info}>
-                {data.description || 'No Description Found'}
-              </p>
-            </div>
-            <Title text='Location' />
-            <div>
-              <p className={classes.info}>{locationName || ''}</p>
-            </div>
-            <div className={classes.mapWrapper}>
-              <RenderMap />
-            </div>
-            <Title text='Published Anonymously' />
-            <div className={classes.wrapper}>
-              <p>{data?.createdBy ? 'No' : 'Yes'}</p>
-            </div>
-            <Title text='Public Information' />
-            <div className={classes.wrapper}>
-              <p>{data?.isPublic ? 'Yes' : 'No'}</p>
-            </div>
-            <Title text='Test Data' />
-            <div className={classes.wrapper}>
-              <p>{data?.isTest ? 'Yes' : 'No'}</p>
-            </div>
-            <Title text='Submitted By' />
-            <div className={classes.text}>
-              <p className='capitalize'>
-                {formatName(data?.createdBy)}
-              </p>
-            </div>
-          </div>
-          <div className={cs(classes.buttons, ['hidden', !isStaff])}>
-            <Button
-              text='Accept'
-              className={classes.acceptBtn}
-              onClick={handleAccept}
-            />
-            <Button
-              text='Decline'
-              className={classes.declineBtn}
-              textClassName={classes.declineBtnText}
-              onClick={handleShowDeclineModal}
-            />
-          </div>
+                <Title text='category' />
+                <div className={classes.categoryWrapper}>
+                  <img
+                    src={categoryIcon || tree}
+                    alt='category'
+                    className={classes.categoryImg}
+                  />
+                  <p className={classes.categoryTitle}>{surveyData?.category?.title || ''}</p>
+                </div>
+                <Title text='photos' />
+                <div className={classes.photosWrapper}>
+                  {surveyData?.attachment?.length
+                    ? surveyData.attachment.map((item: {media: string}) => (
+                      <div className='cursor-pointer' onClick={() => handleShowGallery(item.media)}>
+                        <img
+                          key={item.media}
+                          src={item.media}
+                          alt=''
+                          className={classes.photo}
+                        />
+                      </div>
+                    ))
+                    : <p className={classes.text}>No Photos Found</p>}
+                  {surveyData?.attachment?.length ? <Gallery images={surveyData?.attachment} galleryIndex={galleryIndex} showGallery={showGallery} toggleGalleryVisibility={setShowGallery} /> : ''}
+                </div>
+                <Title text='feels' />
+                <div>
+                  <Feel sentiment={surveyData.sentiment || '-'} />
+                </div>
+                <Title text='Condition' />
+                <div className={classes.wrapper}>
+                  <Improvement improvement={surveyData.improvement} />
+                </div>
+                <Title text='Description' />
+                <div>
+                  <p className={classes.info}>
+                    {surveyData.description || 'No Description Found'}
+                  </p>
+                </div>
+                <Title text='Location' />
+                <div>
+                  <p className={classes.info}>{locationName || ''}</p>
+                </div>
+                <div className={classes.mapWrapper}>
+                  <RenderMap />
+                </div>
+                <Title text='Published Anonymously' />
+                <div className={classes.wrapper}>
+                  <p>{surveyData?.createdBy ? 'No' : 'Yes'}</p>
+                </div>
+                <Title text='Public Information' />
+                <div className={classes.wrapper}>
+                  <p>{surveyData?.isPublic ? 'Yes' : 'No'}</p>
+                </div>
+                <Title text='Test Data' />
+                <div className={classes.wrapper}>
+                  <p>{surveyData?.isTest ? 'Yes' : 'No'}</p>
+                </div>
+                <Title text='Submitted By' />
+                <div className={classes.text}>
+                  <p className='capitalize'>
+                    {formatName(surveyData?.createdBy)}
+                  </p>
+                </div>
+              </div>
+              <div className={cs(classes.buttons, ['hidden', !isStaff])}>
+                <Button
+                  text={data.status.toLowerCase() === 'approved' ? 'Accepted' : 'Accept'}
+                  className={classes.acceptBtn}
+                  onClick={handleAccept}
+                  disabled={data.status.toLowerCase() === 'approved'}
+                />
+                <Button
+                  text={data.status.toLowerCase() === 'rejected' ? 'Declined' : 'Decline'}
+                  className={classes.declineBtn}
+                  textClassName={classes.declineBtnText}
+                  onClick={handleShowDeclineModal}
+                  disabled={data.status.toLowerCase() === 'rejected'}
+                />
+              </div>
+            </>
+          ) : (
+            <p className={classes.emptyMessage}>Unable to get survey data!</p>
+          )}
         </div>
       </div>
       <div
