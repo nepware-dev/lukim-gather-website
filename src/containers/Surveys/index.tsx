@@ -5,7 +5,7 @@ import React, {
   useState,
 } from 'react';
 import {useSelector} from 'react-redux';
-import {useParams} from 'react-router-dom';
+import {useParams, useNavigate} from 'react-router-dom';
 import DatePicker from 'react-datepicker';
 import {gql, useQuery} from '@apollo/client';
 import {BsCalendar4Event, BsArrowUpRight} from 'react-icons/bs';
@@ -225,9 +225,10 @@ const Surveys = () => {
       user: {id: userId},
     },
   } = useSelector((state: rootState) => state);
+  const navigate = useNavigate();
   const {uuid} = useParams();
 
-  const {data} = useQuery(GET_SURVEY_DATA);
+  const {data, refetch: refetchSurveyData} = useQuery(GET_SURVEY_DATA);
   const {data: category} = useQuery(GET_CATEGORY_DATA);
   const {data: regions} = useQuery(GET_REGION_DATA);
   const {data: protectedAreas} = useQuery(GET_PROTECTED_AREA_DATA);
@@ -527,7 +528,8 @@ const Surveys = () => {
   const handleOpenEditModal = useCallback(() => {
     setShowDetails(false);
     toggleEditModal();
-  }, [toggleEditModal]);
+    navigate('/surveys');
+  }, [navigate, toggleEditModal]);
 
   return (
     <>
@@ -686,7 +688,11 @@ const Surveys = () => {
         />
       )}
       {visibleEditModal && (
-        <EditSurveyModal onClose={toggleEditModal} data={surveyEntryData} />
+        <EditSurveyModal
+          onCompleteUpdate={refetchSurveyData}
+          onClose={toggleEditModal}
+          data={surveyEntryData}
+        />
       )}
     </>
   );

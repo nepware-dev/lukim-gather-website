@@ -30,6 +30,7 @@ import classes from './styles';
 interface Props {
     data: SurveyDataType | null;
     onClose: () => void;
+    onCompleteUpdate: () => void;
 }
 
 const ImageItem = ({item, index, onRemove} : {item: string; index?: number; onRemove: any}) => {
@@ -54,7 +55,7 @@ const Title = ({title}: {title: string}) => (
   </div>
 );
 
-const EditSurveyModal: React.FC<Props> = ({data, onClose}) => {
+const EditSurveyModal: React.FC<Props> = ({data, onClose, onCompleteUpdate}) => {
   const [error, setError] = useState<string>('');
 
   const [activeFeel, setActiveFeel] = useState(data?.sentiment || '');
@@ -77,6 +78,7 @@ const EditSurveyModal: React.FC<Props> = ({data, onClose}) => {
   const [updateHappeningSurvey, {loading}] = useMutation(UPDATE_HAPPENING_SURVEY, {
     onCompleted: () => {
       toast('success', 'Survey has been successfully updated !!');
+      onCompleteUpdate();
       onClose();
     },
     onError: (err) => {
