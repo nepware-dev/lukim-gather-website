@@ -15,7 +15,7 @@ import {
 import {parse} from 'json2csv';
 import {toCanvas} from 'html-to-image';
 import jsPDF from 'jspdf';
-import {format} from 'date-fns';
+import {format, differenceInDays, formatDistanceToNowStrict} from 'date-fns';
 
 import cs from '@utils/cs';
 import _cs from '@ra/cs';
@@ -35,6 +35,7 @@ import {
   GET_HAPPENING_SURVEY_HISTORY,
   GET_HAPPENING_SURVEY_HISTORY_ITEM,
 } from '@services/queries';
+import {UPDATE_NUM_DAYS} from '@utils/config';
 
 import csvIcon from '@images/icons/csv.svg';
 import marker from '@images/marker.png';
@@ -58,7 +59,7 @@ type SurveyHistoryType = {
 interface Props {
   data: SurveyDataType;
   setShowDetails(value: boolean): void;
-  handleEditClick: React.MouseEventHandler;
+  onEditClick: (updateMode?: boolean) => void;
 }
 
 const Title = ({text}: {text: string}) => (
@@ -103,11 +104,11 @@ export const Improvement = ({
 };
 
 const UPDATE_SURVEY_STATUS = gql`
-  mutation UpdateHappeningSurvey(
+  mutation EditHappeningSurvey(
     $data: UpdateHappeningSurveyInput!
     $id: UUID!
   ) {
-    updateHappeningSurvey(data: $data, id: $id) {
+    editHappeningSurvey(data: $data, id: $id) {
       ok
       result {
         status
@@ -124,7 +125,7 @@ const ExportOption = ({onClick, icon, title} : {onClick(): void, icon: string, t
   </div>
 );
 
-const SurveyEntry: React.FC<Props> = ({data, setShowDetails, handleEditClick}) => {
+const SurveyEntry: React.FC<Props> = ({data, setShowDetails, onEditClick}) => {
   const navigate = useNavigate();
   const mapRef = useRef<MapRef>(null);
   const entryRef = useRef<any>();
@@ -132,7 +133,6 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails, handleEditClick}) =
   const [updateHappeningSurvey] = useMutation(UPDATE_SURVEY_STATUS, {
     refetchQueries: [GET_SURVEY_DATA, 'happeningSurveys'],
   });
-  const [categoryIcon] = useCategoryIcon(data?.category?.id);
   const [showDeclineModal, setShowDeclineModal] = useState<boolean>(false);
   const [locationName, setLocationName] = useState<string>('');
   const [showGallery, setShowGallery] = useState<boolean>(false);
@@ -144,9 +144,13 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails, handleEditClick}) =
 
   const [activeVersionId, setActiveVersionId] = useState<string | number>('current');
 
-  const {data: surveyHistoryData} = useQuery(GET_HAPPENING_SURVEY_HISTORY, {
+  const {data: surveyHistoryData, refetch} = useQuery(GET_HAPPENING_SURVEY_HISTORY, {
     variables: {surveyId: data.id},
   });
+  useEffect(() => {
+    refetch();
+  }, [refetch]);
+
   const versionsData = useMemo(() => {
     if (surveyHistoryData?.happeningSurveysHistory) {
       const historyData = surveyHistoryData.happeningSurveysHistory.filter(
@@ -185,7 +189,7 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails, handleEditClick}) =
     setActiveVersionId(tabItem.id);
   }, [getHappeningSurveyHistoryItem, data]);
 
-  const surveyData = useMemo(() => {
+  const surveyData: SurveyDataType = useMemo(() => {
     if (activeVersionId !== 'current') {
       return {
         ...(historyItemData?.happeningSurveysHistory?.[0]?.serializedData?.fields || {}),
@@ -194,6 +198,30 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails, handleEditClick}) =
     }
     return data;
   }, [activeVersionId, historyItemData, data]);
+
+  const [categoryIcon] = useCategoryIcon(surveyData?.category?.id);
+
+  const [showUpdate, differenceFromPreviousUpdate, lastUpdated] = useMemo(() => {
+    if (data?.modifiedAt) {
+      const modifiedDate = new Date(data.modifiedAt);
+      const dateDifference = differenceInDays(
+        modifiedDate,
+        new Date(),
+      );
+      const formattedDate = format(modifiedDate, 'MMM dd, yyyy');
+      if (dateDifference < -UPDATE_NUM_DAYS) {
+        return [
+          true,
+          formatDistanceToNowStrict(modifiedDate, {
+            roundingMethod: 'floor',
+          }),
+          formattedDate,
+        ];
+      }
+      return [false, null, formattedDate];
+    }
+    return [false, null, 'N/A'];
+  }, [data]);
 
   const getLocationName = useCallback(async (survey: SurveyDataType) => {
     const response = await fetch(
@@ -313,6 +341,9 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails, handleEditClick}) =
     [],
   );
 
+  const handleEditButtonClick = useCallback(() => onEditClick?.(), [onEditClick]);
+  const handleUpdateButtonClick = useCallback(() => onEditClick?.(true), [onEditClick]);
+
   const onExportPDF = useCallback(async () => {
     const element = entryRef.current;
     await toCanvas(element).then((canvas) => {
@@ -408,7 +439,7 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails, handleEditClick}) =
                 <HiOutlineX size={24} />
               </div>
               <div className={classes.rightContent}>
-                <div onClick={handleEditClick} className='cursor-pointer'>
+                <div onClick={handleEditButtonClick} className='cursor-pointer'>
                   <span className='material-symbols-rounded text-[32px] text-[#70747e]'>edit</span>
                 </div>
                 <div className={classes.exportDropdown}>
@@ -422,24 +453,38 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails, handleEditClick}) =
                 </div>
               </div>
             </div>
+            {showUpdate && (
+              <div className={classes.updateMessageContainer}>
+                <p className={classes.updateMessage}>
+                  This entry is
+                  {' '}
+                  {differenceFromPreviousUpdate}
+                  {' '}
+                  old. Let us know if there are any updates.
+                </p>
+                <Button
+                  text='Update'
+                  className={classes.updateButton}
+                  onClick={handleUpdateButtonClick}
+                />
+              </div>
+            )}
+            {versionsData.length > 1 && (
+              <HistoryTabs
+                className={classes.versionTabsContainer}
+                tabsData={versionsData}
+                onChangeTab={handleChangeVersion}
+                activeTabId={activeVersionId}
+              />
+            )}
           </div>
-          {versionsData.length > 1 && (
-            <HistoryTabs
-              className={_cs(classes.versionTabsContainer, {
-                [classes.versionTabsContainerBackground]: showGallery,
-              })}
-              tabsData={versionsData}
-              onChangeTab={handleChangeVersion}
-              activeTabId={activeVersionId}
-            />
-          )}
           {loading ? (
             <Loader className={classes.loader} />
           ) : surveyData?.title ? (
             <>
               <div ref={entryRef} className={classes.entryWrapper}>
                 <div className={classes.header}>
-                  <h2 className={classes.headerTitle}>{data?.title}</h2>
+                  <h2 className={classes.headerTitle}>{surveyData?.title}</h2>
                   <p
                     className={cs(
                       classes.status,
@@ -451,7 +496,9 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails, handleEditClick}) =
                     {data.status}
                   </p>
                 </div>
-                <p className={classes.date}>{formatDate(data.createdAt)}</p>
+                <p className={classes.date}>
+                  {versionsData.length > 1 && activeVersionId === 'current' ? `Last updated ${lastUpdated}` : formatDate(data.modifiedAt)}
+                </p>
                 {surveyData.project && (
                   <>
                     <Title text='project' />

@@ -5,13 +5,17 @@ import {useMutation} from '@apollo/client';
 import {HiOutlineX} from 'react-icons/hi';
 import {BsXLg} from 'react-icons/bs';
 import {AiOutlinePlus} from 'react-icons/ai';
-import {useNavigate} from 'react-router-dom';
 
 import {SurveyDataType} from '@components/SurveyTable';
 
 import useCategoryIcon from '@hooks/useCategoryIcon';
 import useToast from '@hooks/useToast';
-import {EDIT_HAPPENING_SURVEY} from '@services/queries';
+import {
+  EDIT_HAPPENING_SURVEY,
+  UPDATE_HAPPENING_SURVEY,
+  GET_HAPPENING_SURVEY_HISTORY,
+} from '@services/queries';
+import {GET_SURVEY_DATA} from '@containers/Surveys';
 import usePrevious from '@hooks/usePrevious';
 import cs from '@utils/cs';
 
@@ -29,13 +33,13 @@ import DataOptionInput from './DataOptionInput';
 import classes from './styles';
 
 interface Props {
-    data: SurveyDataType | null;
-    onClose: () => void;
-    onCompleteUpdate: () => void;
-}
+  data: SurveyDataType | null;
+  onClose: () => void;
+  updateMode?: boolean;
+  onCompleteUpdate: () => void;}
 
-const ImageItem = ({item, index, onRemove} : {item: string; index?: number; onRemove: any}) => {
-  const handleRemove = useCallback(() => onRemove(index), [index, onRemove]);
+const ImageItem = ({item, index, onRemove} : {item: string; index?: number; onRemove?: any}) => {
+  const handleRemove = useCallback(() => onRemove?.(index), [index, onRemove]);
   return (
     <div className='relative'>
       <img
@@ -43,9 +47,11 @@ const ImageItem = ({item, index, onRemove} : {item: string; index?: number; onRe
         alt={`img-${index}`}
         className={classes.photo}
       />
-      <div onClick={handleRemove} className={classes.imageDeleteIcon}>
-        <BsXLg size={10} />
-      </div>
+      {onRemove && (
+        <div onClick={handleRemove} className={classes.imageDeleteIcon}>
+          <BsXLg size={10} />
+        </div>
+      )}
     </div>
   );
 };
@@ -56,7 +62,12 @@ const Title = ({title}: {title: string}) => (
   </div>
 );
 
-const EditSurveyModal: React.FC<Props> = ({data, onClose, onCompleteUpdate}) => {
+const EditSurveyModal: React.FC<Props> = ({
+  data,
+  onClose,
+  onCompleteUpdate,
+  updateMode,
+}) => {
   const [error, setError] = useState<string>('');
 
   const [activeFeel, setActiveFeel] = useState(data?.sentiment || '');
@@ -76,22 +87,28 @@ const EditSurveyModal: React.FC<Props> = ({data, onClose, onCompleteUpdate}) => 
   const [isTest, toggleIsTest] = useToggle(data?.isTest || false);
   const [showCategoryModal, toggleCategoryModal] = useToggle(false);
 
-  const navigate = useNavigate();
-
-  const [editHappeningSurvey, {loading}] = useMutation(EDIT_HAPPENING_SURVEY, {
-    onCompleted: () => {
-      toast('success', 'Survey has been successfully updated !!');
-      navigate('/surveys');
-      onCompleteUpdate();
-      onClose();
+  const [submitHappeningSurvey, {loading}] = useMutation(
+    updateMode ? UPDATE_HAPPENING_SURVEY : EDIT_HAPPENING_SURVEY,
+    {
+      refetchQueries: updateMode ? [
+        {query: GET_HAPPENING_SURVEY_HISTORY},
+        {query: GET_SURVEY_DATA},
+      ] : [
+        {query: GET_SURVEY_DATA},
+      ],
+      onCompleted: () => {
+        toast('success', 'Survey has been successfully updated !!');
+        onCompleteUpdate();
+        onClose();
+      },
+      onError: (err) => {
+        setError(String(err));
+        toast('error', String(err));
+      },
     },
-    onError: (err) => {
-      setError(String(err));
-      toast('error', String(err));
-    },
-  });
+  );
 
-  const handleUpdateSurvey = useCallback(async () => {
+  const handleSubmitSurvey = useCallback(async () => {
     const surveyInput = {
       title,
       categoryId: parseInt(category?.id, 10),
@@ -103,7 +120,7 @@ const EditSurveyModal: React.FC<Props> = ({data, onClose, onCompleteUpdate}) => 
       isPublic,
       isTest,
     };
-    await editHappeningSurvey({
+    await submitHappeningSurvey({
       variables: {
         input: surveyInput,
         id: data?.id,
@@ -120,14 +137,14 @@ const EditSurveyModal: React.FC<Props> = ({data, onClose, onCompleteUpdate}) => 
     isTest,
     photos,
     title,
-    editHappeningSurvey,
+    submitHappeningSurvey,
   ]);
 
   useEffect(() => prevCategory?.id !== category?.id && toggleCategoryModal(false), [
     category, category?.id, prevCategory, prevCategory?.id, toggleCategoryModal,
   ]);
 
-  const handleAddImages = useCallback(({files}) => {
+  const handleAddImages = useCallback(({files = []}: {files: any}) => {
     setPhotos([...files]);
   }, []);
 
@@ -141,13 +158,13 @@ const EditSurveyModal: React.FC<Props> = ({data, onClose, onCompleteUpdate}) => 
     } return [];
   }, [photos]);
 
-  const handleRemoveImage = useCallback((index) => {
+  const handleRemoveImage = useCallback((index: number) => {
     const newImages = [...photos];
     newImages.splice(index, 1);
     setPhotos(newImages);
   }, [photos]);
 
-  const handleDeleteImage = useCallback((index) => {
+  const handleDeleteImage = useCallback((index: number) => {
     setAttachmentLink(attachmentLink?.filter((el) => el !== attachmentLink[index]));
   }, [attachmentLink]);
 
@@ -158,12 +175,9 @@ const EditSurveyModal: React.FC<Props> = ({data, onClose, onCompleteUpdate}) => 
     [],
   );
 
-  const handleClose = useCallback(() => {
-    navigate('/surveys');
-    onClose();
-  }, [navigate, onClose]);
-
-  const handleDescriptionChange = useCallback((event) => setDescription(event.target.value), []);
+  const handleDescriptionChange = useCallback((event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setDescription(event.target.value);
+  }, []);
 
   const getLocationName = useCallback(async () => {
     try {
@@ -191,10 +205,10 @@ const EditSurveyModal: React.FC<Props> = ({data, onClose, onCompleteUpdate}) => 
     <div className={classes.modal}>
       <div className={classes.wrapper}>
         <div className={classes.header}>
-          <div className={classes.closeModalIcon} onClick={handleClose}>
+          <div className={classes.closeModalIcon} onClick={onClose}>
             <HiOutlineX size={24} />
           </div>
-          <button onClick={handleUpdateSurvey} className={classes.button} type='button' disabled={!error && loading}>
+          <button onClick={handleSubmitSurvey} className={classes.button} type='button' disabled={!error && loading}>
             <span className='material-symbols-rounded'>done</span>
             <span>Save</span>
           </button>
@@ -207,11 +221,13 @@ const EditSurveyModal: React.FC<Props> = ({data, onClose, onCompleteUpdate}) => 
               onChange={handleTitleChange}
               disabled={isDisableTitleInput}
             />
-            <div onClick={toggleDisableTitleInput} className='grid place-item-center'>
-              <span className='material-symbols-rounded text-[24px] text-[#70747E] cursor-pointer'>
-                border_color
-              </span>
-            </div>
+            {!updateMode && (
+              <div onClick={toggleDisableTitleInput} className='grid place-item-center'>
+                <span className='material-symbols-rounded text-[24px] text-[#70747E] cursor-pointer'>
+                  border_color
+                </span>
+              </div>
+            )}
           </div>
           <Title title='CATEGORY' />
           <div className={classes.categoryContent}>
@@ -223,7 +239,9 @@ const EditSurveyModal: React.FC<Props> = ({data, onClose, onCompleteUpdate}) => 
               />
               <p className={classes.categoryTitle}>{category?.name || data?.category?.title}</p>
             </div>
-            <div onClick={toggleCategoryModal} className={classes.changeButton}>Change</div>
+            {!updateMode && (
+              <div onClick={toggleCategoryModal} className={classes.changeButton}>Change</div>
+            )}
           </div>
           <div
             className={cs(classes.categoryModalOverlay, [
@@ -236,7 +254,11 @@ const EditSurveyModal: React.FC<Props> = ({data, onClose, onCompleteUpdate}) => 
           <Title title='PHOTOS' />
           <div className={classes.photosWrapper}>
             {attachmentLink?.length > 0 ? attachmentLink.map((item, index) => (
-              <ImageItem index={index} item={item.media} onRemove={handleDeleteImage} />
+              <ImageItem
+                index={index}
+                item={item.media}
+                onRemove={updateMode ? undefined : handleDeleteImage}
+              />
             )) : ''}
             {allImages?.map((item, index) => (
               <ImageItem index={index} item={item} onRemove={handleRemoveImage} />
@@ -274,11 +296,13 @@ const EditSurveyModal: React.FC<Props> = ({data, onClose, onCompleteUpdate}) => 
           <ViewOptionInput
             activeOptionItem={isPublic}
             onClick={toggleIsPublic}
+            disabled={updateMode}
           />
           <Title title='Is this the real data or a test point?' />
           <DataOptionInput
             activeOptionItem={isTest}
             onClick={toggleIsTest}
+            disabled={updateMode}
           />
         </div>
       </div>
