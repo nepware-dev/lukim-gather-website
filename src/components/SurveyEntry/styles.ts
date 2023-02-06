@@ -11,7 +11,7 @@ export default {
   updateMessageContainer: 'bg-[#F0F3F6] flex items-flex-start justify-between gap-[16px] px-[16px] py-[12px] mt-[16px] mb-[8px] rounded-lg',
   updateMessage: 'w-3/4',
   updateButton: 'max-w-fit',
-  versionTabsContainer: 'bg-[#fff] flex items-center px-[18px] pb-[12px] gap-5 pt-[8px] mt-[16px] overflow-x-auto w-full border-b-[1px] border-[#B6CBE3]',
+  versionTabsContainer: 'bg-[#fff] flex items-center pb-[12px] gap-5 pt-[8px] mt-[16px] overflow-x-auto w-full border-b-[1px] border-[#B6CBE3]',
   iconWrapper: 'w-[590px] flex items-center justify-between',
   closeModalIcon: 'bg-[#E7E8EA] flex items-center justify-center h-[40px] w-[40px] rounded-full cursor-pointer',
   rightContent: 'flex bg-red items-center gap-5',

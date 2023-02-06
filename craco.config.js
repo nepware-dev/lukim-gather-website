@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const path = require('path');
 
 const resolve = (dir) => path.resolve(__dirname, dir);
@@ -15,6 +16,13 @@ module.exports = {
       '@utils': resolve('src/utils'),
       '@services': resolve('src/services'),
       '@ra': resolve('src/vendor/react-arsenal'),
+    },
+    configure: {
+      ignoreWarnings: [
+        {
+          module: /node_modules\/html-to-image/,
+        },
+      ],
     },
   },
   babel: {

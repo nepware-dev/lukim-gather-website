@@ -611,8 +611,8 @@ const Dashboard = () => {
           </Source>
           {popup && (
             <Popup
-              longitude={popupLngLat!.lng}
-              latitude={popupLngLat!.lat}
+              longitude={popupLngLat?.lng as number}
+              latitude={popupLngLat?.lat as number}
               anchor='bottom'
               onClose={() => setPopUp(null)}
             >
