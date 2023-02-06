@@ -54,7 +54,8 @@ const Input: React.FC<InputProps> = (
 ) => {
   const isActive = useMemo(() => activeOptionItem === optionItem, [activeOptionItem, optionItem]);
   return (
-    <div
+    <button
+      type='button'
       className={cs(
         classes.optionItem,
         [classes.activeOptionItem, isActive],
@@ -77,7 +78,7 @@ const Input: React.FC<InputProps> = (
       >
         {title}
       </p>
-    </div>
+    </button>
   );
 };
 

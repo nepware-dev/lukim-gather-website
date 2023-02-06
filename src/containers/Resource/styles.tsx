@@ -8,4 +8,5 @@ export default {
   cardTitle: 'text-xl font-interSemibold text-color-blue',
   cardDescription: 'mt-3 font-inter text-sm',
   cardButton: 'cursor-pointer rounded-lg font-interMedium px-8 py-2 border border-[#EC6D25] text-[#EC6D25] hover:text-color-white hover:bg-[#EC6D25] w-fit',
+  emptyText: 'text-center mx-auto',
 };
