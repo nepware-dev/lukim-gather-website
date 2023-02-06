@@ -44,7 +44,7 @@ export type CategoryType = {
 const Tutorial = () => {
   const contentRef = useRef<HTMLElement>();
   const topicRef = useRef();
-  const {data} = useQuery(GET_FAQ);
+  const {data, loading} = useQuery(GET_FAQ);
   const {data: category} = useQuery(GET_SUPPORT_CATEGORY, {
     variables: {id: Number(1)},
   });
@@ -108,6 +108,8 @@ const Tutorial = () => {
     className: classes.bgContent,
     renderItem: renderContent,
     keyExtractor,
+    loading,
+    EmptyComponent: <p>No data found!</p>,
   };
   return (
     <Layout isContainer={false} isDarkNavbar>
@@ -134,6 +136,7 @@ const Tutorial = () => {
           <List
             {...topicProps}
             ref={topicRef}
+            EmptyComponent={<div />}
           />
         </div>
         <div className={classes.bgContentWrapper}>

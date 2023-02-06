@@ -4,7 +4,7 @@ import React, {
 import {useSelector} from 'react-redux';
 import {useNavigate} from 'react-router-dom';
 import {
-  gql, useMutation, useQuery, useLazyQuery,
+  gql, useMutation, useLazyQuery,
 } from '@apollo/client';
 import Map, {Marker, Source, Layer} from 'react-map-gl';
 import type {MapRef} from 'react-map-gl';
@@ -144,12 +144,18 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails, onEditClick}) => {
 
   const [activeVersionId, setActiveVersionId] = useState<string | number>('current');
 
-  const {data: surveyHistoryData, refetch} = useQuery(GET_HAPPENING_SURVEY_HISTORY, {
-    variables: {surveyId: data.id},
-  });
+  const [getHappeningSurveyData, {
+    data: surveyHistoryData,
+  }] = useLazyQuery(GET_HAPPENING_SURVEY_HISTORY);
   useEffect(() => {
-    refetch();
-  }, [refetch]);
+    if (data?.id) {
+      getHappeningSurveyData({
+        variables: {
+          surveyId: data.id,
+        },
+      });
+    }
+  }, [data, getHappeningSurveyData]);
 
   const versionsData = useMemo(() => {
     if (surveyHistoryData?.happeningSurveysHistory) {
@@ -208,7 +214,7 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails, onEditClick}) => {
         modifiedDate,
         new Date(),
       );
-      const formattedDate = format(modifiedDate, 'MMM dd, yyyy');
+      const formattedDate = format(modifiedDate, 'MMM d, yyyy');
       if (dateDifference < -UPDATE_NUM_DAYS) {
         return [
           true,
@@ -497,7 +503,7 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails, onEditClick}) => {
                   </p>
                 </div>
                 <p className={classes.date}>
-                  {versionsData.length > 1 && activeVersionId === 'current' ? `Last updated ${lastUpdated}` : formatDate(data.modifiedAt)}
+                  {versionsData.length > 1 && activeVersionId === 'current' ? `Last updated ${lastUpdated}` : formatDate(surveyData?.modifiedAt)}
                 </p>
                 {surveyData.project && (
                   <>

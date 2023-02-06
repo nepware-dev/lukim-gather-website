@@ -31,7 +31,7 @@ const GET_TUTORAL = gql`
 const Tutorial = () => {
   const contentRef = useRef<HTMLElement>();
   const topicRef = useRef();
-  const {data} = useQuery(GET_TUTORAL);
+  const {data, loading} = useQuery(GET_TUTORAL);
   const {data: category} = useQuery(GET_SUPPORT_CATEGORY, {
     variables: {id: Number(6)},
   });
@@ -95,6 +95,8 @@ const Tutorial = () => {
     className: classes.bgContent,
     renderItem: renderContent,
     keyExtractor,
+    loading,
+    EmptyComponent: <p>No data found!</p>,
   };
   return (
     <Layout isContainer={false} isDarkNavbar>
@@ -121,6 +123,7 @@ const Tutorial = () => {
           <List
             {...topicProps}
             ref={topicRef}
+            EmptyComponent={<div />}
           />
         </div>
         <div className={classes.bgContentWrapper}>

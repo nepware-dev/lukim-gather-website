@@ -29,7 +29,8 @@ const SurveySentiment: React.FC<Props> = ({feel, activeFeel, onPress}) => {
   );
 
   return (
-    <div
+    <button
+      type='button'
       className={cs(
         classes.sentiment,
         [classes.activeSentiment, activeFeel === feel],
@@ -44,7 +45,7 @@ const SurveySentiment: React.FC<Props> = ({feel, activeFeel, onPress}) => {
         </div>
       )}
       {feel}
-    </div>
+    </button>
   );
 };
 

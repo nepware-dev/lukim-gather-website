@@ -120,7 +120,7 @@ const UserDropdown = ({alignRight}: {alignRight?: boolean}) => {
           >
             <AiOutlineSetting size={22} color='#888C94' />
             <p className={classes.itemText}>
-              Account Setting
+              Account Settings
             </p>
           </div>
           <div className={classes.separator} />

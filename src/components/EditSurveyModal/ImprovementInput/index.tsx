@@ -20,18 +20,21 @@ const keyExtractor = (item: string) => item;
 
 interface Props {
   improvement: string;
-    activeImprovement: string;
-    onPress(emo: string | null): void;
+  activeImprovement: string;
+  onPress(emo: string | null): void;
 }
 
-const SurveyImprovement: React.FC<Props> = ({improvement, activeImprovement, onPress}) => {
+const SurveyImprovement: React.FC<Props> = ({
+  improvement, activeImprovement, onPress,
+}) => {
   const handlePress = useCallback(
     () => (improvement === activeImprovement ? onPress(null) : onPress(improvement))
     , [improvement, onPress, activeImprovement],
   );
 
   return (
-    <div
+    <button
+      type='button'
       className={cs(
         classes.improvement,
         [classes.activeImprovement, activeImprovement === improvement],
@@ -46,7 +49,7 @@ const SurveyImprovement: React.FC<Props> = ({improvement, activeImprovement, onP
         </div>
       )}
       <Improvement improvement={improvement} iconColor={activeImprovement === improvement ? '#EC6D25' : '#70747E'} />
-    </div>
+    </button>
   );
 };
 

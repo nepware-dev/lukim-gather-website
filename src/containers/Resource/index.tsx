@@ -26,7 +26,7 @@ const GET_RESOURCE = gql`
 
 const Resource = () => {
   const ref = useRef<any>();
-  const {data} = useQuery(GET_RESOURCE);
+  const {loading, data} = useQuery(GET_RESOURCE);
   const [searchedData, setSearchedData] = useState();
   const [openVideoModal, setOpenVideoModal] = useState(false);
   const [videoData, setVideoData] = useState({title: '', videoUrl: ''});
@@ -77,6 +77,8 @@ const Resource = () => {
     className: classes.bgContent,
     renderItem: renderItems,
     keyExtractor,
+    loading,
+    EmptyComponent: <p className={classes.emptyText}>No resources found!</p>,
   };
   return (
     <>
