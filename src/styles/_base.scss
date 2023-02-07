@@ -1,5 +1,16 @@
 @import '@ra/styles/base';
 
+
+@font-face {
+  font-family: 'Material Symbols Rounded';
+  font-style: normal;
+  font-display: block;
+}
+
+.material-symbols-rounded {
+  user-select: none;
+}
+
 :root {
   --color-primary: #196297;
 }
