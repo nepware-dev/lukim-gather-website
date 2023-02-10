@@ -15,4 +15,5 @@ export default {
   dropdownItems:
     'flex-col py-[8px] px-[14px] font-interMedium border border-[#CCDCE8] text-[14px] rounded-lg',
   dropdownItem: 'cursor-pointer p-[10px] rounded-lg',
+  analyticsButton: 'h-[44px] px-[12px] w-fit rounded-lg',
 };
