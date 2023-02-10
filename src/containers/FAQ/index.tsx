@@ -4,9 +4,11 @@ import React, {
 import {gql, useQuery} from '@apollo/client';
 
 import Layout from '@components/Layout';
+import TopicCard, {ChildTopicCard} from '@components/SupportCategoryCard';
 import FaqAccordion from '@components/FaqAccordion';
 
-import cs from '@ra/cs';
+import useSupportCategory from '@hooks/useSupportCategory';
+
 import List from '@ra/components/List';
 
 import classes from './styles';
@@ -21,17 +23,9 @@ const GET_FAQ = gql`
       answer
       category {
         id
+        title
+        treeId
       }
-    }
-  }
-`;
-
-export const GET_SUPPORT_CATEGORY = gql`
-  query SupportCategory($id: ID){
-    supportCategory (parent: $id) {
-      id
-      icon
-      title
     }
   }
 `;
@@ -45,72 +39,81 @@ const Tutorial = () => {
   const contentRef = useRef<HTMLElement>();
   const topicRef = useRef();
   const {data, loading} = useQuery(GET_FAQ);
-  const {data: category} = useQuery(GET_SUPPORT_CATEGORY, {
-    variables: {id: Number(1)},
-  });
-  const [faqTopicId, setFaqTopicId] = useState<number | null>(null);
+
+  const [filterCategory, setFilterCategory] = useState({treeId: null, childCategory: null});
   const [searchedData, setSearchedData] = useState<string>('');
 
-  const filteredData = useMemo(() => (
-    faqTopicId
-      ? data?.frequentlyAskedQuestion.filter(
-        (el: { category: {id: string} }) => el?.category?.id === faqTopicId.toString(),
-      )
-      : data?.frequentlyAskedQuestion.filter((el: {
-    [s: string]: unknown;
-  } | ArrayLike<unknown>) => Object.values(el)
-        .join('')
-        .toLowerCase()
-        .includes(searchedData))), [data, faqTopicId, searchedData]);
+  const {parentCategory, childCategory} = useSupportCategory(filterCategory?.treeId);
+
+  const filteredData = useMemo(() => {
+    if (filterCategory?.treeId) {
+      const dt = data?.frequentlyAskedQuestion?.filter(
+        (el: {
+          category: {title: string; treeId: number}
+        }) => el?.category?.treeId === filterCategory?.treeId,
+      );
+      return filterCategory?.childCategory
+        ? dt.filter((el: any) => el?.category?.title === filterCategory?.childCategory) : dt;
+    }
+    return data?.frequentlyAskedQuestion?.filter((el: {
+          [s: string]: unknown;
+        } | ArrayLike<unknown>) => Object.values(el)
+      .join('')
+      .toLowerCase()
+      .includes(searchedData));
+  }, [
+    data?.frequentlyAskedQuestion,
+    filterCategory?.childCategory,
+    filterCategory?.treeId,
+    searchedData,
+  ]);
 
   const handleClickSearch = useCallback(() => {
     contentRef?.current?.scrollIntoView({behavior: 'smooth'});
   }, []);
 
   const handleSearchChange = useCallback((e) => {
-    setFaqTopicId(null);
+    setFilterCategory({treeId: null, childCategory: null});
     setSearchedData(e.target.value.toLowerCase());
   }, []);
 
+  const handleClickTopic = useCallback((item: any) => {
+    if (filterCategory?.treeId === item?.treeId) {
+      setFilterCategory({treeId: null, childCategory: null});
+    } else {
+      setFilterCategory({treeId: item?.treeId, childCategory: null});
+    }
+  }, [filterCategory]);
+
   const renderTopic = useCallback(({item}) => (
-    <div
-      className={cs(classes.topicCard, faqTopicId === item.id ? 'bg-[#00518B] border-[#fff]' : 'bg-[#0B4570] border-[#3B75B4]')}
-      onClick={() => {
-        if (faqTopicId === item.id) {
-          setFaqTopicId(null);
-        } else {
-          setFaqTopicId(item.id);
-          handleClickSearch();
-        }
-      }}
-    >
-      <span className={cs('material-symbols-rounded text-[28px] group-hover:text-color-white', faqTopicId === item.id ? 'text-[#fff]' : 'text-[#C7E5FB]')}>
-        {item.icon}
-      </span>
-      <h6 className={classes.topicTitle}>{item.title}</h6>
-    </div>
-  ), [faqTopicId, handleClickSearch]);
+    <TopicCard
+      isActive={item?.treeId === filterCategory?.treeId}
+      item={item}
+      onClick={handleClickTopic}
+    />
+  ), [filterCategory?.treeId, handleClickTopic]);
+
+  const handleClickChildCategory = useCallback((item: any) => {
+    if (filterCategory?.childCategory === item.title) {
+      setFilterCategory({...filterCategory, childCategory: null});
+    } else {
+      setFilterCategory({...filterCategory, childCategory: item.title});
+    }
+  }, [filterCategory]);
+
+  const renderChild = useCallback(({item}) => (
+    <ChildTopicCard
+      item={item}
+      onClick={handleClickChildCategory}
+      isActive={item.title === filterCategory.childCategory}
+    />
+  ), [filterCategory.childCategory, handleClickChildCategory]);
 
   const renderContent = useCallback(
-    ({item}) => <FaqAccordion key={item.id} question={item.question} answer={item.answer || 'N/A'} />,
+    ({item}) => <FaqAccordion item={item} />,
     [],
   );
 
-  const topicProps = {
-    data: category?.supportCategory || [],
-    className: classes.topicList,
-    renderItem: renderTopic,
-    keyExtractor,
-  };
-
-  const contentProps = {
-    data: filteredData || data?.frequentlyAskedQuestion,
-    className: classes.bgContent,
-    renderItem: renderContent,
-    keyExtractor,
-    loading,
-    EmptyComponent: <p>No data found!</p>,
-  };
   return (
     <Layout isContainer={false} isDarkNavbar>
       <section className={classes.content}>
@@ -134,15 +137,33 @@ const Tutorial = () => {
             </button>
           </div>
           <List
-            {...topicProps}
             ref={topicRef}
+            data={parentCategory || []}
+            className={classes.topicList}
+            renderItem={renderTopic}
+            keyExtractor={keyExtractor}
             EmptyComponent={<div />}
           />
+          {childCategory?.parent?.children.length > 0 && (
+            <List
+              ref={topicRef}
+              data={childCategory?.parent?.children || []}
+              className={classes.topicList}
+              renderItem={renderChild}
+              keyExtractor={keyExtractor}
+              EmptyComponent={<div />}
+            />
+          )}
         </div>
         <div className={classes.bgContentWrapper}>
           <List
-            {...contentProps}
             ref={contentRef}
+            data={filteredData || data?.tutorial || []}
+            className={classes.bgContent}
+            renderItem={renderContent}
+            keyExtractor={keyExtractor}
+            loading={loading}
+            EmptyComponent={<p>No data found!</p>}
           />
         </div>
       </section>
