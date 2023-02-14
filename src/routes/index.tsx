@@ -6,6 +6,7 @@ import {RootStateOrAny, useSelector} from 'react-redux';
 
 import AccountSettings from '@containers/AccountSettings';
 import CustomForms from '@containers/CustomForms';
+import CustomFormAnalytics from '@containers/CustomFormAnalytics';
 import Dashboard from '@containers/Dashboard';
 import FAQ from '@containers/FAQ';
 import ForgotPassword from '@containers/ForgotPassword';
@@ -60,6 +61,7 @@ const AppRoutes = () => {
         >
           <Route path='/account-settings' element={<AccountSettings />} />
           <Route path='/custom-forms' element={<CustomForms />} />
+          <Route path='/custom-forms/analytics' element={<CustomFormAnalytics />} />
           <Route path='/custom-forms/:id' element={<CustomForms />} />
           <Route path='/dashboard' element={<Dashboard />} />
           <Route path='/organization' element={<Organization />} />

@@ -21,6 +21,7 @@ import cs from '@utils/cs';
 import _cs from '@ra/cs';
 import {formatDate} from '@utils/formatDate';
 import {formatName} from '@utils/formatName';
+import useToast from '@hooks/useToast';
 import useCategoryIcon from '@hooks/useCategoryIcon';
 import {rootState} from '@store/rootReducer';
 
@@ -130,8 +131,14 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails, onEditClick}) => {
   const mapRef = useRef<MapRef>(null);
   const entryRef = useRef<any>();
   const currentDate = new Date().toISOString();
+
+  const toast = useToast();
+
   const [updateHappeningSurvey] = useMutation(UPDATE_SURVEY_STATUS, {
     refetchQueries: [GET_SURVEY_DATA, 'happeningSurveys'],
+    onError: (err) => {
+      toast('error', String(err));
+    },
   });
   const [showDeclineModal, setShowDeclineModal] = useState<boolean>(false);
   const [locationName, setLocationName] = useState<string>('');

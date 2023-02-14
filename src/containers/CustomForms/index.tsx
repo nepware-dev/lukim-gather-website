@@ -17,6 +17,7 @@ import {XMLParser} from 'fast-xml-parser';
 import cs from '@utils/cs';
 import {formatDate} from '@utils/formatDate';
 
+import Button from '@components/Button';
 import DashboardHeader from '@components/DashboardHeader';
 import DashboardLayout from '@components/DashboardLayout';
 import FormTable, {FormDataType} from '@components/FormTable';
@@ -256,6 +257,10 @@ const CustomForms = () => {
     return flattenObject(formAnswers?.data);
   }) || [], [data]);
 
+  const handleAnalyticsClick = useCallback(() => {
+    navigate('/custom-forms/analytics/');
+  }, [navigate]);
+
   return (
     <>
       <DashboardLayout hideOverflowY={showDetails}>
@@ -276,14 +281,14 @@ const CustomForms = () => {
             </div>
             {surveyFormData?.length > 0 && (
               <CSVLink
-                className='h-[44px] px-[12px] flex items-center rounded-lg border-[#CCDCE8] bg-[#E7E8EA] font-interMedium text-[14px] text-[#70747E]'
+                className='ml-auto h-[44px] px-[12px] flex items-center rounded-lg border-[#CCDCE8] bg-[#E7E8EA] font-interMedium text-[14px] text-[#70747E]'
                 filename={`Custom-Survey-Report-${new Date().toISOString()}.csv`}
                 data={flatCustomSurveys}
               >
                 <span>Export to CSV</span>
               </CSVLink>
             )}
-
+            <Button className={classes.analyticsButton} onClick={handleAnalyticsClick} text='View analytics' />
           </div>
           <div className={classes.surveyTable}>
             <FormTable
