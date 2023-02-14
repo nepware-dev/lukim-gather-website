@@ -122,3 +122,18 @@ export const UPDATE_SURVEY = gql`
         }
     }
 `;
+
+export const GET_SUPPORT_CATEGORY = gql`
+query{
+  supportCategory {
+    treeId
+    parent {
+      id
+      title
+      children {
+        title
+      }
+    }
+  }
+}
+`;

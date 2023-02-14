@@ -4,18 +4,18 @@ import React, {
 import {gql, useQuery} from '@apollo/client';
 
 import Layout from '@components/Layout';
+import TopicCard, {ChildTopicCard} from '@components/SupportCategoryCard';
 import FaqAccordion from '@components/FaqAccordion';
 
-import cs from '@ra/cs';
-import List from '@ra/components/List';
+import useSupportCategory from '@hooks/useSupportCategory';
 
-import {GET_SUPPORT_CATEGORY} from '@containers/FAQ';
+import List from '@ra/components/List';
 
 import classes from './styles';
 
 const keyExtractor = (item: {id: string}) => item.id;
 
-const GET_TUTORAL = gql`
+const GET_TUTORIAL = gql`
   query{
     tutorial {
       id
@@ -23,6 +23,8 @@ const GET_TUTORAL = gql`
       answer
       category {
         id
+        title
+        treeId
       }
     }
   }
@@ -31,73 +33,82 @@ const GET_TUTORAL = gql`
 const Tutorial = () => {
   const contentRef = useRef<HTMLElement>();
   const topicRef = useRef();
-  const {data, loading} = useQuery(GET_TUTORAL);
-  const {data: category} = useQuery(GET_SUPPORT_CATEGORY, {
-    variables: {id: Number(6)},
-  });
-  const [tutorialTopicId, setTutorialTopicId] = useState<number | null>(null);
+  const {data, loading} = useQuery(GET_TUTORIAL);
+
+  const [filterCategory, setFilterCategory] = useState({treeId: null, childCategory: null});
   const [searchedData, setSearchedData] = useState<string>('');
 
-  const filteredData = useMemo(() => (
-    tutorialTopicId
-      ? data?.tutorial.filter(
-        (el: { category: {id: string} }) => el?.category?.id === tutorialTopicId.toString(),
-      )
-      : data?.tutorial.filter((el: {
-    [s: string]: unknown;
-  } | ArrayLike<unknown>) => Object.values(el)
-        .join('')
-        .toLowerCase()
-        .includes(searchedData))), [data, tutorialTopicId, searchedData]);
+  const {parentCategory, childCategory} = useSupportCategory(filterCategory?.treeId);
+
+  const filteredData = useMemo(() => {
+    if (filterCategory?.treeId) {
+      const dt = data?.tutorial?.filter(
+        (el: {
+          category: {title: string; treeId: number}
+        }) => el?.category?.treeId === filterCategory?.treeId,
+      );
+      return filterCategory?.childCategory
+        ? dt?.filter((el: any) => el?.category?.title === filterCategory?.childCategory) : dt;
+    }
+    return data?.tutorial?.filter((el: {
+          [s: string]: unknown;
+        } | ArrayLike<unknown>) => Object.values(el)
+      .join('')
+      .toLowerCase()
+      .includes(searchedData));
+  }, [
+    data?.tutorial,
+    filterCategory?.childCategory,
+    filterCategory?.treeId,
+    searchedData,
+  ]);
 
   const handleClickSearch = useCallback(() => {
     contentRef?.current?.scrollIntoView({behavior: 'smooth'});
   }, []);
 
   const handleSearchChange = useCallback((e) => {
-    setTutorialTopicId(null);
+    setFilterCategory({treeId: null, childCategory: null});
     setSearchedData(e.target.value.toLowerCase());
   }, []);
 
+  const handleClickTopic = useCallback((item: any) => {
+    if (filterCategory?.treeId === item?.treeId) {
+      setFilterCategory({treeId: null, childCategory: null});
+    } else {
+      setFilterCategory({treeId: item?.treeId, childCategory: null});
+    }
+  }, [filterCategory]);
+
   const renderTopic = useCallback(({item}) => (
-    <div
-      className={cs(classes.topicCard, tutorialTopicId === item.id ? 'bg-[#00518B] border-[#fff]' : 'bg-[#0B4570] border-[#3B75B4]')}
-      onClick={() => {
-        if (tutorialTopicId === item.id) {
-          setTutorialTopicId(null);
-        } else {
-          setTutorialTopicId(item.id);
-          handleClickSearch();
-        }
-      }}
-    >
-      <span className={cs('material-symbols-rounded text-[28px] group-hover:text-color-white', tutorialTopicId === item.id ? 'text-[#fff]' : 'text-[#C7E5FB]')}>
-        {item.icon}
-      </span>
-      <h6 className={classes.topicTitle}>{item.title}</h6>
-    </div>
-  ), [tutorialTopicId, handleClickSearch]);
+    <TopicCard
+      isActive={item?.treeId === filterCategory?.treeId}
+      item={item}
+      onClick={handleClickTopic}
+    />
+  ), [filterCategory?.treeId, handleClickTopic]);
+
+  const handleClickChildCategory = useCallback((item: any) => {
+    if (filterCategory?.childCategory === item.title) {
+      setFilterCategory({...filterCategory, childCategory: null});
+    } else {
+      setFilterCategory({...filterCategory, childCategory: item.title});
+    }
+  }, [filterCategory]);
+
+  const renderChild = useCallback(({item}) => (
+    <ChildTopicCard
+      item={item}
+      onClick={handleClickChildCategory}
+      isActive={item.title === filterCategory.childCategory}
+    />
+  ), [filterCategory.childCategory, handleClickChildCategory]);
 
   const renderContent = useCallback(
-    ({item}) => <FaqAccordion key={item.id} question={item.question} answer={item.answer || 'N/A'} />,
+    ({item}) => <FaqAccordion item={item} />,
     [],
   );
 
-  const topicProps = {
-    data: category?.supportCategory || [],
-    className: classes.topicList,
-    renderItem: renderTopic,
-    keyExtractor,
-  };
-
-  const contentProps = {
-    data: filteredData || data?.tutorial,
-    className: classes.bgContent,
-    renderItem: renderContent,
-    keyExtractor,
-    loading,
-    EmptyComponent: <p>No data found!</p>,
-  };
   return (
     <Layout isContainer={false} isDarkNavbar>
       <section className={classes.content}>
@@ -121,15 +132,33 @@ const Tutorial = () => {
             </button>
           </div>
           <List
-            {...topicProps}
             ref={topicRef}
+            data={parentCategory || []}
+            className={classes.topicList}
+            renderItem={renderTopic}
+            keyExtractor={keyExtractor}
             EmptyComponent={<div />}
           />
+          {childCategory?.parent?.children.length > 0 && (
+            <List
+              ref={topicRef}
+              data={childCategory?.parent?.children || []}
+              className={classes.topicList}
+              renderItem={renderChild}
+              keyExtractor={keyExtractor}
+              EmptyComponent={<div />}
+            />
+          )}
         </div>
         <div className={classes.bgContentWrapper}>
           <List
-            {...contentProps}
             ref={contentRef}
+            data={filteredData || data?.tutorial || []}
+            className={classes.bgContent}
+            renderItem={renderContent}
+            keyExtractor={keyExtractor}
+            loading={loading}
+            EmptyComponent={<p>No data found!</p>}
           />
         </div>
       </section>
