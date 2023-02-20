@@ -37,6 +37,7 @@ interface Props {
   data: SurveyDataType[];
   setActiveIndex(i: number): void;
   setShowDetails(value: boolean): void;
+  loading: boolean;
 }
 
 interface ItemProps {
@@ -111,6 +112,7 @@ const SurveyItem: React.FC<ItemProps> = ({
 
 const SurveyTable: React.FC<Props> = ({
   data,
+  loading,
   setActiveIndex,
   setShowDetails,
 }) => (
@@ -152,7 +154,7 @@ const SurveyTable: React.FC<Props> = ({
         ) : (
           <tr>
             <td>
-              <p className={classes.notFound}>No Survey Found</p>
+              <p className={classes.notFound}>{loading ? 'Loading' : 'No Survey Found'}</p>
             </td>
           </tr>
         )}

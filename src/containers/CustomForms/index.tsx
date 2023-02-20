@@ -70,7 +70,7 @@ const GET_FORMS = gql`
 
 const CustomForms = () => {
   const {id} = useParams();
-  const {data} = useQuery(GET_SURVEY_DATA);
+  const {data, loading: surveyLoading} = useQuery(GET_SURVEY_DATA);
   const {refetch} = useQuery(GET_SURVEY, {
     variables: {id: Number(id)},
     fetchPolicy: !id ? 'cache-only' : 'cache-first',
@@ -293,6 +293,7 @@ const CustomForms = () => {
           <div className={classes.surveyTable}>
             <FormTable
               data={surveyFormData}
+              loading={surveyLoading}
               setActiveIndex={setActiveIndex}
               setShowDetails={setShowDetails}
             />

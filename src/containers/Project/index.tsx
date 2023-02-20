@@ -26,7 +26,7 @@ const GET_PROJECTS = gql`
 const Project = () => {
   const ref = useRef();
   const {data} = useQuery(GET_PROJECTS);
-  const {data: myProjects} = useQuery(GET_PROJECTS, {
+  const {data: myProjects, loading: loadingProjects} = useQuery(GET_PROJECTS, {
     variables: {tab: 'my_project'},
   });
   const renderItems = useCallback(
@@ -65,6 +65,7 @@ const Project = () => {
         <section className='w-screen md:w-[100%] '>
           <List
             ref={ref}
+            loading={loadingProjects}
             {...MyOrganizationProps}
           />
         </section>
@@ -76,6 +77,7 @@ const Project = () => {
         <section className='w-screen md:w-[100%] '>
           <List
             ref={ref}
+            loading={loadingProjects}
             {...AllOrganizationProps}
           />
         </section>

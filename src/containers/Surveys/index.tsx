@@ -229,7 +229,7 @@ const Surveys = () => {
   const navigate = useNavigate();
   const {uuid} = useParams();
 
-  const {data, refetch: refetchSurveyData} = useQuery(GET_SURVEY_DATA);
+  const {data, refetch: refetchSurveyData, loading: loadingSurvey} = useQuery(GET_SURVEY_DATA);
   const {data: category} = useQuery(GET_CATEGORY_DATA);
   const {data: regions} = useQuery(GET_REGION_DATA);
   const {data: protectedAreas} = useQuery(GET_PROTECTED_AREA_DATA);
@@ -665,6 +665,7 @@ const Surveys = () => {
           )}
           >
             <SurveyTable
+              loading={loadingSurvey}
               data={surveyData}
               setActiveIndex={setActiveIndex}
               setShowDetails={setShowDetails}

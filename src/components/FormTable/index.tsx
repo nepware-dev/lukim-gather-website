@@ -17,6 +17,7 @@ export type FormDataType = {
 
 interface Props {
   data: FormDataType[];
+  loading: boolean;
   setActiveIndex(i: number): void;
   setShowDetails(value: boolean): void;
 }
@@ -73,7 +74,9 @@ const FormItem: React.FC<ItemProps> = ({
   );
 };
 
-const FormTable: React.FC<Props> = ({data, setActiveIndex, setShowDetails}) => (
+const FormTable: React.FC<Props> = ({
+  data, loading, setActiveIndex, setShowDetails,
+}) => (
   <div className={classes.container}>
     <table className={classes.table}>
       <thead>
@@ -103,7 +106,7 @@ const FormTable: React.FC<Props> = ({data, setActiveIndex, setShowDetails}) => (
         ) : (
           <tr>
             <td>
-              <p className={classes.notFound}>No Form Found</p>
+              <p className={classes.notFound}>{loading ? 'Loading' : 'No Form Found'}</p>
             </td>
           </tr>
         )}
