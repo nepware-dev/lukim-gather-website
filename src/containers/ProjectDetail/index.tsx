@@ -157,7 +157,7 @@ const ProjectDetails = () => {
   const {id} = useParams();
   const toast = useToast();
 
-  const {data, refetch} = useQuery(GET_PROJECT, {
+  const {data, loading, refetch} = useQuery(GET_PROJECT, {
     variables: {id: String(id)},
   });
 
@@ -220,34 +220,35 @@ const ProjectDetails = () => {
           </span>
           <p className={classes.backTitle}>Back to projects</p>
         </Link>
-        <div className={classes.content}>
-          <div className={classes.itemContainer}>
-            <div className={classes.itemHeader}>
-              <div className='divide-dashed'>
-                <h2 className={classes.title}>{data?.projects[0]?.title || 'N/A'}</h2>
+        {loading ? 'Loading ...' : (
+          <div className={classes.content}>
+            <div className={classes.itemContainer}>
+              <div className={classes.itemHeader}>
+                <div className='divide-dashed'>
+                  <h2 className={classes.title}>{data?.projects[0]?.title || 'N/A'}</h2>
+                </div>
               </div>
-            </div>
-            <p className={classes.description}>
-              {parse(data?.projects[0]?.description || 'N/A')}
-            </p>
-            <div className={classes.infoWrapper}>
-              <div className={classes.info}>
-                <h5 className={classes.infoHeading}>DATE CREATED</h5>
-                <p className={classes.infoData}>
-                  {
-                    new Date(data?.projects[0]?.createdAt)?.toLocaleDateString(undefined, {
-                      month: 'short', day: '2-digit', year: 'numeric',
-                    })
-                  }
-                </p>
+              <p className={classes.description}>
+                {parse(data?.projects[0]?.description || 'N/A')}
+              </p>
+              <div className={classes.infoWrapper}>
+                <div className={classes.info}>
+                  <h5 className={classes.infoHeading}>DATE CREATED</h5>
+                  <p className={classes.infoData}>
+                    {
+                      new Date(data?.projects[0]?.createdAt)?.toLocaleDateString(undefined, {
+                        month: 'short', day: '2-digit', year: 'numeric',
+                      })
+                    }
+                  </p>
+                </div>
+                <hr className={classes.separator} />
+                <div className={classes.info}>
+                  <h5 className={classes.infoHeading}>NUMBER OF MEMBERS</h5>
+                  <p className={classes.infoData}>{data?.projects[0]?.totalUsers}</p>
+                </div>
               </div>
-              <hr className={classes.seperator} />
-              <div className={classes.info}>
-                <h5 className={classes.infoHeading}>NUMBER OF MEMBERS</h5>
-                <p className={classes.infoData}>{data?.projects[0]?.totalUsers}</p>
-              </div>
-            </div>
-            {data?.projects[0]?.organization
+              {data?.projects[0]?.organization
               && (
                 <div className={classes.orgContainer}>
                   <div className={classes.orgHeader}>
@@ -259,24 +260,25 @@ const ProjectDetails = () => {
                   </div>
                 </div>
               )}
-          </div>
-          {data?.projects[0].isAdmin && (
-            <div className={classes.userContainer}>
-              <div className={classes.userHeaderContainer}>
-                <h3 className={classes.userHeader}>Users</h3>
-                <Button text='+ Add' className={classes.addButton} textClassName={classes.addButtonText} onClick={onClickAddUser} />
-              </div>
-              <List
-                className={classes.userList}
-                data={data?.projects[0]?.users}
-                renderItem={UserItem}
-                keyExtractor={UserKeyExtractor}
-                onDelete={refetch}
-                projectId={id}
-              />
             </div>
-          )}
-        </div>
+            {data?.projects[0].isAdmin && (
+              <div className={classes.userContainer}>
+                <div className={classes.userHeaderContainer}>
+                  <h3 className={classes.userHeader}>Users</h3>
+                  <Button text='+ Add' className={classes.addButton} textClassName={classes.addButtonText} onClick={onClickAddUser} />
+                </div>
+                <List
+                  className={classes.userList}
+                  data={data?.projects[0]?.users}
+                  renderItem={UserItem}
+                  keyExtractor={UserKeyExtractor}
+                  onDelete={refetch}
+                  projectId={id}
+                />
+              </div>
+            )}
+          </div>
+        )}
       </section>
       <Modal
         title='Add users'
