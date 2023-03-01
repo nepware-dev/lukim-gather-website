@@ -5,8 +5,10 @@ import {useMutation} from '@apollo/client';
 import {HiOutlineX} from 'react-icons/hi';
 import {BsXLg} from 'react-icons/bs';
 import {AiOutlinePlus} from 'react-icons/ai';
+import {FiTrash2, FiUpload} from 'react-icons/fi';
 
 import {SurveyDataType} from '@components/SurveyTable';
+import AudioPlayer from '@components/AudioPlayer';
 
 import useCategoryIcon from '@hooks/useCategoryIcon';
 import useToast from '@hooks/useToast';
@@ -78,6 +80,7 @@ const EditSurveyModal: React.FC<Props> = ({
   const [category, setCategory] = useState<any>(data?.category);
   const [attachmentLink, setAttachmentLink] = useState(data?.attachment || []);
   const [photos, setPhotos] = useState<any>([]);
+  const [audioFile, setAudioFile] = useState<any>(data?.audioFile);
 
   const toast = useToast();
   const prevCategory = usePrevious(category || data?.category);
@@ -115,6 +118,7 @@ const EditSurveyModal: React.FC<Props> = ({
       sentiment: activeFeel,
       attachment: photos || null,
       attachmentLink: attachmentLink?.flatMap((e) => e.id),
+      audioFile,
       improvement: activeImprovement || null,
       description,
       isPublic,
@@ -127,17 +131,18 @@ const EditSurveyModal: React.FC<Props> = ({
       },
     });
   }, [
-    activeFeel,
-    activeImprovement,
-    attachmentLink,
+    title,
     category?.id,
-    data?.id,
+    activeFeel,
+    photos,
+    attachmentLink,
+    audioFile,
+    activeImprovement,
     description,
     isPublic,
     isTest,
-    photos,
-    title,
     submitHappeningSurvey,
+    data?.id,
   ]);
 
   useEffect(() => prevCategory?.id !== category?.id && toggleCategoryModal(false), [
@@ -147,6 +152,12 @@ const EditSurveyModal: React.FC<Props> = ({
   const handleAddImages = useCallback(({files = []}: {files: any}) => {
     setPhotos([...files]);
   }, []);
+
+  const handleAddAudio = useCallback(({files}: {files: any}) => {
+    setAudioFile(files[0]);
+  }, []);
+
+  const handleDeleteAudio = useCallback(() => setAudioFile(null), []);
 
   const allImages = useMemo(() => {
     const images = [];
@@ -304,6 +315,29 @@ const EditSurveyModal: React.FC<Props> = ({
             onClick={toggleIsTest}
             disabled={updateMode}
           />
+          <Title title='Audio description' />
+          {audioFile ? (
+            <div className={classes.audioPlayerWrapper}>
+              <AudioPlayer file={audioFile} />
+              <div className='cursor-pointer' onClick={handleDeleteAudio}>
+                <FiTrash2 size={24} color='#585D69' />
+              </div>
+            </div>
+          ) : (
+            <div>
+              <FileInput
+                id='surveyAudio'
+                className={classes.imageInput}
+                accept='audio/mpeg, audio/mp4, audio/ogg'
+                onChange={handleAddAudio}
+              />
+              {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
+              <label htmlFor='surveyAudio' className={classes.audioInput}>
+                <FiUpload color='#fff' size={18} />
+                <p className='text-[#fff]'>Upload audio file</p>
+              </label>
+            </div>
+          )}
         </div>
       </div>
     </div>

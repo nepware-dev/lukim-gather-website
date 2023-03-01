@@ -22,4 +22,6 @@ export default {
   emptyComponent: 'bg-[#cfc] grid place-items-center bg-[#f4f4f4]',
   imageDeleteIcon: 'cursor-pointer drop-shadow-sm bg-[#fff] absolute right-[6px] top-[6px] z-10 rounded-full h-[20px] w-[20px] grid place-items-center',
   textarea: 'w-[100%] p-[10px] font-interMedium text-[16px] border border-[#CCDCE8] rounded-lg',
+  audioPlayerWrapper: 'flex items-center gap-2',
+  audioInput: 'cursor-pointer flex items-center gap-3 bg-[#585D69] w-fit px-4 py-2 rounded',
 };
