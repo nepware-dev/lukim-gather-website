@@ -31,6 +31,7 @@ import {SurveyDataType} from '@components/SurveyTable';
 import {GET_SURVEY_DATA} from '@containers/Surveys';
 import Dropdown from '@components/Dropdown';
 import Gallery from '@components/Gallery';
+import AudioPlayer from '@components/AudioPlayer';
 
 import {
   GET_HAPPENING_SURVEY_HISTORY,
@@ -582,6 +583,12 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails, onEditClick}) => {
                     {formatName(surveyData?.createdBy)}
                   </p>
                 </div>
+                {surveyData?.audioFile && (
+                  <>
+                    <Title text='Audio description' />
+                    <AudioPlayer file={surveyData?.audioFile} />
+                  </>
+                )}
               </div>
               <div className={cs(classes.buttons, ['hidden', !isStaff])}>
                 <Button

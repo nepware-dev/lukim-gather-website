@@ -46,6 +46,7 @@ export const GET_SURVEY_DATA = gql`
         id
         media
       }
+      audioFile
       category {
         id
         title
@@ -94,6 +95,7 @@ export const GET_SURVEY = gql`
         id
         media
       }
+      audioFile
       category {
         id
         title
