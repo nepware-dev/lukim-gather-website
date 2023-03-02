@@ -10,7 +10,7 @@ export default {
   surveyTable: 'md:max-w-[calc(100vw-276px)] overflow-x-auto bg-color-white',
   footer: 'w-[100%] flex flex-wrap gap-4 items-center justify-between mt-[24px]',
   dropdownWrapper: 'flex gap-[12px] items-center',
-  show: 'font-interMedium text-[14px] text-[#282F3E]',
+  show: 'font-interMedium text-[14px] text-color-text',
   dropdownLabel: 'flex items-center gap-[15px] h-[42px] px-[14px] border border-[#CCDCE8] rounded-lg font-interMedium text-[14px] text-[#585D69] cursor-pointer',
   dropdownItems: 'flex-col py-[8px] px-[14px] font-interMedium border border-[#CCDCE8] text-[14px] rounded-lg',
   dropdownItem: 'cursor-pointer p-[10px] rounded-lg',

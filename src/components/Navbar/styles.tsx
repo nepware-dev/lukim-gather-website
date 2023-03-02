@@ -1,7 +1,7 @@
 export default {
   navbar: 'w-full max-w-[1440px] mx-auto px-[5vw] py-[22px] sm:flex sm:justify-between z-[9] fixed sm:static',
   darkBar: 'bg-[#05375A]',
-  lightBar: 'sm:bg-color-bg bg-[#fff] mb-[20px]',
+  lightBar: 'sm:bg-color-bg bg-color-white mb-[20px]',
   toggle: 'absolute right-[20px] top-[30px] py-2 px-2 cursor-pointers',
   logoWrapper: 'cursor-pointer',
   logo: 'h-[66px]',
@@ -9,7 +9,7 @@ export default {
   darkMenuList: 'bg-[#05375A]',
   lightMenuList: 'bg-color-bg',
   linkWrapper: 'w-[100%] my-4 sm:my-0 flex justify-items-center text-center',
-  link: 'sm:w-[100%] mx-auto sm:mx-3 sm:mr-8 font-interMedium px-4 py-4 border-b-2',
+  link: 'sm:w-[100%] mx-auto sm:mx-3 sm:mr-8 font-interSemibold px-4 py-4 border-b-2',
   darkLink: 'bg-[#05375A] text-color-white',
   lightLink: 'sm:bg-color-bg',
   buttonWrapper: 'sm:ml-10 sm:mt-0 mt-[7vh] sm:mb-0 mb-[3vh]',

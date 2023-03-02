@@ -1,7 +1,7 @@
 export default {
-  container: 'w-[222px] bg-[#fff] z-auto px-[16px] py-[12px] rounded-lg',
+  container: 'w-[222px] bg-color-white z-auto px-[16px] py-[12px] rounded-lg',
   itemWrapper: 'flex items-center gap-[12px] p-[10px] rounded-lg hover:bg-[#F0F3F6] cursor-pointer',
-  itemText: 'font-inter text-[16px] text-[#282F3E]',
+  itemText: 'font-inter text-[16px] text-color-text',
   separator: 'h-[1px] bg-[#E7E8EA] my-[4px]',
   labelWrapper: 'h-[44px] w-fit flex items-center gap-[8px] rounded-lg px-[12px] bg-[#FDF0E9] cursor-pointer select-none',
   letterWrapper: 'w-[28px] h-[28px] flex items-center justify-center rounded-full bg-[#EC6D25]',

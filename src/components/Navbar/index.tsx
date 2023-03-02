@@ -45,7 +45,7 @@ const Navbar: React.FC<Props> = ({hideButton = false, isDark = false}) => {
   const toggleMenu = useCallback(() => setOpen(!open), [open]);
   const screenWidth = useMemo(() => (width || 0), [width]);
   // eslint-disable-next-line consistent-return
-  const mobileMenuStyle = 'fixed w-full pt-[10vh] px-[5vw] pb-[20px] left-0 top-[100px] shadow z-10 transition-transform bg-[#fff]';
+  const mobileMenuStyle = 'fixed w-full pt-[10vh] px-[5vw] pb-[20px] left-0 top-[100px] shadow z-10 transition-transform bg-color-white';
   const isMobile = useMemo(() => {
     if (screenWidth < 640) {
       if (open) {

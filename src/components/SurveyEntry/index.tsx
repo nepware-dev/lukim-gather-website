@@ -591,19 +591,21 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails, onEditClick}) => {
                 )}
               </div>
               <div className={cs(classes.buttons, ['hidden', !isStaff])}>
-                <Button
-                  text={data.status.toLowerCase() === 'approved' ? 'Accepted' : 'Accept'}
-                  className={classes.acceptBtn}
-                  onClick={handleAccept}
-                  disabled={data.status.toLowerCase() === 'approved'}
-                />
-                <Button
-                  text={data.status.toLowerCase() === 'rejected' ? 'Declined' : 'Decline'}
-                  className={classes.declineBtn}
-                  textClassName={classes.declineBtnText}
-                  onClick={handleShowDeclineModal}
-                  disabled={data.status.toLowerCase() === 'rejected'}
-                />
+                {data.status.toLowerCase() !== 'approved' && (
+                  <Button
+                    text={data.status.toLowerCase() === 'approved' ? 'Accepted' : 'Accept'}
+                    className={classes.acceptBtn}
+                    onClick={handleAccept}
+                  />
+                )}
+                {data.status.toLowerCase() !== 'rejected' && (
+                  <Button
+                    text={data.status.toLowerCase() === 'rejected' ? 'Declined' : 'Decline'}
+                    className={classes.declineBtn}
+                    textClassName={classes.declineBtnText}
+                    onClick={handleShowDeclineModal}
+                  />
+                )}
               </div>
             </>
           ) : (
