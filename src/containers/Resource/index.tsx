@@ -1,4 +1,3 @@
-/* eslint-disable array-callback-return */
 import React, {useCallback, useRef, useState} from 'react';
 import {gql, useQuery} from '@apollo/client';
 import parse from 'html-react-parser';
@@ -32,11 +31,12 @@ const Resource = () => {
   const [videoData, setVideoData] = useState({title: '', videoUrl: ''});
 
   const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    // eslint-disable-next-line max-len
-    const filteredData = data?.resource.filter((el: { [s: string]: unknown; } | ArrayLike<unknown>) => Object.values(el)
-      .join('')
-      .toLowerCase()
-      .includes(e.target.value.toLowerCase()));
+    const filteredData = data?.resource.filter(
+      (el: { [s: string]: unknown; } | ArrayLike<unknown>) => Object.values(el)
+        .join('')
+        .toLowerCase()
+        .includes(e.target.value.toLowerCase()),
+    );
     setSearchedData(filteredData);
   }, [data?.resource]);
 
