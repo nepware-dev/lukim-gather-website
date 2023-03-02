@@ -16,10 +16,6 @@ const AudioPlayer = ({file} : {file?: any}) => {
       audio.pause();
     }
     audio.onended = () => setPlaying(false);
-    return () => {
-      audio.pause();
-      setPlaying(false);
-    };
   }, [isPlaying, setPlaying]);
 
   useEffect(() => {

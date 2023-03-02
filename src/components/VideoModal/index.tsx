@@ -29,7 +29,7 @@ const VideoModal = ({
             leaveFrom='opacity-100 scale-100'
             leaveTo='opacity-0 scale-95'
           >
-            <Dialog.Panel className='lg:w-[670px] max-w-[90%] transform overflow-hidden rounded-2xl p-6 text-left align-middle shadow-xl transition-all bg-[#fff]'>
+            <Dialog.Panel className='lg:w-[670px] max-w-[90%] transform overflow-hidden rounded-2xl p-6 text-left align-middle shadow-xl transition-all bg-color-white'>
               <Dialog.Title
                 as='h3'
                 className='flex items-center justify-between text-3xl font-semibold border-b border-solid border-[#f7f7f7] pb-3'

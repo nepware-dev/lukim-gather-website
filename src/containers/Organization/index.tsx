@@ -49,7 +49,7 @@ const Organization = () => {
         </div>
         <div className='cursor-pointer bg-[#F0F3F6] px-[12px] py-[16px] flex justify-between items-center gap-x-2'>
           <h4 className='font-semibold text-sm text-[#0a52a1]'>{item.title}</h4>
-          <span className='material-symbols-rounded text-[#0a52a1] bg-[#fff] rounded-3xl p-1'>
+          <span className='material-symbols-rounded text-[#0a52a1] bg-color-white rounded-3xl p-1'>
             arrow_forward
           </span>
         </div>

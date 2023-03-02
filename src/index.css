@@ -27,6 +27,11 @@
   src: url('./assets/fonts/Inter-SemiBold.ttf');
 }
 
+@font-face {
+  font-family: 'Inter-bold';
+  src: url('./assets/fonts/Inter-Bold.ttf');
+}
+
 ::-ms-reveal {
   display: none;
 }

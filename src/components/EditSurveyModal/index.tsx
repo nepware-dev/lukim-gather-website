@@ -334,7 +334,7 @@ const EditSurveyModal: React.FC<Props> = ({
               {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
               <label htmlFor='surveyAudio' className={classes.audioInput}>
                 <FiUpload color='#fff' size={18} />
-                <p className='text-[#fff]'>Upload audio file</p>
+                <p className='text-color-white'>Upload audio file</p>
               </label>
             </div>
           )}

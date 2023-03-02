@@ -10,7 +10,7 @@ export default {
   exportDropdown: 'font-inter text-[#0A52A1]',
   exportButton: 'cursor-pointer bg-[#E7EEF6] flex justify-between items-center px-[10px] py-[8px] border border-[#0A52A1] rounded-lg',
   exportButtonTitle: 'color-[#0a52a1] ml-[8px]',
-  exportOptions: 'cursor-pointer ml-[-90px] w-[190px] shadow-[0_5px_40px_0_rgba(0,0,0,0.16)] z-10 px-[11px] py-[13px] rounded-lg bg-[#fff]',
-  exportOption: 'text-[#282F3E] px-[13px] py-[11px] hover:bg-[#F0F3F6] flex items-center rounded-lg',
-  exportOptionTitle: 'text-[16px] ml-[12px] font-inter',
+  exportOptions: 'cursor-pointer ml-[-90px] w-[190px] shadow-[0_5px_40px_0_rgba(0,0,0,0.16)] z-10 px-[11px] py-[13px] rounded-lg bg-color-white',
+  exportOption: 'px-[13px] py-[11px] hover:bg-[#F0F3F6] flex items-center rounded-lg',
+  exportOptionTitle: 'text-[16px] ml-[12px] font-inter text-color-text ',
 };
