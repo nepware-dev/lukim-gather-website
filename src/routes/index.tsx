@@ -25,6 +25,7 @@ import Surveys from '@containers/Surveys';
 import TermsAndConditions from '@containers/TermsAndConditions';
 import Tutorial from '@containers/Tutorial';
 import VerifyPhone from '@containers/VerifyPhone';
+import ContactUs from '@containers/ContactUs';
 
 interface Props {
   isAuthenticated: boolean;
@@ -55,6 +56,7 @@ const AppRoutes = () => {
         <Route path='/resource' element={<Resource />} />
         <Route path='/terms' element={<TermsAndConditions />} />
         <Route path='/tutorial' element={<Tutorial />} />
+        <Route path='/contact-us' element={<ContactUs />} />
         <Route
           path='/'
           element={<PrivateRoute isAuthenticated={isAuthenticated} />}
