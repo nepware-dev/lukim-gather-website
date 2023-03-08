@@ -9,6 +9,8 @@ import {FiTrash2, FiUpload} from 'react-icons/fi';
 
 import {SurveyDataType} from '@components/SurveyTable';
 import AudioPlayer from '@components/AudioPlayer';
+import Modal from '@ra/components/Modal';
+import Loader from '@components/Loader';
 
 import useCategoryIcon from '@hooks/useCategoryIcon';
 import useToast from '@hooks/useToast';
@@ -214,6 +216,9 @@ const EditSurveyModal: React.FC<Props> = ({
 
   return (
     <div className={classes.modal}>
+      <Modal isVisible={loading} overlayClassName={classes.loadingModal}>
+        <Loader />
+      </Modal>
       <div className={classes.wrapper}>
         <div className={classes.header}>
           <div className={classes.closeModalIcon} onClick={onClose}>
