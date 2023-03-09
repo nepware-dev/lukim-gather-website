@@ -1,4 +1,5 @@
 export default {
+  loadingModal: 'w-[434px] !left-auto',
   titleWrapper: 'h-[32px] mt-[32px] mb-[12px] flex items-center bg-[#E6EEF3] px-[10px] rounded',
   titleText: 'font-inter text-[14px] text-[#585D69] uppercase',
   modal: 'fixed top-0 bottom-0 left-0 right-0 bg-[#10182880] z-10 flex justify-end',
