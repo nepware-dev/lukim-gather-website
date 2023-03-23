@@ -109,6 +109,19 @@ export const GET_HAPPENING_SURVEY_HISTORY_ITEM = gql`
     }
 `;
 
+export const CREATE_SURVEY = gql`
+    mutation CreateWritableSurvey($input: WritableSurveyMutationInput!) {
+        createWritableSurvey(input: $input) {
+            id
+            title
+            errors {
+                field
+                messages
+            }
+        }
+    }
+`;
+
 export const UPDATE_SURVEY = gql`
     mutation UpdateSurvey($id: ID!, $answer: JSONString!) {
         updateSurvey(id: $id, answer: $answer) {
