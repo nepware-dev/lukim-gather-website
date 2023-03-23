@@ -18,7 +18,7 @@ export type SurveyDataType = {
   attachment: {
     id: string;media: string
 }[];
-  audioFile?: string;
+  audioFile?: string | File;
   category: {id: string | number; title: string};
   modifiedAt: string;
   createdAt: string;

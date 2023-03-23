@@ -114,18 +114,20 @@ const EditSurveyModal: React.FC<Props> = ({
   );
 
   const handleSubmitSurvey = useCallback(async () => {
-    const surveyInput = {
-      title,
+    const surveyInput: Partial<SurveyDataType> & {[key: string]: any} = {
+      title: title as string,
       categoryId: parseInt(category?.id, 10),
       sentiment: activeFeel,
       attachment: photos || null,
       attachmentLink: attachmentLink?.flatMap((e) => e.id),
-      audioFile,
       improvement: activeImprovement || null,
       description,
       isPublic,
       isTest,
     };
+    if (typeof audioFile !== 'string') {
+      surveyInput.audioFile = audioFile;
+    }
     await submitHappeningSurvey({
       variables: {
         input: surveyInput,
