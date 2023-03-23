@@ -8,7 +8,7 @@ import React, {
 } from 'react';
 import {useParams, useNavigate} from 'react-router-dom';
 import DatePicker from 'react-datepicker';
-import {gql, useQuery} from '@apollo/client';
+import {gql, useQuery, useMutation} from '@apollo/client';
 import {BsCalendar4Event} from 'react-icons/bs';
 import {RiArrowDownSLine} from 'react-icons/ri';
 import {CSVLink} from 'react-csv';
@@ -27,6 +27,10 @@ import FormEntry from '@components/FormEntry';
 import EditCustomSurveyModal from '@components/EditCustomSurveyModal';
 
 import {flattenObject} from '@containers/Dashboard';
+
+import useToggle from '@ra/hooks/useToggle';
+import useToast from '@hooks/useToast';
+import {UPDATE_SURVEY, CREATE_SURVEY} from '@services/queries';
 
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -70,7 +74,7 @@ const GET_FORMS = gql`
 
 const CustomForms = () => {
   const {id} = useParams();
-  const {data, loading: surveyLoading} = useQuery(GET_SURVEY_DATA);
+  const {data, loading: surveyLoading, refetch: refetchSurveys} = useQuery(GET_SURVEY_DATA);
   const {refetch} = useQuery(GET_SURVEY, {
     variables: {id: Number(id)},
     fetchPolicy: !id ? 'cache-only' : 'cache-first',
@@ -88,9 +92,34 @@ const CustomForms = () => {
   const [maxDate, setMaxDate] = useState<Date>();
   const [minDate, setMinDate] = useState<Date>();
   const [startDate, endDate] = dateRange;
-  const [showEditSurvey, setShowEditSurvey] = useState(false);
+  const [showEditSurvey, toggleShowEditSurvey] = useToggle(false);
+  const [showAddSurvey, toggleShowAddSurvey] = useToggle(false);
 
   const navigate = useNavigate();
+
+  const toast = useToast();
+
+  const [updateSurvey] = useMutation(UPDATE_SURVEY, {
+    onCompleted: () => {
+      toast('success', 'Survey has been updated successfully!');
+      toggleShowEditSurvey();
+      refetchSurveys();
+    },
+    onError: () => {
+      toast('error', 'Error updating survey');
+    },
+  });
+
+  const [addSurvey] = useMutation(CREATE_SURVEY, {
+    onCompleted: () => {
+      toast('success', 'Survey has been added successfully!');
+      toggleShowAddSurvey();
+      refetchSurveys();
+    },
+    onError: () => {
+      toast('error', 'Error adding survey');
+    },
+  });
 
   useEffect(() => {
     if (!id) return;
@@ -172,14 +201,30 @@ const CustomForms = () => {
     return {};
   }, [formData]);
 
-  const handleEditClick = useCallback(() => {
-    setShowEditSurvey(true);
-  }, []);
-
   const handleCloseEditSurvey = useCallback(() => {
     navigate('/custom-forms');
-    setShowEditSurvey(false);
-  }, [navigate]);
+    toggleShowEditSurvey();
+  }, [navigate, toggleShowEditSurvey]);
+
+  const handleEditSurvey = useCallback((_formData) => {
+    updateSurvey({
+      variables: {
+        id: surveyFormData[activeIndex].id,
+        answer: _formData,
+      },
+    });
+  }, [updateSurvey, surveyFormData, activeIndex]);
+
+  const handleAddSurvey = useCallback((_formData) => {
+    addSurvey({
+      variables: {
+        input: {
+          title: formData?.surveyForm?.[0].title,
+          answer: _formData,
+        },
+      },
+    });
+  }, [addSurvey, formData?.surveyForm]);
 
   const handlePage = useCallback((num: number) => {
     setActivePage(num);
@@ -279,6 +324,7 @@ const CustomForms = () => {
                 customInput={<CustomInput />}
               />
             </div>
+            <Button className={classes.addNewButton} textClassName={classes.addNewButtonText} onClick={toggleShowAddSurvey} text='Add New Entry' />
             {surveyFormData?.length > 0 && (
               <CSVLink
                 className='ml-auto h-[44px] px-[12px] flex items-center rounded-lg border-[#CCDCE8] bg-[#E7E8EA] font-interMedium text-[14px] text-[#70747E]'
@@ -321,14 +367,25 @@ const CustomForms = () => {
           setShowDetails={setShowDetails}
           formModel={formModel}
           formQuestion={formQuestion}
-          onEditClick={handleEditClick}
+          onEditClick={toggleShowEditSurvey}
         />
       )}
       {showEditSurvey && formData?.surveyForm?.[0] && surveyFormData[activeIndex] && (
         <EditCustomSurveyModal
+          title='Edit Survey'
           onClose={handleCloseEditSurvey}
           formData={surveyFormData[activeIndex]}
           formObj={formData?.surveyForm?.[0]}
+          handleSubmit={handleEditSurvey}
+        />
+      )}
+      {showAddSurvey && (
+        <EditCustomSurveyModal
+          title='Add Survey'
+          onClose={toggleShowAddSurvey}
+          formData={{}}
+          formObj={formData?.surveyForm?.[0]}
+          handleSubmit={handleAddSurvey}
         />
       )}
     </>

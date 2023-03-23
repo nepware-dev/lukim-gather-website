@@ -1,9 +1,5 @@
 import React, {useEffect, useRef} from 'react';
 import {XMLBuilder, XMLParser} from 'fast-xml-parser';
-import {useMutation} from '@apollo/client';
-
-import useToast from '@hooks/useToast';
-import {UPDATE_SURVEY} from '@services/queries';
 
 import Modal from '@components/Modal';
 
@@ -13,25 +9,17 @@ interface Props {
   onClose: () => void;
   formData: any;
   formObj: any;
+  handleSubmit: (formData: any) => void;
+  title: string;
 }
 
 interface IframeElement extends HTMLIFrameElement {
   contentWindow: any;
 }
 
-const EditCustomSurvey: React.FC<Props> = ({onClose, formData, formObj}) => {
-  const toast = useToast();
-
-  const [updateSurvey] = useMutation(UPDATE_SURVEY, {
-    onCompleted: () => {
-      toast('success', 'Survey has been updated successfully!');
-      onClose();
-    },
-    onError: () => {
-      toast('error', 'Error updating survey');
-    },
-  });
-
+const EditCustomSurvey: React.FC<Props> = ({
+  title, onClose, formData, formObj, handleSubmit,
+}) => {
   const iframeRef = useRef<IframeElement>(null);
 
   useEffect(() => {
@@ -76,12 +64,7 @@ const EditCustomSurvey: React.FC<Props> = ({onClose, formData, formObj}) => {
           const parser = new XMLParser({
             attributeNamePrefix: '_',
           });
-          updateSurvey({
-            variables: {
-              id: formData.id,
-              answer: JSON.stringify(parser.parse(STORE.data)),
-            },
-          });
+          handleSubmit(JSON.stringify(parser.parse(STORE.data)));
         }
       }
     };
@@ -90,12 +73,12 @@ const EditCustomSurvey: React.FC<Props> = ({onClose, formData, formObj}) => {
     return () => {
       window.removeEventListener('message', handleMessage, false);
     };
-  }, [onClose, updateSurvey, formData.id]);
+  }, [onClose, handleSubmit, formData.id]);
 
   return (
     <Modal
       isVisible
-      title='Edit Custom Survey'
+      title={title}
       className={classes.modal}
       onClose={onClose}
       actions={[]}
