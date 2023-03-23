@@ -10,7 +10,7 @@ interface Props {
   text: string;
   className?: string;
   textClassName?: string;
-  onClick(): void;
+  onClick?(): void;
   loading?: boolean;
   disabled?: boolean;
 }

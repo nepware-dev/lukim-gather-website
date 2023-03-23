@@ -8,7 +8,7 @@ export default {
   menuList: 'overflow-hidden sm:items-center',
   darkMenuList: 'bg-[#05375A]',
   lightMenuList: 'bg-color-bg',
-  linkWrapper: 'w-[100%] my-4 sm:my-0 flex justify-items-center text-center',
+  linkWrapper: 'my-2.5 sm:my-0 flex justify-items-center text-center',
   link: 'sm:w-[100%] mx-auto sm:mx-3 sm:mr-8 font-interSemibold px-4 py-4 border-b-2',
   darkLink: 'bg-[#05375A] text-color-white',
   lightLink: 'sm:bg-color-bg',

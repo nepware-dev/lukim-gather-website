@@ -1,0 +1,137 @@
+import React, {useCallback} from 'react';
+import {FaFacebookF, FaLinkedinIn, FaTwitter} from 'react-icons/fa';
+import {IoMdMail} from 'react-icons/io';
+import {IoLocationSharp} from 'react-icons/io5';
+import {gql, useMutation} from '@apollo/client';
+
+import Layout from '@components/Layout';
+import Button from '@ra/components/Button';
+
+import TextInput from '@ra/components/Form/TextInput';
+import Form, {FormSubmitCallback, InputField} from '@ra/components/Form';
+
+import useToast from '@hooks/useToast';
+
+import classes from './styles';
+
+const SEND_MESSAGE = gql`
+  mutation SendMessage {
+    sendMessage {
+      ok
+      errors
+    }
+  }
+`;
+
+const ContactUs = () => {
+  const toast = useToast();
+
+  const [sendMessage, {loading}] = useMutation(SEND_MESSAGE, {
+    onCompleted: () => {
+      toast('success', 'Successfully message sent!!');
+    },
+    onError: ({graphQLErrors}) => {
+      toast('error', graphQLErrors[0]?.message || 'Something went wrong !!');
+    },
+  });
+
+  const handleSaveDeliverables: FormSubmitCallback = useCallback(async (formData) => {
+    await sendMessage({
+      variables: {
+        data: formData,
+      },
+    });
+  }, [sendMessage]);
+
+  return (
+    <Layout>
+      <section className={classes.container}>
+        <div className={classes.header}>
+          <h1 className={classes.heading}>Get in Touch</h1>
+          <p className={classes.desc}>Any question or remarks? Just write us a message!</p>
+        </div>
+        <div className={classes.contentWrapper}>
+          <div className={classes.content}>
+            <div>
+              <h2 className={classes.title}>Contact information</h2>
+              <p className={classes.message}>Our friendly team would love to hear from you!</p>
+            </div>
+            <div className={classes.infoWrapper}>
+              <div className={classes.info}>
+                <IoMdMail size={32} color='#fff' />
+                <p className={classes.mail}>example@mail.com</p>
+              </div>
+              <div className={classes.info}>
+                <IoLocationSharp size={32} color='#fff' />
+                <p className={classes.mail}>
+                  Level 14, Kina Bank HausN.C.D, Port
+                  MoresbyPapua New Guinea
+                </p>
+              </div>
+            </div>
+            <div className={classes.socialMedia}>
+              <a href='https://facebook.com/' target='_blank' rel='noreferrer'>
+                <FaFacebookF size={28} color='#fff' />
+              </a>
+              <a href='https://linkedin.com/' target='_blank' rel='noreferrer'>
+                <FaLinkedinIn size={32} color='#fff' />
+              </a>
+              <a href='https://twitter.com/' target='_blank' rel='noreferrer'>
+                <FaTwitter size={32} color='#fff' />
+              </a>
+            </div>
+          </div>
+          <Form className={classes.formWrapper} onSubmit={handleSaveDeliverables}>
+            <div className={classes.row}>
+              <div className={classes.col}>
+                <p className={classes.label}>First Name</p>
+                <InputField
+                  component={TextInput}
+                  name='firstName'
+                  placeholder='Enter your first name'
+                  className={classes.input}
+                  required
+                />
+              </div>
+              <div className={classes.col}>
+                <p className={classes.label}>Last Name</p>
+                <InputField
+                  component={TextInput}
+                  name='lastName'
+                  placeholder='Enter your last name'
+                  className={classes.input}
+                  required
+                />
+              </div>
+            </div>
+            <div className={classes.col}>
+              <p className={classes.label}>Email</p>
+              <InputField
+                component={TextInput}
+                name='email'
+                type='email'
+                placeholder='Enter your email address'
+                className={classes.input}
+                required
+              />
+            </div>
+            <div className={classes.col}>
+              <p className={classes.label}>Message</p>
+              <InputField
+                component='textarea'
+                name='message'
+                className={classes.input}
+                rows={5}
+                placeholder='Enter your message here ...'
+                required
+              />
+            </div>
+            <Button disabled={loading} type='submit' className={classes.submitButton}>Submit</Button>
+          </Form>
+        </div>
+      </section>
+    </Layout>
+  );
+};
+
+export default ContactUs;
