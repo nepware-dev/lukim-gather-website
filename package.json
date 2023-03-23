@@ -49,7 +49,7 @@
     "build": "craco build",
     "test": "craco test",
     "eject": "react-scripts eject",
-    "lint": "eslint ./src/**",
+    "lint": "eslint './src/**/*.{jsx,js,tsx,ts}'",
     "lint:fix": "eslint ./src/* --fix",
     "prepare": "husky install",
     "pre-commit": "yarn lint --fix"
