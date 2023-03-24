@@ -36,6 +36,7 @@ import AudioPlayer from '@components/AudioPlayer';
 import {
   GET_HAPPENING_SURVEY_HISTORY,
   GET_HAPPENING_SURVEY_HISTORY_ITEM,
+  GET_HAPPENING_SURVEY_COMMENTS,
 } from '@services/queries';
 import {UPDATE_NUM_DAYS} from '@utils/config';
 
@@ -45,6 +46,7 @@ import pdfIcon from '@images/icons/pdf.svg';
 import pngIcon from '@images/icons/image.svg';
 import tree from '@images/category-tree.png';
 
+import Comments from './Comments';
 import HistoryTabs from './HistoryTabs';
 import {polygon, polygonTitle} from './layers';
 
@@ -164,6 +166,23 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails, onEditClick}) => {
       });
     }
   }, [data, getHappeningSurveyData]);
+
+  const [getHappeningSurveyComments, {
+    data: surveyCommentsData,
+  }] = useLazyQuery(GET_HAPPENING_SURVEY_COMMENTS);
+  const fetchHappeningSurveyComments = useCallback((surveyId) => {
+    getHappeningSurveyComments({
+      variables: {
+        surveyId,
+        level: 0,
+      },
+    });
+  }, [getHappeningSurveyComments]);
+  useEffect(() => {
+    if (data?.id) {
+      fetchHappeningSurveyComments(data.id);
+    }
+  }, [data, fetchHappeningSurveyComments]);
 
   const versionsData = useMemo(() => {
     if (surveyHistoryData?.happeningSurveysHistory) {
@@ -587,6 +606,16 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails, onEditClick}) => {
                   <>
                     <Title text='Audio description' />
                     <AudioPlayer file={surveyData?.audioFile} />
+                  </>
+                )}
+                {activeVersionId === 'current' && (
+                  <>
+                    <Title text='Comments' />
+                    <Comments
+                      surveyId={surveyData?.id as number | string}
+                      commentsData={surveyCommentsData?.comments || []}
+                      refetch={fetchHappeningSurveyComments}
+                    />
                   </>
                 )}
               </div>
