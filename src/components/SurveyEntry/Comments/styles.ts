@@ -17,4 +17,5 @@ export default {
   commentOptions: 'bg-color-white rounded mt-[-32px] shadow-[0_5px_40px_0_rgba(0,0,0,0.08)] z-10 py-[4px] border border-color-bg border-solid',
   commentOptionItem: 'bg-color-white py-[4px] my-[2px] cursor-pointer hover:brightness-95 pl-[12px] pr-[24px]',
   emptyMessage: 'mb-[16px]',
+  viewMoreLink: 'ml-[56px] font-interMedium text-[14px] cursor-pointer hover:underline text-color-blue',
 };
