@@ -46,6 +46,7 @@ const UserDropdown = ({alignRight}: {alignRight?: boolean}) => {
   const handleAccountSettings = useCallback(() => {
     navigate('/account-settings');
   }, [navigate]);
+
   const handleLogout = useCallback(() => {
     dispatchLogout();
   }, []);
