@@ -22,7 +22,7 @@ const CommentInput: React.FC<CommentInputProps> = ({
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
   const [text, setText] = useState<string>('');
-  const [textAreaRows, setTextAreaRows] = useState<number>(1);
+  const [textAreaRows, setTextAreaRows] = useState<number>(defaultValue ? 3 : 1);
 
   const handleTextChange = useCallback((e: React.FormEvent<HTMLTextAreaElement>) => {
     const textAreaElement = e.target as HTMLTextAreaElement;

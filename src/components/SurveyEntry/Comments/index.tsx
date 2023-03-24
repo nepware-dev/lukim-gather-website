@@ -49,6 +49,11 @@ const CommentItem: React.FC<CommentItemProps> = ({
 }) => {
   const {user} = useSelector((state: rootState) => state.auth);
 
+  const [showAllReplies, setShowAllReplies] = useState<boolean>(false);
+  const handleShowAllReplies = useCallback(() => {
+    setShowAllReplies(true);
+  }, []);
+
   const [isReplyMode, setReplyMode] = useState<boolean>(false);
   const [isEditMode, setEditMode] = useState<boolean>(false);
   const [isDeleteVisible, setDeleteVisible] = useState<boolean>(false);
@@ -181,9 +186,16 @@ const CommentItem: React.FC<CommentItemProps> = ({
       {item.replies && item.replies.length > 0 && (
         <List
           className={cs(classes.commentList, classes.commentListReplies)}
-          data={item.replies}
+          data={showAllReplies ? item.replies : item.replies.slice(0, 1)}
           keyExtractor={idExtractor}
           renderItem={renderReplyCommentItem}
+          FooterComponent={(showAllReplies || item.replies.length <= 1) ? null : (
+            <div className={classes.viewMoreLink} onClick={handleShowAllReplies}>
+              {item.replies.length - 1 === 1
+                ? 'View 1 more reply'
+                : `View ${item.replies.length - 1} more reply`}
+            </div>
+          )}
         />
       )}
       <Modal
