@@ -64,6 +64,7 @@ interface Props {
   data: SurveyDataType;
   setShowDetails(value: boolean): void;
   onEditClick: (updateMode?: boolean) => void;
+  allowEdit: boolean;
 }
 
 const Title = ({text}: {text: string}) => (
@@ -129,7 +130,14 @@ const ExportOption = ({onClick, icon, title} : {onClick(): void, icon: string, t
   </div>
 );
 
-const SurveyEntry: React.FC<Props> = ({data, setShowDetails, onEditClick}) => {
+const SurveyEntry: React.FC<Props> = (
+  {
+    data,
+    setShowDetails,
+    allowEdit,
+    onEditClick,
+  },
+) => {
   const navigate = useNavigate();
   const mapRef = useRef<MapRef>(null);
   const entryRef = useRef<any>();
@@ -472,9 +480,11 @@ const SurveyEntry: React.FC<Props> = ({data, setShowDetails, onEditClick}) => {
                 <HiOutlineX size={24} />
               </div>
               <div className={classes.rightContent}>
-                <div onClick={handleEditButtonClick} className='cursor-pointer'>
-                  <span className='material-symbols-rounded text-[32px] text-[#70747e]'>edit</span>
-                </div>
+                {allowEdit && (
+                  <div onClick={handleEditButtonClick} className='cursor-pointer'>
+                    <span className='material-symbols-rounded text-[32px] text-[#70747e]'>edit</span>
+                  </div>
+                )}
                 <div className={classes.exportDropdown}>
                   <Dropdown renderLabel={renderLabel}>
                     <div className={classes.exportOptions}>

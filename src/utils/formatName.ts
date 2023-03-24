@@ -1,5 +1,5 @@
 type ObjectType = {
-  id: number,
+  id: string | number,
   firstName: string,
   lastName: string,
 };

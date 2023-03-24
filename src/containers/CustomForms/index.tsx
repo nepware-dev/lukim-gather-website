@@ -7,6 +7,7 @@ import React, {
   useMemo,
 } from 'react';
 import {useParams, useNavigate} from 'react-router-dom';
+import {useSelector} from 'react-redux';
 import DatePicker from 'react-datepicker';
 import {gql, useQuery, useMutation} from '@apollo/client';
 import {BsCalendar4Event} from 'react-icons/bs';
@@ -16,6 +17,7 @@ import {XMLParser} from 'fast-xml-parser';
 
 import cs from '@utils/cs';
 import {formatDate} from '@utils/formatDate';
+import {rootState} from '@store/rootReducer';
 
 import Button from '@components/Button';
 import DashboardHeader from '@components/DashboardHeader';
@@ -74,6 +76,11 @@ const GET_FORMS = gql`
 
 const CustomForms = () => {
   const {id} = useParams();
+  const {
+    auth: {
+      user: {id: userId, isStaff},
+    },
+  } = useSelector((state: rootState) => state);
   const {data, loading: surveyLoading, refetch: refetchSurveys} = useQuery(GET_SURVEY_DATA);
   const {refetch} = useQuery(GET_SURVEY, {
     variables: {id: Number(id)},
@@ -363,6 +370,7 @@ const CustomForms = () => {
       </DashboardLayout>
       {(showDetails && activeSurveyFormData) && (
         <FormEntry
+          allowEdit={activeSurveyFormData.createdBy.id === userId || isStaff}
           data={activeSurveyFormData}
           setShowDetails={setShowDetails}
           formModel={formModel}
