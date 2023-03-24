@@ -45,6 +45,7 @@ interface Props {
   data: FormDataType;
   setShowDetails(value: boolean): void;
   onEditClick(): void;
+  allowEdit: boolean;
 }
 
 interface FormValueRendererProps {
@@ -178,7 +179,7 @@ const FormValueRenderer = ({
 };
 
 const FormEntry: React.FC<Props> = ({
-  data, setShowDetails, formModel, formQuestion, onEditClick,
+  data, allowEdit, setShowDetails, formModel, formQuestion, onEditClick,
 }) => {
   const navigate = useNavigate();
   const answers: Entries<AnswerItemType> = useMemo(() => {
@@ -218,7 +219,8 @@ const FormEntry: React.FC<Props> = ({
           </div>
           <div className={classes.header}>
             <h2 className={classes.headerTitle}>{data?.title}</h2>
-            <span onClick={onEditClick} className='material-symbols-rounded text-[32px] text-[#70747e] cursor-pointer'>edit</span>
+            {allowEdit
+              && <span onClick={onEditClick} className='material-symbols-rounded text-[32px] text-[#70747e] cursor-pointer'>edit</span>}
           </div>
           <p className={classes.date}>{formatDate(data.createdAt)}</p>
           {answers?.map(([key, value]) => (

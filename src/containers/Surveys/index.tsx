@@ -80,6 +80,7 @@ export const GET_SURVEY_DATA = gql`
       project {
         id
         title
+        isAdmin
       }
     }
   }
@@ -225,7 +226,7 @@ const happeningSurveyBoundaryParser = new Parser({
 const Surveys = () => {
   const {
     auth: {
-      user: {id: userId},
+      user: {id: userId, isStaff},
     },
   } = useSelector((state: rootState) => state);
   const navigate = useNavigate();
@@ -690,13 +691,19 @@ const Surveys = () => {
           </div>
         </div>
       </DashboardLayout>
-      {(showDetails && surveyEntryData) && (
-        <SurveyEntry
-          data={surveyEntryData}
-          setShowDetails={setShowDetails}
-          onEditClick={handleOpenEditModal}
-        />
-      )}
+      {
+        (showDetails && surveyEntryData) && (
+          <SurveyEntry
+            allowEdit={
+              userId === surveyEntryData.createdBy?.id || isStaff
+              || surveyEntryData.project.isAdmin
+            }
+            data={surveyEntryData}
+            setShowDetails={setShowDetails}
+            onEditClick={handleOpenEditModal}
+          />
+        )
+      }
       {visibleEditModal && (
         <EditSurveyModal
           onCompleteUpdate={refetchSurveyData}

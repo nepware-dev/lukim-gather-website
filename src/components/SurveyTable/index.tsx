@@ -30,8 +30,8 @@ export type SurveyDataType = {
   region: {id: number};
   isTest: boolean;
   isPublic: boolean;
-  createdBy: {id: number, firstName: string, lastName: string};
-  project: {id: string | number; title: string}
+  createdBy: {id: string | number, firstName: string, lastName: string};
+  project: {id: string | number; title: string, isAdmin: boolean}
 };
 
 interface Props {

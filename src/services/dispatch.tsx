@@ -1,6 +1,7 @@
 import {AddToast, DeleteToast} from '@store/slices/toasts';
 import {UserType} from '@store/types/auth';
 import {store} from '../store';
+import client from './client';
 
 import {
   setLogin,
@@ -21,6 +22,7 @@ export const dispatchLogin = async (accessToken: string, refreshToken: string, u
 
 export const dispatchLogout = () => {
   dispatch(setLogout());
+  client.clearStore();
 };
 
 export const dispatchAddToast = (type: string, message: string, id: string | number) => {
