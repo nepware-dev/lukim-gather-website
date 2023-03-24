@@ -42,7 +42,7 @@ const Dropdown: React.FC<Props> = ({renderLabel, children, alignRight}) => {
 
   return (
     <div className={classes.container}>
-      <div onClick={handleClick}>{renderLabel()}</div>
+      <button type='button' onClick={handleClick}>{renderLabel()}</button>
       {open && (
         <div
           className={cs(
