@@ -12,6 +12,7 @@ import OTPInput from '@components/OtpInput';
 import useToast from '@hooks/useToast';
 import {rootState} from '@store/rootReducer';
 import {PHONE_NUMBER_CHANGE, PHONE_NUMBER_CHANGE_VERIFY} from '@services/queries';
+import {dispatchLogout} from '@services/dispatch';
 
 import classes from './styles';
 
@@ -120,7 +121,7 @@ const AccountSettings = () => {
     {
       onCompleted: () => {
         toast('success', 'Your phone number has been successfully changed!');
-        handleTab();
+        dispatchLogout();
       },
       onError: (err) => {
         toast('error', String(err));

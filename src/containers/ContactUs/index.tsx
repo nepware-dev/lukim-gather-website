@@ -2,7 +2,8 @@ import React, {useCallback} from 'react';
 import {FaFacebookF, FaLinkedinIn, FaTwitter} from 'react-icons/fa';
 import {IoMdMail} from 'react-icons/io';
 import {IoLocationSharp} from 'react-icons/io5';
-import {gql, useMutation} from '@apollo/client';
+import {useMutation} from '@apollo/client';
+import {useNavigate} from 'react-router-dom';
 
 import Layout from '@components/Layout';
 import Button from '@ra/components/Button';
@@ -11,24 +12,18 @@ import TextInput from '@ra/components/Form/TextInput';
 import Form, {FormSubmitCallback, InputField} from '@ra/components/Form';
 
 import useToast from '@hooks/useToast';
+import {SEND_MESSAGE} from '@services/queries';
 
 import classes from './styles';
 
-const SEND_MESSAGE = gql`
-  mutation SendMessage {
-    sendMessage {
-      ok
-      errors
-    }
-  }
-`;
-
 const ContactUs = () => {
   const toast = useToast();
+  const navigate = useNavigate();
 
   const [sendMessage, {loading}] = useMutation(SEND_MESSAGE, {
     onCompleted: () => {
       toast('success', 'Successfully message sent!!');
+      navigate('/');
     },
     onError: ({graphQLErrors}) => {
       toast('error', graphQLErrors[0]?.message || 'Something went wrong !!');
@@ -38,7 +33,12 @@ const ContactUs = () => {
   const handleSaveDeliverables: FormSubmitCallback = useCallback(async (formData) => {
     await sendMessage({
       variables: {
-        data: formData,
+        input: {
+          name: `${formData.firstName} ${formData.firstName}`,
+          email: formData.email,
+          subject: 'subject',
+          message: formData.message,
+        },
       },
     });
   }, [sendMessage]);
