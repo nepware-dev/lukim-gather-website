@@ -23,6 +23,8 @@ const LOGIN = gql`
         firstName
         lastName
         email
+        organization
+        avatar
         isStaff
       }
     }

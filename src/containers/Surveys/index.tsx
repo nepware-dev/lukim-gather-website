@@ -696,7 +696,7 @@ const Surveys = () => {
           <SurveyEntry
             allowEdit={
               userId === surveyEntryData.createdBy?.id || isStaff
-              || surveyEntryData.project.isAdmin
+              || surveyEntryData.project?.isAdmin
             }
             data={surveyEntryData}
             setShowDetails={setShowDetails}
