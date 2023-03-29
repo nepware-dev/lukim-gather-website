@@ -34,6 +34,7 @@ const PHONE_NUMBER_CONFIRM_VERIFY = gql`
                 email
                 organization
                 avatar
+                isStaff
             }
         }
     }
