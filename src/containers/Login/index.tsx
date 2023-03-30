@@ -88,6 +88,15 @@ const Login = () => {
     },
     onError: ({graphQLErrors}) => {
       setError(graphQLErrors[0].message);
+      if (graphQLErrors[0].message.includes('been sent')) {
+        const ph = parsePhoneNumber(phoneNumber, 'PG');
+        const phone = ph?.formatInternational().replace(/\s/g, '');
+        navigate('/verify-phone', {
+          state: {
+            username: phone,
+          },
+        });
+      }
       toast('error', graphQLErrors[0]?.message || 'Something went wrong, Please enter valid credentials');
     },
   });
