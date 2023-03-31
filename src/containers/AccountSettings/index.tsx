@@ -1,4 +1,4 @@
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {gql, useMutation} from '@apollo/client';
 import {useSelector} from 'react-redux';
 
@@ -28,7 +28,7 @@ const AccountSettings = () => {
   const toast = useToast();
   const {
     auth: {
-      user: {email},
+      user: {email, phoneNumber},
     },
   } = useSelector((state: rootState) => state);
 
@@ -111,10 +111,17 @@ const AccountSettings = () => {
     [],
   );
 
-  const handleTab = useCallback(() => {
+  const [activeTab, setActiveTab] = useState<string>('Password');
+
+  const handleTab = useCallback((text: string) => {
+    setActiveTab(text);
     setShowOtpForm(false);
     setPin('');
   }, []);
+
+  useEffect(() => {
+    if (!email) { setActiveTab('Phone Number'); }
+  }, [email]);
 
   const [changePhoneVerify, {loading: verifyLoading}] = useMutation(
     PHONE_NUMBER_CHANGE_VERIFY,
@@ -146,14 +153,23 @@ const AccountSettings = () => {
         <h2 className={classes.title}>Account Settings</h2>
         <div className={classes.contentWrapper}>
           <div className={classes.tabsWrapper}>
-            <AccountTab
-              text={email ? 'Password' : 'Phone Number'}
-              isActive
-              onClick={handleTab}
-            />
+            {email !== null && (
+              <AccountTab
+                text='Password'
+                isActive={activeTab === 'Password'}
+                onClick={handleTab}
+              />
+            )}
+            {phoneNumber !== null && (
+              <AccountTab
+                text='Phone Number'
+                isActive={activeTab === 'Phone Number'}
+                onClick={handleTab}
+              />
+            )}
           </div>
           <div className='w-fit'>
-            {email ? (
+            {activeTab === 'Password' && (
               <div className={classes.inputsWrapper}>
                 <InputField
                   password
@@ -178,7 +194,8 @@ const AccountSettings = () => {
                   loading={!error && loading}
                 />
               </div>
-            ) : (
+            )}
+            {activeTab === 'Phone Number' && (
               <div>
                 {showOtpForm ? (
                   <div className={classes.inputsWrapper}>

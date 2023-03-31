@@ -39,6 +39,7 @@ import {
   GET_HAPPENING_SURVEY_COMMENTS,
 } from '@services/queries';
 import {UPDATE_NUM_DAYS} from '@utils/config';
+import sentimentName from '@utils/sentimentName';
 
 import csvIcon from '@images/icons/csv.svg';
 import marker from '@images/marker.png';
@@ -421,7 +422,7 @@ const SurveyEntry: React.FC<Props> = (
       Boundary: data?.boundary?.coordinates,
       Region: data?.region?.id,
       Condition: data?.improvement,
-      Sentiment: data?.sentiment,
+      Sentiment: sentimentName[data?.sentiment],
       'Created By': data?.createdBy?.id,
       'Created At': formatDate(data?.createdAt),
       Status: data?.status,

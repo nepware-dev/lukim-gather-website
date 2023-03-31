@@ -1,4 +1,4 @@
-import React, {useState, useCallback, useEffect} from 'react';
+import React, {useState, useCallback} from 'react';
 import {gql, useMutation} from '@apollo/client';
 import {Link, useNavigate} from 'react-router-dom';
 import {parsePhoneNumber} from 'libphonenumber-js';
@@ -26,6 +26,7 @@ const LOGIN = gql`
         organization
         avatar
         isStaff
+        phoneNumber
       }
     }
   }
@@ -115,19 +116,6 @@ const Login = () => {
       },
     });
   }, [phoneNumber, phoneConfirm, toast]);
-
-  useEffect(() => {
-    const listener = (event: KeyboardEvent) => {
-      if (event.code === 'Enter' || event.code === 'NumpadEnter') {
-        if (!username || !password) return;
-        handleLogin();
-      }
-    };
-    document.addEventListener('keydown', listener);
-    return () => {
-      document.removeEventListener('keydown', listener);
-    };
-  }, [handleLogin, password, username]);
 
   const handleUsernameChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
