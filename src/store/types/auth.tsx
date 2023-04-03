@@ -4,6 +4,7 @@ export type UserType = {
   lastName: string;
   email: string;
   isStaff: boolean;
+  phoneNumber: string;
 };
 
 export interface AuthState {

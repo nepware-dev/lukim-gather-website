@@ -36,12 +36,14 @@ import {rootState} from '@store/rootReducer';
 import cs from '@utils/cs';
 import {formatDate} from '@utils/formatDate';
 import {findPropertyAnywhere} from '@utils/searchTree';
+import sentimentName from '@utils/sentimentName';
 
 import pdfIcon from '@images/icons/pdf.svg';
 import csvIcon from '@images/icons/csv.svg';
 import pngIcon from '@images/icons/image.svg';
 
 import mapboxgl from 'mapbox-gl';
+
 import {
   clusterLayer,
   clusterCountLayer,
@@ -408,10 +410,11 @@ const Dashboard = () => {
           (_attachment: any) => _attachment.media,
         );
       }
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      surveyItem.attachment = surveyItem.attachment.map((mediaUrl) => JSON.stringify(mediaUrl)).join(','); // eslint-disable-line no-param-reassign
-      return surveyItem;
+      return {
+        ...surveyItem,
+        attachment: surveyItem.attachment.map((mediaUrl) => JSON.stringify(mediaUrl)).join(','),
+        sentiment: sentimentName[surveyItem.sentiment],
+      };
     });
     const happeningSurveyLocationCSV = happeningSurveyLocationParser.parse(
       surveyExportData.filter((locationData: SurveyDataType) => locationData?.location !== null),

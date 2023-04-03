@@ -20,6 +20,7 @@ import {rootState} from '@store/rootReducer';
 import cs from '@utils/cs';
 import {formatDate} from '@utils/formatDate';
 import {formatName} from '@utils/formatName';
+import sentimentName from '@utils/sentimentName';
 
 import DashboardHeader from '@components/DashboardHeader';
 import DashboardLayout from '@components/DashboardLayout';
@@ -512,12 +513,16 @@ const Surveys = () => {
   );
 
   const handleCSVClick = useCallback(() => {
+    const data = surveyData.map((item) => ({
+      ...item,
+      sentiment: sentimentName[item.sentiment],
+    }));
     const dateVal = formatISO(new Date(), {format: 'basic'}).replace(/\+|:/g, '');
     const happeningSurveyLocationCSV = happeningSurveyLocationParser.parse(
-      surveyData.filter((surveyLocation) => surveyLocation.location !== null),
+      data.filter((surveyLocation) => surveyLocation.location !== null),
     );
     const happeningSurveyBoundaryCSV = happeningSurveyBoundaryParser.parse(
-      surveyData.filter((surveyBoundary) => surveyBoundary.boundary !== null),
+      data.filter((surveyBoundary) => surveyBoundary.boundary !== null),
     );
     const zip = new JSZip();
     zip.file(`Happening_survey_report_location_${dateVal}.csv`, happeningSurveyLocationCSV);
