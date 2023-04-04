@@ -294,6 +294,12 @@ const Surveys = () => {
   }, [uuid, activeIndex, refetch, surveyData, data]);
 
   useEffect(() => {
+    if (!showDetails) {
+      setSurveyEntryData(null);
+    }
+  }, [showDetails]);
+
+  useEffect(() => {
     if (!data) return;
     const MaxDate = new Date(
       Math.max(

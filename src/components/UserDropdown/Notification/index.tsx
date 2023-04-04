@@ -7,6 +7,7 @@ import {formatDistance} from 'date-fns';
 import {gql, useMutation, useQuery} from '@apollo/client';
 import parse from 'html-react-parser';
 
+import cs from '@utils/cs';
 import useInterval from '@ra/hooks/useInterval';
 import List from '@ra/components/List';
 
@@ -21,6 +22,7 @@ export type NotificationType = {
     createdAt: string;
     description: string;
     notificationType: string;
+    hasRead: boolean;
   } | undefined
 }
 
@@ -32,6 +34,7 @@ const GET_NOTIFICATIONS = gql`
       createdAt
       description
       notificationType
+      hasRead
     }
   }
 `;
@@ -81,7 +84,7 @@ const NotificationCard = React.forwardRef<RefType, PropsType>(({openNotification
   const renderNotification = useCallback(({item}) => {
     const icon = icons[item?.notificationType as keyof IconType] || icons.default;
     return (
-      <div className={styles.notificationWrapper} onClick={() => handleNotificationPress(item)}>
+      <div className={cs(styles.notificationWrapper, item?.hasRead ? '' : 'bg-[#00518B]  bg-opacity-10')} onClick={() => handleNotificationPress(item)}>
         <div className={styles.iconContainer}>
           {icon}
         </div>
