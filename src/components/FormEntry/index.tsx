@@ -88,6 +88,9 @@ const FormValueRenderer = ({
         if (name?.toLowerCase() === 'why_area_important') {
           return value?.replace(/ /g, ', ').replace(/_/g, ' ');
         }
+        if (name === 'image' && value?.startsWith('http')) {
+          return <img alt='photos' src={value} />;
+        }
 
         return answerObj?.label || value.replace(/_/g, ' ');
       }
