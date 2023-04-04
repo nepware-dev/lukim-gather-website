@@ -165,6 +165,7 @@ const SurveyEntry: React.FC<Props> = (
 
   const [getHappeningSurveyData, {
     data: surveyHistoryData,
+    loading: loadingHistory,
   }] = useLazyQuery(GET_HAPPENING_SURVEY_HISTORY);
   useEffect(() => {
     if (data?.id) {
@@ -320,24 +321,24 @@ const SurveyEntry: React.FC<Props> = (
   }, []);
 
   const hideDetails = useCallback(() => {
-    navigate('/surveys');
     setShowDetails(false);
+    navigate('/surveys');
   }, [navigate, setShowDetails]);
 
   const handleAccept = useCallback(async () => {
     await updateHappeningSurvey({
-      variables: {data: {status: 'APPROVED'}, id: data.id},
+      variables: {data: {status: 'APPROVED'}, id: data?.id},
     });
     setShowDetails(false);
-  }, [data.id, setShowDetails, updateHappeningSurvey]);
+  }, [data?.id, setShowDetails, updateHappeningSurvey]);
 
   const handleDecline = useCallback(async () => {
     await updateHappeningSurvey({
-      variables: {data: {status: 'REJECTED'}, id: data.id},
+      variables: {data: {status: 'REJECTED'}, id: data?.id},
     });
     setShowDeclineModal(false);
     setShowDetails(false);
-  }, [data.id, setShowDetails, updateHappeningSurvey]);
+  }, [data?.id, setShowDetails, updateHappeningSurvey]);
 
   const [galleryIndex, setGalleryIndex] = useState<number>(0);
 
@@ -363,7 +364,7 @@ const SurveyEntry: React.FC<Props> = (
   }), [surveyData]);
 
   const onMapLoad = useCallback(() => {
-    if (!mapRef.current || !surveyData.boundary?.coordinates) return;
+    if (!mapRef.current || !surveyData?.boundary?.coordinates) return;
     const [minLng, minLat, maxLng, maxLat] = bbox(surveyPolyGeoJSON);
     mapRef.current.fitBounds(
       [
@@ -372,7 +373,7 @@ const SurveyEntry: React.FC<Props> = (
       ],
       {padding: 20, duration: 1000},
     );
-  }, [surveyData.boundary?.coordinates, surveyPolyGeoJSON]);
+  }, [surveyData?.boundary?.coordinates, surveyPolyGeoJSON]);
 
   const renderLabel = useCallback(
     () => (
@@ -414,7 +415,7 @@ const SurveyEntry: React.FC<Props> = (
 
   const onExportCSV = useCallback(() => {
     const csvData = {
-      ID: data.id,
+      ID: data?.id,
       Title: data?.title,
       Description: data?.description,
       Category: data?.category?.title,
@@ -459,14 +460,14 @@ const SurveyEntry: React.FC<Props> = (
       {surveyData?.location?.coordinates
                   && (
                     <Marker
-                      longitude={surveyData.location.coordinates?.[0]}
-                      latitude={surveyData.location.coordinates?.[1]}
+                      longitude={surveyData?.location.coordinates?.[0]}
+                      latitude={surveyData?.location.coordinates?.[1]}
                     >
                       <img src={marker} alt='marker' />
                     </Marker>
                   )}
     </Map>
-  ), [surveyData.location?.coordinates, onMapLoad, surveyPolyGeoJSON]);
+  ), [surveyData?.location?.coordinates, onMapLoad, surveyPolyGeoJSON]);
 
   return (
     <div>
@@ -522,7 +523,7 @@ const SurveyEntry: React.FC<Props> = (
               />
             )}
           </div>
-          {loading ? (
+          {(loadingHistory || loading) ? (
             <Loader className={classes.loader} />
           ) : surveyData?.title ? (
             <>
@@ -532,12 +533,12 @@ const SurveyEntry: React.FC<Props> = (
                   <p
                     className={cs(
                       classes.status,
-                      [classes.pending, data.status.toLowerCase() === 'pending'],
-                      [classes.rejected, data.status.toLowerCase() === 'rejected'],
-                      [classes.approved, data.status.toLowerCase() === 'approved'],
+                      [classes.pending, data?.status.toLowerCase() === 'pending'],
+                      [classes.rejected, data?.status.toLowerCase() === 'rejected'],
+                      [classes.approved, data?.status.toLowerCase() === 'approved'],
                     )}
                   >
-                    {data.status}
+                    {data?.status}
                   </p>
                 </div>
                 <p className={classes.date}>
@@ -631,16 +632,16 @@ const SurveyEntry: React.FC<Props> = (
                 )}
               </div>
               <div className={cs(classes.buttons, ['hidden', !isStaff])}>
-                {data.status.toLowerCase() !== 'approved' && (
+                {data?.status.toLowerCase() !== 'approved' && (
                   <Button
-                    text={data.status.toLowerCase() === 'approved' ? 'Accepted' : 'Accept'}
+                    text={data?.status.toLowerCase() === 'approved' ? 'Accepted' : 'Accept'}
                     className={classes.acceptBtn}
                     onClick={handleAccept}
                   />
                 )}
-                {data.status.toLowerCase() !== 'rejected' && (
+                {data?.status.toLowerCase() !== 'rejected' && (
                   <Button
-                    text={data.status.toLowerCase() === 'rejected' ? 'Declined' : 'Decline'}
+                    text={data?.status.toLowerCase() === 'rejected' ? 'Declined' : 'Decline'}
                     className={classes.declineBtn}
                     textClassName={classes.declineBtnText}
                     onClick={handleShowDeclineModal}
