@@ -129,9 +129,10 @@ const Dashboard = () => {
 
   const {
     auth: {
-      user: {id: userId},
+      user,
     },
   } = useSelector((state: rootState) => state);
+  const userId = useMemo(() => user?.id, [user]);
 
   const [popup, setPopUp] = useState<ReactElement | null>(null);
   const [filteredData, setFilteredData] = useState([]);

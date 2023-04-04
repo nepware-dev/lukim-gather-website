@@ -1,5 +1,21 @@
 import {gql} from '@apollo/client';
 
+export const GET_ME = gql`
+    query GetMe {
+        me {
+          id
+          firstName
+          lastName
+          email
+          organization
+          avatar
+          isStaff
+          phoneNumber
+          hasPassword
+        }
+    }
+`;
+
 export const EDIT_HAPPENING_SURVEY = gql`
     mutation EditHappeningSurvey(
         $input: UpdateHappeningSurveyInput!
@@ -269,4 +285,39 @@ export const DELETE_COMMENT = gql`
             }
         }
     }
+`;
+
+export const CHANGE_PASSWORD = gql`
+    mutation ChangePassword($data: ChangePasswordInput!) {
+        changePassword(data: $data) {
+            ok
+        }
+    }
+`;
+
+export const EMAIL_CHANGE = gql`
+  mutation EmailChange($data: EmailChangeInput!) {
+    emailChange(data: $data) {
+      ok
+      errors
+    }
+  }
+`;
+
+export const EMAIL_CHANGE_VERIFY = gql`
+  mutation EmailChangeVerify($data: EmailChangePinVerifyInput!) {
+    emailChangeVerify(data: $data) {
+      ok
+      errors
+    }
+  }
+`;
+
+export const SET_PASSWORD = gql`
+  mutation SetPassword($data: SetPasswordInput!) {
+    setPassword(data: $data) {
+      ok
+      errors
+    }
+  }
 `;

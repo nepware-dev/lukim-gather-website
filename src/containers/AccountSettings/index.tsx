@@ -1,150 +1,53 @@
-import React, {useCallback, useEffect, useState} from 'react';
-import {gql, useMutation} from '@apollo/client';
+import React, {useCallback, useState, useMemo} from 'react';
 import {useSelector} from 'react-redux';
 
 import DashboardHeader from '@components/DashboardHeader';
 import DashboardLayout from '@components/DashboardLayout';
 import AccountTab from '@components/AccountTab';
-import InputField from '@components/InputField';
-import Button from '@components/Button';
-import OTPInput from '@components/OtpInput';
 
-import useToast from '@hooks/useToast';
 import {rootState} from '@store/rootReducer';
-import {PHONE_NUMBER_CHANGE, PHONE_NUMBER_CHANGE_VERIFY} from '@services/queries';
-import {dispatchLogout} from '@services/dispatch';
+
+import EmailSettings from './Email';
+import PasswordSettings from './Password';
+import PhoneNumberSettings from './PhoneNumber';
 
 import classes from './styles';
 
-export const CHANGE_PASSWORD = gql`
-    mutation ChangePassword($data: ChangePasswordInput!) {
-        changePassword(data: $data) {
-            ok
-        }
-    }
-`;
+type TabType = {
+  title: string;
+};
+
+const tabs:TabType[] = [{
+  title: 'Email',
+}, {
+  title: 'Phone Number',
+}, {
+  title: 'Password',
+}];
 
 const AccountSettings = () => {
-  const toast = useToast();
   const {
     auth: {
-      user: {email, phoneNumber},
+      user: {email},
     },
   } = useSelector((state: rootState) => state);
 
-  const [currentPassword, setCurrentPassword] = useState<string>('');
-  const [newPassword, setNewPassword] = useState<string>('');
-  const [error, setError] = useState<string>('');
-  const [newPhoneNumber, setNewPhoneNumber] = useState<string>('');
-  const [pin, setPin] = useState('');
-  const [showOtpForm, setShowOtpForm] = useState<boolean>(false);
-
-  const [changePassword, {loading}] = useMutation(CHANGE_PASSWORD, {
-    onCompleted: () => {
-      toast('success', 'Password has been successfully changed!');
-      setCurrentPassword('');
-      setNewPassword('');
-    },
-    onError: (err) => {
-      setError(String(err));
-      toast('error', String(err));
-    },
-  });
-
-  const handleChangePassword = useCallback(async () => {
-    await changePassword({
-      variables: {
-        data: {
-          password: currentPassword,
-          newPassword,
-          rePassword: newPassword,
-        },
-      },
-    });
-  }, [changePassword, currentPassword, newPassword]);
-
-  const handleCurrentPassword = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      setCurrentPassword(e.target.value);
-    },
-    [],
-  );
-
-  const handleNewPassword = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      setNewPassword(e.target.value);
-    },
-    [],
-  );
-
-  const handlePhoneChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      setNewPhoneNumber(e.target.value);
-    },
-    [],
-  );
-
-  const [changePhone, {loading: changePhoneLoading}] = useMutation(PHONE_NUMBER_CHANGE, {
-    onCompleted: () => {
-      toast('success', 'OTP has been sent to your new mobile number.');
-      setShowOtpForm(true);
-    },
-    onError: (err) => {
-      toast('error', String(err));
-    },
-  });
-
-  const handleVerifyPhone = useCallback(async () => {
-    await changePhone({
-      variables: {
-        data: {
-          newPhoneNumber,
-        },
-      },
-    });
-  }, [changePhone, newPhoneNumber]);
-
-  const handlePinChange = useCallback(
-    (otp) => {
-      setPin(otp);
-    },
-    [],
-  );
-
-  const [activeTab, setActiveTab] = useState<string>('Password');
-
-  const handleTab = useCallback((text: string) => {
-    setActiveTab(text);
-    setShowOtpForm(false);
-    setPin('');
-  }, []);
-
-  useEffect(() => {
-    if (!email) { setActiveTab('Phone Number'); }
+  const visibleTabs = useMemo(() => {
+    if (email) {
+      return tabs;
+    }
+    return tabs.filter((tab) => tab.title !== 'Password');
   }, [email]);
 
-  const [changePhoneVerify, {loading: verifyLoading}] = useMutation(
-    PHONE_NUMBER_CHANGE_VERIFY,
-    {
-      onCompleted: () => {
-        toast('success', 'Your phone number has been successfully changed!');
-        dispatchLogout();
-      },
-      onError: (err) => {
-        toast('error', String(err));
-      },
-    },
-  );
+  const [activeTab, setActiveTab] = useState<TabType['title']>(visibleTabs[0].title);
 
-  const handleChangePhoneVerify = useCallback(async () => {
-    await changePhoneVerify({
-      variables: {
-        data: {
-          pin: parseInt(pin, 10),
-        },
-      },
-    });
-  }, [changePhoneVerify, pin]);
+  const handleTab = useCallback((tab: TabType['title']) => {
+    setActiveTab(tab);
+  }, []);
+
+  const handlePasswordTab = useCallback(() => {
+    setActiveTab('Password');
+  }, []);
 
   return (
     <DashboardLayout>
@@ -153,97 +56,18 @@ const AccountSettings = () => {
         <h2 className={classes.title}>Account Settings</h2>
         <div className={classes.contentWrapper}>
           <div className={classes.tabsWrapper}>
-            {email !== null && (
+            {visibleTabs.map((tab) => (
               <AccountTab
-                text='Password'
-                isActive={activeTab === 'Password'}
+                text={tab.title}
+                isActive={activeTab === tab.title}
                 onClick={handleTab}
               />
-            )}
-            {phoneNumber !== null && (
-              <AccountTab
-                text='Phone Number'
-                isActive={activeTab === 'Phone Number'}
-                onClick={handleTab}
-              />
-            )}
+            ))}
           </div>
           <div className='w-fit'>
-            {activeTab === 'Password' && (
-              <div className={classes.inputsWrapper}>
-                <InputField
-                  password
-                  title='Current password'
-                  placeholder='Enter your current password'
-                  value={currentPassword}
-                  onChange={handleCurrentPassword}
-                  inputClassname={classes.input}
-                />
-                <InputField
-                  password
-                  title='New password'
-                  placeholder='Enter your new password'
-                  value={newPassword}
-                  onChange={handleNewPassword}
-                  inputClassname={classes.input}
-                />
-                <Button
-                  text='Save Changes'
-                  onClick={handleChangePassword}
-                  disabled={!currentPassword || !newPassword}
-                  loading={!error && loading}
-                />
-              </div>
-            )}
-            {activeTab === 'Phone Number' && (
-              <div>
-                {showOtpForm ? (
-                  <div className={classes.inputsWrapper}>
-                    <OTPInput
-                      autoFocus
-                      isNumberInput
-                      length={6}
-                      className={classes.otpContainer}
-                      inputClassName={classes.otpInput}
-                      onChangeOTP={handlePinChange}
-                    />
-                    <Button
-                      text='Verify'
-                      onClick={handleChangePhoneVerify}
-                      disabled={pin.length < 6 || verifyLoading}
-                      loading={changePhoneLoading}
-                    />
-                    <div className={classes.textWrapper}>
-                      <p className={classes.text}>{'Didn\'t receive code?'}</p>
-                      <button
-                        type='button'
-                        disabled={verifyLoading}
-                        className={classes.cursor}
-                        onClick={handleVerifyPhone}
-                      >
-                        <p className={classes.sendAgain}>Send it again</p>
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <div className={classes.inputsWrapper}>
-                    <InputField
-                      title='New phone number (with country code)'
-                      value={newPhoneNumber}
-                      placeholder='Enter your new phone number'
-                      onChange={handlePhoneChange}
-                      inputClassname={classes.input}
-                    />
-                    <Button
-                      text='Continue'
-                      onClick={handleVerifyPhone}
-                      disabled={changePhoneLoading}
-                      loading={changePhoneLoading}
-                    />
-                  </div>
-                )}
-              </div>
-            )}
+            {activeTab === 'Email' && <EmailSettings onPasswordError={handlePasswordTab} />}
+            {activeTab === 'Password' && <PasswordSettings />}
+            {activeTab === 'Phone Number' && <PhoneNumberSettings />}
           </div>
         </div>
       </div>
