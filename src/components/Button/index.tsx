@@ -13,6 +13,7 @@ interface Props {
   onClick?(): void;
   loading?: boolean;
   disabled?: boolean;
+  type?: 'button' | 'submit' | 'reset';
 }
 
 interface NumBtnProps {
@@ -35,9 +36,10 @@ const Button: React.FC<Props> = ({
   onClick,
   loading,
   disabled,
+  type = 'button',
 }) => (
   <button
-    type='button'
+    type={type} // eslint-disable-line react/button-has-type
     onClick={onClick}
     disabled={disabled || false}
     className={cs(classes.button, [classes.disabled, !!disabled], className)}

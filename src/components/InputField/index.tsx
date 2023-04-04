@@ -47,7 +47,7 @@ const InputField: React.FC<Props> = ({
             inputClassname,
           )}
         />
-        <div className={cs(classes.iconWrapper, [classes.hidden, !password])}>
+        <button type='button' className={cs(classes.iconWrapper, [classes.hidden, !password])}>
           {type === 'password' ? (
             <AiOutlineEyeInvisible
               size={22}
@@ -61,7 +61,7 @@ const InputField: React.FC<Props> = ({
               onClick={handleEyeIconToggle}
             />
           )}
-        </div>
+        </button>
       </div>
     </div>
   );

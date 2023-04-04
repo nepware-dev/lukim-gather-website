@@ -1,5 +1,5 @@
 import React, {
-  useCallback, useEffect, useRef, useState,
+  useCallback, useEffect, useRef, useState, useMemo,
 } from 'react';
 import {useSelector} from 'react-redux';
 import {useNavigate} from 'react-router-dom';
@@ -38,10 +38,9 @@ const UserDropdown = ({alignRight}: {alignRight?: boolean}) => {
   }, 20000);
 
   const {
-    auth: {
-      user: {firstName},
-    },
+    auth: {user},
   } = useSelector((state: rootState) => state);
+  const firstName = useMemo(() => user?.firstName || '', [user]);
 
   const handleAccountSettings = useCallback(() => {
     navigate('/account-settings');

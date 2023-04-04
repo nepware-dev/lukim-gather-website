@@ -2,7 +2,8 @@ import React, {useEffect} from 'react';
 import {
   Navigate, Outlet, Route, Routes, useLocation,
 } from 'react-router-dom';
-import {RootStateOrAny, useSelector} from 'react-redux';
+import {RootStateOrAny, useSelector, useDispatch} from 'react-redux';
+import {useLazyQuery} from '@apollo/client';
 
 import AccountSettings from '@containers/AccountSettings';
 import CustomForms from '@containers/CustomForms';
@@ -27,6 +28,10 @@ import Tutorial from '@containers/Tutorial';
 import VerifyPhone from '@containers/VerifyPhone';
 import ContactUs from '@containers/ContactUs';
 
+import {GET_ME} from '@services/queries';
+import {setUser} from '@store/slices/auth';
+import {dispatchLogout} from '@services/dispatch';
+
 interface Props {
   isAuthenticated: boolean;
 }
@@ -35,6 +40,8 @@ const PrivateRoute: React.FC<Props> = ({isAuthenticated}) => (isAuthenticated ? 
 
 const AppRoutes = () => {
   const {pathname} = useLocation();
+
+  const dispatch = useDispatch();
   const isAuthenticated = useSelector(
     (state: RootStateOrAny) => state.auth.isAuthenticated,
   );
@@ -42,6 +49,21 @@ const AppRoutes = () => {
   useEffect(() => {
     window.scrollTo({top: 0, behavior: 'smooth'});
   }, [pathname]);
+
+  const [getUserData] = useLazyQuery(GET_ME, {
+    onCompleted: ({me}) => {
+      dispatch(setUser(me));
+    },
+    onError: () => {
+      dispatchLogout();
+    },
+  });
+  useEffect(() => {
+    if (isAuthenticated) {
+      getUserData();
+    }
+  }, [isAuthenticated, getUserData]);
+
   return (
     <>
       <Notice />

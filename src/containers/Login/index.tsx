@@ -117,6 +117,24 @@ const Login = () => {
     });
   }, [phoneNumber, phoneConfirm, toast]);
 
+  const handleFormSubmit = useCallback((e: React.FormEvent) => {
+    e.preventDefault();
+    if (!phoneNumber) {
+      toast('error', 'Phone number is required');
+    } else {
+      handlePhoneLogin();
+    }
+  }, [phoneNumber, toast, handlePhoneLogin]);
+
+  const handleEmailFormSubmit = useCallback((e: React.FormEvent) => {
+    e.preventDefault();
+    if (!username || !password) {
+      toast('error', 'Email and password are required');
+    } else {
+      handleLogin();
+    }
+  }, [handleLogin, username, password, toast]);
+
   const handleUsernameChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       setUsername(e.target.value);
@@ -158,7 +176,7 @@ const Login = () => {
               className='w-1/2 rounded-r-lg'
             />
             {selectedTab === 'email' ? (
-              <>
+              <form onSubmit={handleEmailFormSubmit}>
                 <div className={classes.inputsWrapper}>
                   <InputField
                     title='Username'
@@ -178,14 +196,14 @@ const Login = () => {
                   <p className={classes.text}>Forgot Password?</p>
                 </Link>
                 <Button
+                  type='submit'
                   text='Login'
-                  onClick={handleLogin}
                   loading={!error && loading}
                   disabled={!username || !password}
                 />
-              </>
+              </form>
             ) : (
-              <div className={classes.inputsWrapper}>
+              <form className={classes.inputsWrapper} onSubmit={handleFormSubmit}>
                 <InputField
                   title='Phone Number'
                   value={phoneNumber}
@@ -193,12 +211,12 @@ const Login = () => {
                   onChange={handlePhoneChange}
                 />
                 <Button
+                  type='submit'
                   text='Continue'
-                  onClick={handlePhoneLogin}
                   loading={!error && phoneConfirmLoading}
                   disabled={!phoneNumber}
                 />
-              </div>
+              </form>
             )}
           </div>
         </div>

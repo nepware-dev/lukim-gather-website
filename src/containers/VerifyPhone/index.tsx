@@ -28,13 +28,14 @@ const PHONE_NUMBER_CONFIRM_VERIFY = gql`
             token
             refreshToken
             user {
-                id
-                firstName
-                lastName
-                email
-                organization
-                avatar
-                isStaff
+              id
+              firstName
+              lastName
+              email
+              organization
+              avatar
+              isStaff
+              phoneNumber
             }
         }
     }
