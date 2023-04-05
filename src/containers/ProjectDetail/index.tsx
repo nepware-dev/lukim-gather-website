@@ -1,5 +1,5 @@
 import React, {useCallback, useState} from 'react';
-import {Link, useParams} from 'react-router-dom';
+import {Link, useParams, useNavigate} from 'react-router-dom';
 import {
   gql, useMutation, useQuery, useLazyQuery,
 } from '@apollo/client';
@@ -38,6 +38,8 @@ query Project ($id: ID) {
         title
         logo
       }
+      surveyCount
+      surveyLastModified
     }
   }
 `;
@@ -155,6 +157,7 @@ const ProjectDetails = () => {
   const [showAddUserModal, setShowAddUserModal] = useState(false);
   const [selectedUsers, setSelectedUsers] = useState([]);
   const {id} = useParams();
+  const navigate = useNavigate();
   const toast = useToast();
 
   const {data, loading, refetch} = useQuery(GET_PROJECT, {
@@ -184,6 +187,10 @@ const ProjectDetails = () => {
   const onClickAddUser = useCallback(() => {
     setShowAddUserModal(true);
   }, []);
+
+  const onClickViewSurveys = useCallback(() => {
+    navigate('/surveys', {state: {project: {id, title: data?.projects[0]?.title}}});
+  }, [id, navigate, data?.projects]);
 
   const handleSelectedUsersChange = useCallback(({value}) => {
     setSelectedUsers(value);
@@ -227,6 +234,7 @@ const ProjectDetails = () => {
                 <div className='divide-dashed'>
                   <h2 className={classes.title}>{data?.projects[0]?.title || 'N/A'}</h2>
                 </div>
+                <Button text='View Surveys' className={classes.secondaryButton} textClassName={classes.secondaryButtonText} onClick={onClickViewSurveys} />
               </div>
               <p className={classes.description}>
                 {parse(data?.projects[0]?.description || 'N/A')}
@@ -247,6 +255,24 @@ const ProjectDetails = () => {
                   <h5 className={classes.infoHeading}>NUMBER OF MEMBERS</h5>
                   <p className={classes.infoData}>{data?.projects[0]?.totalUsers}</p>
                 </div>
+                <hr className={classes.separator} />
+                <div className={classes.info}>
+                  <h5 className={classes.infoHeading}>No of surveys</h5>
+                  <p className={classes.infoData}>{data?.projects[0]?.surveyCount}</p>
+                </div>
+                <hr className={classes.separator} />
+                <div className={classes.info}>
+                  <h5 className={classes.infoHeading}>Last Updated</h5>
+                  <p className={classes.infoData}>
+                    {
+                      new Date(data?.projects[0]?.surveyLastModified)
+                        ?.toLocaleDateString(undefined, {
+                          month: 'short', day: '2-digit', year: 'numeric',
+                        })
+                    }
+
+                  </p>
+                </div>
               </div>
               {data?.projects[0]?.organization
               && (
@@ -265,7 +291,7 @@ const ProjectDetails = () => {
               <div className={classes.userContainer}>
                 <div className={classes.userHeaderContainer}>
                   <h3 className={classes.userHeader}>Users</h3>
-                  <Button text='+ Add' className={classes.addButton} textClassName={classes.addButtonText} onClick={onClickAddUser} />
+                  <Button text='+ Add' className={classes.secondaryButton} textClassName={classes.secondaryButtonText} onClick={onClickAddUser} />
                 </div>
                 <List
                   className={classes.userList}
