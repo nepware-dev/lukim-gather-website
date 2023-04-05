@@ -25,7 +25,7 @@ const InputField: React.FC<Props> = ({
 
   const handleEyeIconToggle = useCallback(() => {
     if (type === 'password') {
-      setType('email');
+      setType('text');
     } else {
       setType('password');
     }
@@ -47,7 +47,13 @@ const InputField: React.FC<Props> = ({
             inputClassname,
           )}
         />
-        <button type='button' className={cs(classes.iconWrapper, [classes.hidden, !password])}>
+        <button
+          type='button'
+          className={cs(classes.iconWrapper, [
+            classes.hidden,
+            !password,
+          ])}
+        >
           {type === 'password' ? (
             <AiOutlineEyeInvisible
               size={22}
