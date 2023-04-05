@@ -5,7 +5,7 @@ import React, {
   useState,
 } from 'react';
 import {useSelector} from 'react-redux';
-import {useParams, useNavigate} from 'react-router-dom';
+import {useParams, useNavigate, useLocation} from 'react-router-dom';
 import DatePicker from 'react-datepicker';
 import {gql, useQuery} from '@apollo/client';
 import {BsCalendar4Event, BsArrowUpRight} from 'react-icons/bs';
@@ -219,6 +219,13 @@ const happeningSurveyLocationParser = new Parser({
   defaultValue: 'No matching data found in selection',
 });
 
+type State = {
+  project: {
+    id: number;
+    title: string;
+  }
+}
+
 const happeningSurveyBoundaryParser = new Parser({
   fields: headers.filter((header) => !(header.label === 'Location' || header.label === 'Longitude' || header.label === 'Latitude')),
   defaultValue: 'No matching data found in selection',
@@ -231,6 +238,8 @@ const Surveys = () => {
     },
   } = useSelector((state: rootState) => state);
   const navigate = useNavigate();
+  const location = useLocation();
+  const state = location.state as State;
   const {uuid} = useParams();
 
   const {data, refetch: refetchSurveyData, loading: loadingSurvey} = useQuery(GET_SURVEY_DATA);
@@ -270,9 +279,9 @@ const Surveys = () => {
     status: null,
     protectedArea: null,
     createdBy: null,
-    project: null,
+    project: state?.project?.id ? state.project : null,
   });
-  const [toggleFilter, setToggleFilter] = useState<boolean>(false);
+  const [toggleFilter, setToggleFilter] = useState<boolean>(Boolean(state?.project));
 
   const {refetch} = useQuery(GET_SURVEY, {
     variables: {id: uuid},
