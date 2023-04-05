@@ -27,6 +27,7 @@ const LOGIN = gql`
                 avatar
                 isStaff
                 phoneNumber
+                hasPassword
             }
         }
     }
