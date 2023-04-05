@@ -14,22 +14,22 @@ import SurveyTab from '@components/SurveyTab';
 import classes from './styles';
 
 const LOGIN = gql`
-  mutation TokenAuth($username: String!, $password: String!) {
-    tokenAuth(username: $username, password: $password) {
-      token
-      refreshToken
-      user {
-        id
-        firstName
-        lastName
-        email
-        organization
-        avatar
-        isStaff
-        phoneNumber
-      }
+    mutation TokenAuth($username: String!, $password: String!) {
+        tokenAuth(username: $username, password: $password) {
+            token
+            refreshToken
+            user {
+                id
+                firstName
+                lastName
+                email
+                organization
+                avatar
+                isStaff
+                phoneNumber
+            }
+        }
     }
-  }
 `;
 
 const PHONE_NUMBER_CONFIRM = gql`
@@ -67,7 +67,11 @@ const Login = () => {
     },
     onError: ({graphQLErrors}) => {
       setError(graphQLErrors[0].message);
-      toast('error', graphQLErrors[0]?.message || 'Something went wrong, Please enter valid credentials');
+      toast(
+        'error',
+        graphQLErrors[0]?.message
+                    || 'Something went wrong, Please enter valid credentials',
+      );
     },
   });
 
@@ -76,31 +80,38 @@ const Login = () => {
     await login({variables: {username, password}});
   }, [username, password, login]);
 
-  const [phoneConfirm, {loading: phoneConfirmLoading}] = useMutation(PHONE_NUMBER_CONFIRM, {
-    onCompleted: () => {
-      const ph = parsePhoneNumber(phoneNumber, 'PG');
-      const phone = ph?.formatInternational().replace(/\s/g, '');
-      toast('success', `OTP sent to your phone number ${phone}`);
-      navigate('/verify-phone', {
-        state: {
-          username: phone,
-        },
-      });
-    },
-    onError: ({graphQLErrors}) => {
-      setError(graphQLErrors[0].message);
-      if (graphQLErrors[0].message.includes('been sent')) {
+  const [phoneConfirm, {loading: phoneConfirmLoading}] = useMutation(
+    PHONE_NUMBER_CONFIRM,
+    {
+      onCompleted: () => {
         const ph = parsePhoneNumber(phoneNumber, 'PG');
         const phone = ph?.formatInternational().replace(/\s/g, '');
+        toast('success', `OTP sent to your phone number ${phone}`);
         navigate('/verify-phone', {
           state: {
             username: phone,
           },
         });
-      }
-      toast('error', graphQLErrors[0]?.message || 'Something went wrong, Please enter valid credentials');
+      },
+      onError: ({graphQLErrors}) => {
+        setError(graphQLErrors[0].message);
+        if (graphQLErrors[0].message.includes('been sent')) {
+          const ph = parsePhoneNumber(phoneNumber, 'PG');
+          const phone = ph?.formatInternational().replace(/\s/g, '');
+          navigate('/verify-phone', {
+            state: {
+              username: phone,
+            },
+          });
+        }
+        toast(
+          'error',
+          graphQLErrors[0]?.message
+                        || 'Something went wrong, Please enter valid credentials',
+        );
+      },
     },
-  });
+  );
 
   const handlePhoneLogin = useCallback(async () => {
     setError('');
@@ -117,23 +128,29 @@ const Login = () => {
     });
   }, [phoneNumber, phoneConfirm, toast]);
 
-  const handleFormSubmit = useCallback((e: React.FormEvent) => {
-    e.preventDefault();
-    if (!phoneNumber) {
-      toast('error', 'Phone number is required');
-    } else {
-      handlePhoneLogin();
-    }
-  }, [phoneNumber, toast, handlePhoneLogin]);
+  const handleFormSubmit = useCallback(
+    (e: React.FormEvent) => {
+      e.preventDefault();
+      if (!phoneNumber) {
+        toast('error', 'Phone number is required');
+      } else {
+        handlePhoneLogin();
+      }
+    },
+    [phoneNumber, toast, handlePhoneLogin],
+  );
 
-  const handleEmailFormSubmit = useCallback((e: React.FormEvent) => {
-    e.preventDefault();
-    if (!username || !password) {
-      toast('error', 'Email and password are required');
-    } else {
-      handleLogin();
-    }
-  }, [handleLogin, username, password, toast]);
+  const handleEmailFormSubmit = useCallback(
+    (e: React.FormEvent) => {
+      e.preventDefault();
+      if (!username || !password) {
+        toast('error', 'Email and password are required');
+      } else {
+        handleLogin();
+      }
+    },
+    [handleLogin, username, password, toast],
+  );
 
   const handleUsernameChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -193,7 +210,9 @@ const Login = () => {
                   />
                 </div>
                 <Link to='/forgot-password'>
-                  <p className={classes.text}>Forgot Password?</p>
+                  <p className={classes.text}>
+                    Forgot Password?
+                  </p>
                 </Link>
                 <Button
                   type='submit'
@@ -203,7 +222,10 @@ const Login = () => {
                 />
               </form>
             ) : (
-              <form className={classes.inputsWrapper} onSubmit={handleFormSubmit}>
+              <form
+                className={classes.inputsWrapper}
+                onSubmit={handleFormSubmit}
+              >
                 <InputField
                   title='Phone Number'
                   value={phoneNumber}
