@@ -303,10 +303,10 @@ const Surveys = () => {
   }, [uuid, activeIndex, refetch, surveyData, data]);
 
   useEffect(() => {
-    if (!showDetails) {
+    if (!showDetails && !visibleEditModal) {
       setSurveyEntryData(null);
     }
-  }, [showDetails]);
+  }, [showDetails, visibleEditModal]);
 
   useEffect(() => {
     if (!data) return;
