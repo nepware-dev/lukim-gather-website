@@ -1,5 +1,5 @@
 export default {
-  container: 'absolute top-[45px] rounded-lg shadow-[0_4px_42px_rgba(0,5,40,0.16)] z-10 sm:right-[2em]',
+  container: 'absolute top-[45px] rounded-lg shadow-[0_4px_42px_rgba(0,5,40,0.16)] z-10 md:right-[2em]',
   notificationWrapper: 'flex p-[10px] rounded-lg hover:bg-[#F0F3F6] cursor-pointer mb-1',
   notification: 'flex flex-col items-center gap-[4px]',
   iconContainer: 'flex justify-center cursor-pointer',

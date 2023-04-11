@@ -323,6 +323,7 @@ const CustomForms = () => {
             <div className='cursor-pointer'>
               <DatePicker
                 selectsRange
+                showYearDropdown
                 startDate={startDate}
                 endDate={endDate}
                 minDate={minDate}

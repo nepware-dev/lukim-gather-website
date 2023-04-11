@@ -593,6 +593,7 @@ const Surveys = () => {
               <div>
                 <DatePicker
                   selectsRange
+                  showYearDropdown
                   startDate={startDate}
                   endDate={endDate}
                   minDate={minDate}
