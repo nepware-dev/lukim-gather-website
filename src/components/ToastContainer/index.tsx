@@ -33,7 +33,7 @@ export default function ToastContainer() {
   };
 
   return (
-    <div className='fixed top-10 left-[50%] translate-x-[-50%] min-w-[75vw] w-fit max-w-max z-99999'>
+    <div className='fixed top-10 left-[50%] translate-x-[-50%]  w-fit max-w-max z-50'>
       <List
         {...Props}
         ref={ref}
