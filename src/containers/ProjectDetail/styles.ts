@@ -1,6 +1,6 @@
 export default {
   section: 'p-5 flex flex-col justify-center',
-  backWrapper: 'mb-8 flex items-center gap-3 w-[100%] cursor-pointer',
+  backWrapper: 'mb-8 flex items-center gap-3 cursor-pointer self-start',
   backTitle: 'text-base font-normal text-[#101828]',
   content: 'flex sm:flex-row flex-col gap-8',
   itemContainer: 'w-[100%]',

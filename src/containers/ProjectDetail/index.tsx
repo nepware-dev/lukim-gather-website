@@ -257,7 +257,7 @@ const ProjectDetails = () => {
                 </div>
                 <hr className={classes.separator} />
                 <div className={classes.info}>
-                  <h5 className={classes.infoHeading}>No of surveys</h5>
+                  <h5 className={classes.infoHeading}>No. of surveys</h5>
                   <p className={classes.infoData}>{data?.projects[0]?.surveyCount}</p>
                 </div>
                 <hr className={classes.separator} />
