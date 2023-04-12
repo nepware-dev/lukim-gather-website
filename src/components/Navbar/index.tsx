@@ -92,7 +92,7 @@ const Navbar: React.FC<Props> = ({hideButton = false, isDark = false}) => {
           />
           <NavItem
             to='/tutorial'
-            title='Tutorial'
+            title='Tutorials'
             isDarkNav={isDark}
           />
           <NavItem

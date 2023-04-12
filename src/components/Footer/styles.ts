@@ -1,6 +1,6 @@
 export default {
   container: 'pb-[28px] mt-[80px]',
-  buttons: 'flex flex-row justify-center gap-[12px] flex-1',
+  buttons: 'flex flex-row justify-center items-start gap-[12px] flex-1',
   contentWrapper: 'flex flex-col lg:flex-row',
   partnersWrapper: 'flex-1 py-[37px] border-t-[1px] border-color-border',
   partnerTitle: 'uppercase font-interSemibold text-[#0A52A1] text-[24px] leading-[29px] mb-[12px]',
