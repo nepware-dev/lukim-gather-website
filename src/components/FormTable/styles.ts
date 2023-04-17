@@ -12,6 +12,6 @@ export default {
   tableText: 'text-color-text font-inter text-[16px]',
   status:
     'max-w-fit px-[12px] py-[4px] rounded-full uppercase font-interMedium text-[12px]',
-  button: 'text-[#00518B] font-interMedium text-[14px] lg:-mr-[20px]',
+  button: 'text-[#00518B] font-interMedium text-[14px] lg:-mr-[20px] hover:opacity-80 transition duration-20',
   notFound: 'p-[20px] text-color-text font-inter text-[16px]',
 };

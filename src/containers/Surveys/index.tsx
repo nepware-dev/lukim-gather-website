@@ -422,7 +422,7 @@ const Surveys = () => {
         <div
           onClick={handle5rows}
           className={cs(classes.dropdownItem, 'mb-[5px]', [
-            'bg-[#F2F5F9]',
+            'bg-color-blue-alt text-[white]',
             rows === 5,
           ])}
         >
@@ -430,7 +430,7 @@ const Surveys = () => {
         </div>
         <div
           onClick={handle10rows}
-          className={cs(classes.dropdownItem, ['bg-[#F2F5F9]', rows === 10])}
+          className={cs(classes.dropdownItem, ['bg-color-blue-alt text-[white]', rows === 10])}
         >
           10 rows
         </div>

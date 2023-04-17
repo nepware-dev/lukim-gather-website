@@ -14,6 +14,6 @@ export default {
   pending: 'bg-[#FFF3E2] text-[#F79009]',
   rejected: 'bg-[#FFEFEE] text-[#F04438]',
   approved: 'bg-[#E7F5EF] text-[#12B76A]',
-  button: 'text-[#00518B] font-interMedium text-[14px] mr-[12px] lg:mr-[8px] pl-[20px]',
+  button: 'text-[#00518B] font-interMedium text-[14px] mr-[12px] lg:mr-[8px] pl-[20px] hover:opacity-80 transition duration-200',
   notFound: 'p-[20px] text-color-text font-inter text-[16px]',
 };

@@ -1,6 +1,6 @@
 export default {
-  button: 'w-[100%] h-[49px] px-5 bg-[#EC6D25] rounded-lg',
-  disabled: 'cursor-not-allowed opacity-80',
+  button: 'w-[100%] h-[49px] px-5 bg-[#EC6D25] rounded-lg hover:brightness-105 transition duration-300',
+  disabled: 'cursor-not-allowed opacity-80 hover:filter-none',
   text: 'font-interSemibold text-color-white text-base',
   loading: 'opacity-50 cursor-not-allowed',
   NumButton: 'w-[28px] h-[28px] font-interMedium text-[14px] rounded-full',

@@ -332,10 +332,15 @@ const CustomForms = () => {
                 customInput={<CustomInput />}
               />
             </div>
-            <Button className={classes.addNewButton} textClassName={classes.addNewButtonText} onClick={toggleShowAddSurvey} text='Add New Entry' />
+            <Button
+              className={classes.addNewButton}
+              textClassName={classes.addNewButtonText}
+              onClick={toggleShowAddSurvey}
+              text='Add New Entry'
+            />
             {surveyFormData?.length > 0 && (
               <CSVLink
-                className='ml-auto h-[44px] px-[12px] flex items-center rounded-lg border-[#CCDCE8] bg-[#E7E8EA] font-interMedium text-[14px] text-[#70747E]'
+                className='ml-auto h-[44px] px-[12px] flex items-center rounded-lg border-[#CCDCE8] bg-[#E7E8EA] font-interMedium text-[14px] text-[#70747E] hover:brightness-[1.02] transition duration-300'
                 filename={`Custom-Survey-Report-${new Date().toISOString()}.csv`}
                 data={flatCustomSurveys}
               >

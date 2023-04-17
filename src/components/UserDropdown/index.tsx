@@ -104,7 +104,7 @@ const UserDropdown = ({alignRight}: {alignRight?: boolean}) => {
   return (
     <div className='flex items-center'>
       <div className='relative'>
-        <div className='flex flex-col select-none'>
+        <div className='flex flex-col select-none hover:opacity-80'>
           <NotificationIcon />
         </div>
         <Notification

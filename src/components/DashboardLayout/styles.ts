@@ -7,7 +7,7 @@ export default {
   logoWrapper: 'hidden md:inline-block pt-[24px]',
   logo: 'h-[60px]',
   linksWrapper: 'flex flex-col mt-[85px]',
-  link: 'flex items-center py-[10px] px-[8px] mb-[15px] rounded-lg gap-[15px]',
+  link: 'flex items-center py-[10px] px-[8px] mb-[15px] rounded-lg gap-[15px] hover:opacity-80',
   activeLink: 'bg-color-white text-[#00518B]',
   inactiveLink: 'text-[#404653]',
   linkText: 'font-interSemibold text-[16px]',
