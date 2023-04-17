@@ -7,6 +7,8 @@ import GefLogo from '@images/gef.webp';
 import UndpLogo from '@images/undp.webp';
 import biodiversity from '@images/biodiversity.svg';
 
+import cs from '@ra/cs';
+
 import classes from './styles';
 
 const Footer = ({hideContent = false}: {hideContent?: boolean}) => (
@@ -40,12 +42,12 @@ const Footer = ({hideContent = false}: {hideContent?: boolean}) => (
       </p>
       <div className={classes.legalLink}>
         <Link to='/terms'>
-          <p className={classes.text}>
+          <p className={cs(classes.text, classes.textLink)}>
             Terms And Conditions
           </p>
         </Link>
         <Link to='/privacy'>
-          <p className={classes.text}>
+          <p className={cs(classes.text, classes.textLink)}>
             Privacy Policy
           </p>
         </Link>

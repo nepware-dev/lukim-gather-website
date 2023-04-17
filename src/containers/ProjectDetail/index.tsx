@@ -270,7 +270,6 @@ const ProjectDetails = () => {
                           month: 'short', day: '2-digit', year: 'numeric',
                         })
                     }
-
                   </p>
                 </div>
               </div>

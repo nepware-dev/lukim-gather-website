@@ -33,7 +33,7 @@ const Project = () => {
     ({item}) => (
       <Link
         to={`/project/${item.id}`}
-        className='rounded-lg w-[100%] md:w-[49%] lg:w-[32%] xl:w-[24%] border border-[#E7EEF6] flex flex-col justify-between'
+        className='rounded-lg w-[100%] md:w-[49%] lg:w-[32%] xl:w-[24%] border border-[#E7EEF6] flex flex-col justify-between hover:brightness-[0.97] transition duration-200'
       >
         <div className='p-[40px] flex justify-center align-center'>
           <img className='max-h-[115px]' src={item.logo || organizationPlaceholder} alt={item.title} />

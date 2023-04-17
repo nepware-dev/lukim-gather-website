@@ -7,7 +7,8 @@ export default {
   partnersImgWrapper: 'flex flex-col flex-wrap sm:flex-row gap-[34px] sm:gap-[50px] lg:gap-x-[130px] items-center justify-between',
   partnerImage: 'max-h-[80px]',
   undpImage: 'max-h-[100px]',
-  text: 'mb-[50px] font-inter text-color-lt-grey text-center text-[14px] leading-[20px]',
-  footerCred: 'flex justify-between',
-  legalLink: 'flex gap-[20px]',
+  text: 'font-inter text-color-lt-grey text-center text-[14px] leading-[20px]',
+  textLink: 'hover:brightness-90',
+  footerCred: 'flex justify-between pb-[50px]',
+  legalLink: 'flex gap-[20px] items-start',
 };

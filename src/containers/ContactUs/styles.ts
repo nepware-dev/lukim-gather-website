@@ -15,6 +15,6 @@ export default {
   row: 'grid grid-cols-2 gap-4',
   col: 'w-full',
   label: 'text-[16px] leading-none text-[#888c94] mb-[8px] interMedium',
-  input: 'w-full !border !border-[#CEDCEC] bg-color-bg !rounded-lg text-[16px] text-[#585D69] !p-[12px]',
+  input: 'w-full border border-[#CEDCEC] bg-color-bg !rounded-lg text-[16px] text-[#585D69] !p-[12px] hover:border-color-blue-alt',
   submitButton: '!bg-color-blue w-fit !px-[45px] !rounded-lg !py-[15px] hover:bg-[#05375A] !font-interSemibold !text-[16px]',
 };

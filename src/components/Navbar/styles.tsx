@@ -9,7 +9,7 @@ export default {
   darkMenuList: 'bg-[#05375A]',
   lightMenuList: 'bg-color-bg',
   linkWrapper: 'my-2.5 sm:my-0 flex justify-items-center text-center',
-  link: 'sm:w-[100%] mx-auto sm:mx-3 sm:mr-8 font-interSemibold px-4 py-4 border-b-2',
+  link: 'sm:w-[100%] mx-auto sm:mx-3 sm:mr-8 font-interSemibold px-4 py-4 border-b-2 hover:opacity-70',
   darkLink: 'bg-[#05375A] text-color-white',
   lightLink: 'sm:bg-color-bg',
   buttonWrapper: 'sm:ml-10 sm:mt-0 mt-[7vh] sm:mb-0 mb-[3vh]',
