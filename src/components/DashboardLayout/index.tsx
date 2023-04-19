@@ -3,7 +3,7 @@ import {Link, useLocation} from 'react-router-dom';
 import {BsFillGridFill} from 'react-icons/bs';
 import {FiFileText} from 'react-icons/fi';
 import {HiMenuAlt1, HiOutlineX} from 'react-icons/hi';
-import {GoListUnordered} from 'react-icons/go';
+import {TbTrees} from 'react-icons/tb';
 import {MdWorkspacesOutline} from 'react-icons/md';
 
 import cs from '@utils/cs';
@@ -95,7 +95,7 @@ const DashboardLayout = ({
                 [classes.inactiveLink, pathname !== '/custom-forms'],
               )}
             >
-              <GoListUnordered size={20} />
+              <TbTrees size={20} />
               <p className={classes.linkText}>METT List</p>
             </Link>
             <Link

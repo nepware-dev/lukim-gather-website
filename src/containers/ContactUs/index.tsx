@@ -59,13 +59,14 @@ const ContactUs = () => {
             <div className={classes.infoWrapper}>
               <div className={classes.info}>
                 <IoMdMail size={32} color='#fff' />
-                <p className={classes.mail}>example@mail.com</p>
+                <a href='mailto:info@png-nrmhub.org' className={classes.mail}>info@png-nrmhub.org</a>
               </div>
               <div className={classes.info}>
                 <IoLocationSharp size={32} color='#fff' />
                 <p className={classes.mail}>
-                  Level 14, Kina Bank HausN.C.D, Port
-                  MoresbyPapua New Guinea
+                  Level 14, Kina Bank Haus
+                  N.C.D, Port Moresby
+                  Papua New Guinea
                 </p>
               </div>
             </div>

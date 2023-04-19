@@ -22,6 +22,7 @@ import {formatDate} from '@utils/formatDate';
 import {formatName} from '@utils/formatName';
 import sentimentName from '@utils/sentimentName';
 
+import Button from '@components/Button';
 import DashboardHeader from '@components/DashboardHeader';
 import DashboardLayout from '@components/DashboardLayout';
 import SurveyTable, {SurveyDataType} from '@components/SurveyTable';
@@ -547,6 +548,10 @@ const Surveys = () => {
     });
   }, [surveyData]);
 
+  const handleAnalyticsClick = useCallback(() => {
+    navigate('/surveys/analytics');
+  }, [navigate]);
+
   const surveyStatus = [{
     title: 'PENDING',
     id: '1',
@@ -612,6 +617,7 @@ const Surveys = () => {
                   <span className='ml-2'>Export to CSV</span>
                 </button>
               )}
+              <Button className={classes.analyticsButton} onClick={handleAnalyticsClick} text='View analytics' />
             </div>
           </div>
           <div className={cs(

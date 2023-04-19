@@ -23,4 +23,5 @@ export default {
   transitionOpacity: 'transition-opacity duration-500 ease-out',
   opacityNone: 'opacity-0 invisible',
   opacityFull: 'opacity-100 visible',
+  analyticsButton: 'h-[44px] px-[12px] !w-fit rounded-lg',
 };

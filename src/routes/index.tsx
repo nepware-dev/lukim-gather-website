@@ -23,6 +23,7 @@ import PrivacyPolicy from '@containers/PrivacyPolicy';
 import ResetPassword from '@containers/ResetPassword';
 import Resource from '@containers/Resource';
 import Surveys from '@containers/Surveys';
+import SurveyAnalytics from '@containers/SurveyAnalytics';
 import TermsAndConditions from '@containers/TermsAndConditions';
 import Tutorial from '@containers/Tutorial';
 import VerifyPhone from '@containers/VerifyPhone';
@@ -94,6 +95,7 @@ const AppRoutes = () => {
           <Route path='/organization/:id' element={<OrganizationDetails />} />
           <Route path='/surveys' element={<Surveys />} />
           <Route path='/surveys/:uuid' element={<Surveys />} />
+          <Route path='/surveys/analytics' element={<SurveyAnalytics />} />
         </Route>
         <Route path='*' element={<Page404 />} />
       </Routes>

@@ -438,10 +438,12 @@ const Dashboard = () => {
   const onExportPDF = useCallback(async () => {
     const element: any = contentRef.current;
     await toCanvas(element).then((canvas) => {
-      const imgData = canvas.toDataURL('img/png', {height: element.scrollHeight, width: element.scrollWidth});
+      const height = element.scrollHeight;
+      const width = element.scrollWidth;
+      const imgData = canvas.toDataURL('img/png', {height, width});
       // eslint-disable-next-line new-cap
-      const pdf = new jsPDF('p', 'mm', 'a4');
-      pdf.addImage(imgData, 'PNG', 0, 0, 210, (element.scrollHeight * 210) / element.scrollWidth);
+      const pdf = new jsPDF(height > width ? 'p' : 'l', 'pt', [width, height]);
+      pdf.addImage(imgData, 'PNG', 0, 0, width, height);
       pdf.save(`Survey_report_${currentDate}.pdf`);
     });
   }, [currentDate]);

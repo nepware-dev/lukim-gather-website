@@ -106,7 +106,7 @@ const CustomForms = () => {
 
   const toast = useToast();
 
-  const [updateSurvey] = useMutation(UPDATE_SURVEY, {
+  const [updateSurvey, {loading: updateLoading}] = useMutation(UPDATE_SURVEY, {
     onCompleted: () => {
       toast('success', 'Survey has been updated successfully!');
       toggleShowEditSurvey();
@@ -117,7 +117,7 @@ const CustomForms = () => {
     },
   });
 
-  const [addSurvey] = useMutation(CREATE_SURVEY, {
+  const [addSurvey, {loading: addLoading}] = useMutation(CREATE_SURVEY, {
     onCompleted: () => {
       toast('success', 'Survey has been added successfully!');
       toggleShowAddSurvey();
@@ -304,10 +304,10 @@ const CustomForms = () => {
     setActivePage(1);
   }, []);
 
-  const flatCustomSurveys = useMemo(() => data?.survey?.map((srvForm: FormDataType) => {
+  const flatCustomSurveys = useMemo(() => surveyFormData?.map((srvForm: FormDataType) => {
     const formAnswers = JSON.parse(srvForm.answer);
     return flattenObject(formAnswers?.data);
-  }) || [], [data]);
+  }) || [], [surveyFormData]);
 
   const handleAnalyticsClick = useCallback(() => {
     navigate('/custom-forms/analytics/');
@@ -387,6 +387,7 @@ const CustomForms = () => {
       {showEditSurvey && formData?.surveyForm?.[0] && surveyFormData[activeIndex] && (
         <EditCustomSurveyModal
           title='Edit Survey'
+          loading={updateLoading}
           onClose={handleCloseEditSurvey}
           formData={surveyFormData[activeIndex]}
           formObj={formData?.surveyForm?.[0]}
@@ -396,6 +397,7 @@ const CustomForms = () => {
       {showAddSurvey && (
         <EditCustomSurveyModal
           title='Add Survey'
+          loading={addLoading}
           onClose={toggleShowAddSurvey}
           formData={{}}
           formObj={formData?.surveyForm?.[0]}
