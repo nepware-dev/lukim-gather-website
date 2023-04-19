@@ -145,17 +145,18 @@ export const protectedAreaLayer: LayerProps = {
   'source-layer': 'protected-areas',
   paint: {
     'fill-outline-color': 'rgba(59, 117, 180, 0.4)',
-    'fill-color': 'rgba(59, 117, 180, 0.4)',
+    'fill-color': 'rgba(38, 176, 108, 0.2)',
   },
 };
 
 export const protectedAreaLayerTitle: LayerProps = {
   id: 'protected-area-title',
   type: 'symbol',
-  minzoom: 12,
+  minzoom: 6,
   'source-layer': 'protected-areas',
   layout: {
-    'text-field': ['get', 'name'],
+    'text-field': ['format', ['get', 'name']],
+    'text-size': 11,
   },
   paint: {
     'text-color': 'rgba(0, 0, 0, 0.8)',

@@ -3,6 +3,7 @@ import {XMLBuilder, XMLParser} from 'fast-xml-parser';
 import {useMutation} from '@apollo/client';
 
 import Modal from '@components/Modal';
+import Loader from '@components/Loader';
 
 import {UPLOAD_MEDIA} from '@services/queries';
 import useToast from '@hooks/useToast';
@@ -17,6 +18,7 @@ interface Props {
   formObj: any;
   handleSubmit: (formData: any) => void;
   title: string;
+  loading: boolean;
 }
 
 interface IframeElement extends HTMLIFrameElement {
@@ -29,7 +31,7 @@ const STORE = {
 };
 
 const EditCustomSurvey: React.FC<Props> = ({
-  title, onClose, formData, formObj, handleSubmit,
+  title, onClose, formData, formObj, handleSubmit, loading,
 }) => {
   const iframeRef = useRef<IframeElement>(null);
   const toast = useToast();
@@ -115,7 +117,10 @@ const EditCustomSurvey: React.FC<Props> = ({
       onClose={onClose}
       actions={[]}
     >
-      <iframe className={classes.iframe} ref={iframeRef} src={`/xforms?xform=${formData.id}`} title='Edit Custom Survey' />
+      <>
+        {loading && <Loader className={classes.loader} />}
+        <iframe className={classes.iframe} ref={iframeRef} src={`/xforms?xform=${formData.id}`} title='Edit Custom Survey' />
+      </>
     </Modal>
   );
 };
