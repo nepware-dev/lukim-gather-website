@@ -9,6 +9,7 @@ export default {
     'flex items-center justify-center h-[24px] w-[24px] bg-[#E7E8EA] rounded-full cursor-pointer',
   header: 'flex items-center justify-between mt-[35px] mb-[12px]',
   headerTitle: 'font-interSemibold text-[24px]',
+  rightContent: 'flex bg-red items-center gap-5 ml-auto mr-[18px]',
   date: 'font-inter text-[16px] text-[#585D69]',
   info: 'font-inter text-[16px] text-color-text leading-[24px]',
   closeIcon:

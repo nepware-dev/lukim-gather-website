@@ -20,6 +20,8 @@ import ProjectDetail from '@containers/ProjectDetail';
 import Notice from '@components/NoticeBar';
 import Page404 from '@containers/Page404';
 import PrivacyPolicy from '@containers/PrivacyPolicy';
+import PublicSurvey from '@containers/PublicSurvey';
+import PublicCustomForm from '@containers/PublicCustomForm';
 import ResetPassword from '@containers/ResetPassword';
 import Resource from '@containers/Resource';
 import Surveys from '@containers/Surveys';
@@ -97,6 +99,8 @@ const AppRoutes = () => {
           <Route path='/surveys/:uuid' element={<Surveys />} />
           <Route path='/surveys/analytics' element={<SurveyAnalytics />} />
         </Route>
+        <Route path='/public/survey/:id' element={<PublicSurvey />} />
+        <Route path='/public/mett-survey/:id' element={<PublicCustomForm />} />
         <Route path='*' element={<Page404 />} />
       </Routes>
     </>

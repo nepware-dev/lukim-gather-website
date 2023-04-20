@@ -53,7 +53,7 @@ export const GET_SURVEY_DATA = gql`
 `;
 
 export const GET_SURVEY = gql`
-  query Survey($id: Float!) {
+  query Survey($id: ID) {
     survey(id: $id, ordering: "-created_at") {
       id
       title
@@ -63,7 +63,7 @@ export const GET_SURVEY = gql`
   }
 `;
 
-const GET_FORMS = gql`
+export const GET_FORMS = gql`
   query {
     surveyForm {
       id
@@ -376,7 +376,7 @@ const CustomForms = () => {
       </DashboardLayout>
       {(showDetails && activeSurveyFormData) && (
         <FormEntry
-          allowEdit={activeSurveyFormData.createdBy.id === userId || isStaff}
+          allowEdit={activeSurveyFormData.createdBy?.id === userId || isStaff}
           data={activeSurveyFormData}
           setShowDetails={setShowDetails}
           formModel={formModel}

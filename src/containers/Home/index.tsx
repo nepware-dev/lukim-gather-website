@@ -7,7 +7,6 @@ import InfoCard from '@components/InfoCard';
 import Card from '@components/Card';
 
 import HeroImage from '@images/lukim-hero.webp';
-// import BgArt from '@images/bg-art.png';
 import circle from '@images/circle.svg';
 import upload from '@images/upload.svg';
 import flag from '@images/flag.svg';

@@ -6,6 +6,9 @@ import Map, {Marker} from 'react-map-gl';
 import {formatDate} from '@utils/formatDate';
 
 import {FormDataType} from '@components/FormTable';
+import SurveyExportDropdown from '@components/SurveyExportDropdown';
+
+import useToast from '@hooks/useToast';
 
 import 'mapbox-gl/dist/mapbox-gl.css';
 import cs from '@ra/cs';
@@ -37,15 +40,6 @@ type FormModelType = {
 
 interface QuestionObject {
     [x: string]: string;
-}
-
-interface Props {
-  formModel: FormModelType;
-  formQuestion: QuestionObject;
-  data: FormDataType;
-  setShowDetails(value: boolean): void;
-  onEditClick(): void;
-  allowEdit: boolean;
 }
 
 interface FormValueRendererProps {
@@ -181,14 +175,93 @@ const FormValueRenderer = ({
   );
 };
 
-const FormEntry: React.FC<Props> = ({
-  data, allowEdit, setShowDetails, formModel, formQuestion, onEditClick,
-}) => {
-  const navigate = useNavigate();
+type FormDetailsProps = {
+  formModel: FormModelType;
+  formQuestion: QuestionObject;
+  data: FormDataType;
+  allowEdit: boolean;
+  className?: string;
+  onClose?: () => void;
+  onEdit?: () => void;
+};
+
+export const FormDetails: React.FC<FormDetailsProps> = (props) => {
+  const {
+    data,
+    allowEdit,
+    className,
+    onClose,
+    onEdit,
+    formModel,
+    formQuestion,
+  } = props;
+
   const answers: Entries<AnswerItemType> = useMemo(() => {
     const dataObject: object = JSON.parse(data.answer)?.data ?? {};
     return Object.entries(dataObject).filter(([key]) => key.startsWith('section'));
   }, [data]);
+
+  const toast = useToast();
+  const handleCopyLink = useCallback(async () => {
+    const link = `${window.location.origin}/public/mett-survey/${data?.id}/`;
+    try {
+      await navigator.clipboard.writeText(link);
+      toast('success', 'Public link to the METT survey has been successfully copied to clipboard!');
+    } catch (err) {
+      toast('error', 'Something went wrong while getting the link!');
+    }
+  }, [toast, data]);
+
+  return (
+    <div className={className}>
+      {onClose && (
+        <div className={classes.iconWrapper} onClick={onClose}>
+          <HiOutlineX size={14} />
+        </div>
+      )}
+      <div className={classes.header}>
+        <h2 className={classes.headerTitle}>{data?.title}</h2>
+        <div className={classes.rightContent}>
+          {allowEdit
+          && <span onClick={onEdit} className='material-symbols-rounded text-[32px] text-[#70747e] cursor-pointer'>edit</span>}
+          <SurveyExportDropdown
+            onCopyLink={handleCopyLink}
+          />
+        </div>
+      </div>
+      <p className={classes.date}>{formatDate(data.createdAt)}</p>
+      {answers?.map(([key, value]) => (
+        <FormValueRenderer
+          key={key}
+          name={key}
+          value={value}
+          level={0}
+          formModel={formModel}
+          formQuestion={formQuestion}
+        />
+      ))}
+    </div>
+  );
+};
+
+type FormEntryProps = {
+  formModel: FormModelType;
+  formQuestion: QuestionObject;
+  data: FormDataType;
+  setShowDetails(value: boolean): void;
+  onEditClick(): void;
+  allowEdit: boolean;
+};
+
+const FormEntry: React.FC<FormEntryProps> = ({
+  data,
+  allowEdit,
+  setShowDetails,
+  formModel,
+  formQuestion,
+  onEditClick,
+}) => {
+  const navigate = useNavigate();
 
   const escapeListener = useCallback(
     (event: KeyboardEvent) => {
@@ -216,27 +289,15 @@ const FormEntry: React.FC<Props> = ({
   return (
     <div>
       <div className={classes.detailsContainer}>
-        <div className={classes.detailsModal}>
-          <div className={classes.iconWrapper} onClick={hideDetails}>
-            <HiOutlineX size={14} />
-          </div>
-          <div className={classes.header}>
-            <h2 className={classes.headerTitle}>{data?.title}</h2>
-            {allowEdit
-              && <span onClick={onEditClick} className='material-symbols-rounded text-[32px] text-[#70747e] cursor-pointer'>edit</span>}
-          </div>
-          <p className={classes.date}>{formatDate(data.createdAt)}</p>
-          {answers?.map(([key, value]) => (
-            <FormValueRenderer
-              key={key}
-              name={key}
-              value={value}
-              level={0}
-              formModel={formModel}
-              formQuestion={formQuestion}
-            />
-          ))}
-        </div>
+        <FormDetails
+          className={classes.detailsModal}
+          onClose={hideDetails}
+          data={data}
+          allowEdit={allowEdit}
+          onEdit={onEditClick}
+          formModel={formModel}
+          formQuestion={formQuestion}
+        />
       </div>
     </div>
   );

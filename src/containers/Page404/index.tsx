@@ -29,7 +29,7 @@ const Page404 = () => {
               </p>
               <Button
                 onClick={handleClick}
-                text='Take me to the home'
+                text='Take me to the homepage'
                 className={classes.button}
                 textClassName={classes.buttonText}
               />

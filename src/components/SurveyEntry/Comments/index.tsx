@@ -26,6 +26,7 @@ interface CommentsProps {
   surveyId?: number | string;
   commentsData: any[];
   refetch: (surveyId: string | number) => void;
+  readOnly?: boolean;
 }
 
 const NoComments: React.FC = () => <p className={classes.emptyMessage}>No comments found!</p>;
@@ -37,6 +38,7 @@ interface CommentItemProps {
   onReply?: (commentText: string, parentId: string | number) => void;
   onEdit: (commentText: string, commentId: string | number) => void;
   onDelete: (commentId: string | number) => void;
+  readOnly?: boolean;
 }
 
 const CommentItem: React.FC<CommentItemProps> = ({
@@ -46,6 +48,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
   onReply,
   onEdit,
   onDelete,
+  readOnly,
 }) => {
   const {user} = useSelector((state: rootState) => state.auth);
 
@@ -104,8 +107,15 @@ const CommentItem: React.FC<CommentItemProps> = ({
   }, [onEdit, item]);
 
   const renderReplyCommentItem = useCallback((listProps) => (
-    <CommentItem {...listProps} isReply onLike={onLike} onEdit={onEdit} onDelete={onDelete} />
-  ), [onLike, onEdit, onDelete]);
+    <CommentItem
+      {...listProps}
+      isReply
+      onLike={onLike}
+      onEdit={onEdit}
+      onDelete={onDelete}
+      readOnly={readOnly}
+    />
+  ), [onLike, onEdit, onDelete, readOnly]);
 
   const renderCommentOptionsIcon = useCallback(() => (
     <div className={classes.commentOptionsIconContainer}>
@@ -158,7 +168,10 @@ const CommentItem: React.FC<CommentItemProps> = ({
           {!isEditMode ? isReplyMode ? (
             <CommentInput placeholder='Add reply' onCancel={handleReplyCancel} onSubmit={handleReplySubmit} />
           ) : (
-            <div className={classes.commentActions}>
+            <div className={cs(classes.commentActions, {
+              hidden: readOnly,
+            })}
+            >
               {!item.isDeleted && (
                 <LikeIcon
                   size={20}
@@ -222,6 +235,7 @@ const Comments: React.FC<CommentsProps> = ({
   surveyId,
   commentsData,
   refetch,
+  readOnly,
 }) => {
   const toast = useToast();
 
@@ -306,13 +320,20 @@ const Comments: React.FC<CommentsProps> = ({
       onReply={handleAddComment}
       onEdit={handleEditComment}
       onDelete={handleDeleteComment}
+      readOnly={readOnly}
     />
-  ), [handleLikeDislikeComment, handleAddComment, handleEditComment, handleDeleteComment]);
+  ), [
+    handleLikeDislikeComment,
+    handleAddComment,
+    handleEditComment,
+    handleDeleteComment,
+    readOnly,
+  ]);
 
   return (
     <div className={classes.container}>
       {hasNoComments && <NoComments />}
-      <CommentInput onSubmit={handleAddComment} />
+      {!readOnly && <CommentInput onSubmit={handleAddComment} />}
       {!hasNoComments && (
         <List
           className={classes.commentList}
