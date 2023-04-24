@@ -1,7 +1,7 @@
 export default {
   navbar: 'w-full max-w-[1440px] mx-auto px-[5vw] py-[22px] sm:flex sm:justify-between z-[9] fixed sm:static',
   darkBar: 'bg-[#05375A]',
-  lightBar: 'sm:bg-color-bg bg-color-white mb-[20px]',
+  lightBar: 'sm:bg-color-bg bg-color-white',
   toggle: 'absolute right-[20px] top-[30px] py-2 px-2 cursor-pointers',
   logoWrapper: 'cursor-pointer',
   logo: 'h-[66px]',

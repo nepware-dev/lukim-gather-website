@@ -8,6 +8,6 @@ export default {
   text: 'max-w-[446px] font-inter text-[16px] leading-[24px] text-[#404653] my-[28px] sm:text-[18px] sm:leading-[32px]',
   imageWrapper: 'sm:flex sm:align-center sm:justify-center lg:w-[50%]',
   image404: 'max-h-[400px]',
-  button: 'max-w-[226px] bg-color-white',
-  buttonText: 'font-interSemibold text-[#EC6D25]',
+  button: 'max-w-[250px] bg-color-white',
+  buttonText: 'font-interSemibold',
 };
