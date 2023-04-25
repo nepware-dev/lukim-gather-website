@@ -15,7 +15,9 @@ export default {
   dropdownItems:
     'flex-col py-[8px] px-[14px] font-interMedium border border-[#CCDCE8] text-[14px] rounded-lg',
   dropdownItem: 'cursor-pointer p-[10px] rounded-lg',
-  addNewButton: '!w-fit border-[#CCDCE8] bg-[#E7E8EA] h-[44px]',
+  addNewButton: '!w-fit border-[#CCDCE8] bg-[#E7E8EA] h-[44px] mr-auto',
   addNewButtonText: '!text-[#70747E] text-[14px]',
   analyticsButton: 'h-[44px] px-[12px] !w-fit rounded-lg',
+  selectInput: 'h-[42px] min-w-[260px] sm:min-w-[12em] w-max cursor-pointer',
+  clear: 'flex items-center cursor-pointer hover:text-[#585D69] h-[42px] hover:bg-[#E7ECF2] px-3 rounded-lg w-fit mb-4',
 };

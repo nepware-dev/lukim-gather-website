@@ -27,6 +27,7 @@ import Pagination from '@components/Pagination';
 import Dropdown from '@components/Dropdown';
 import FormEntry from '@components/FormEntry';
 import EditCustomSurveyModal from '@components/EditCustomSurveyModal';
+import SelectInput from '@ra/components/Form/SelectInput'; // eslint-disable-line no-eval
 
 import {flattenObject} from '@containers/Dashboard';
 
@@ -74,6 +75,13 @@ export const GET_FORMS = gql`
   }
 `;
 
+function getProjectNameFromFormData(formData: FormDataType) {
+  const dataObject: any = JSON.parse(formData.answer)?.data ?? {};
+  return dataObject?.section_1?.project_name;
+}
+
+const identity = (item: any) => item;
+
 const CustomForms = () => {
   const {id} = useParams();
   const {
@@ -87,7 +95,6 @@ const CustomForms = () => {
     fetchPolicy: !id ? 'cache-only' : 'cache-first',
   });
   const {data: formData} = useQuery(GET_FORMS);
-  const [status] = useState<string>('All');
   const [surveyFormData, setSurveyFormData] = useState<FormDataType[]>([]);
   const [activeSurveyFormData, setActiveSurveyFormData] = useState<FormDataType>();
   const [activePage, setActivePage] = useState<number>(1);
@@ -101,6 +108,8 @@ const CustomForms = () => {
   const [startDate, endDate] = dateRange;
   const [showEditSurvey, toggleShowEditSurvey] = useToggle(false);
   const [showAddSurvey, toggleShowAddSurvey] = useToggle(false);
+
+  const [projectFilter, setProjectFilter] = useState<string>('');
 
   const navigate = useNavigate();
 
@@ -163,35 +172,27 @@ const CustomForms = () => {
 
   useEffect(() => {
     if (!data?.survey.length) return;
-    if (status === 'All') {
-      const filterData = data.survey.filter(
-        (item: {createdAt: string}) => new Date(new Date(item.createdAt).toDateString())
-            >= new Date(startDate.toDateString())
-          && new Date(new Date(item.createdAt).toDateString())
-            <= new Date(endDate?.toDateString()),
-      );
-      const slicedData = filterData.slice(
-        rows * activePage - rows,
-        rows * activePage,
-      );
-      setSurveyFormData(slicedData);
-      setTotalPages(Math.ceil(filterData.length / rows));
-    } else {
-      const filterData = data.survey.filter(
-        (item: {status: string; createdAt: string}) => new Date(new Date(item.createdAt).toDateString())
-            >= new Date(startDate.toDateString())
-          && new Date(new Date(item.createdAt).toDateString())
-            <= new Date(endDate?.toDateString())
-          && item.status.toLowerCase() === status.toLowerCase(),
-      );
-      const slicedData = filterData.slice(
-        rows * activePage - rows,
-        rows * activePage,
-      );
-      setSurveyFormData(slicedData);
-      setTotalPages(Math.ceil(filterData.length / rows));
-    }
-  }, [activePage, data, endDate, rows, startDate, status]);
+    const projectFilteredSurveys = data.survey.filter((survey: FormDataType) => {
+      if (projectFilter) {
+        const projectName = getProjectNameFromFormData(survey);
+        return projectName && projectName === projectFilter;
+      }
+      return true;
+    });
+    let filterData = projectFilteredSurveys;
+    filterData = filterData.filter(
+      (item: {createdAt: string}) => new Date(new Date(item.createdAt).toDateString())
+           >= new Date((startDate as Date).toDateString?.())
+         && new Date(new Date(item.createdAt).toDateString())
+           <= new Date((endDate as Date)?.toDateString?.()),
+    );
+    const slicedData = filterData.slice(
+      rows * activePage - rows,
+      rows * activePage,
+    );
+    setSurveyFormData(slicedData);
+    setTotalPages(Math.ceil(filterData.length / rows));
+  }, [activePage, data, endDate, rows, startDate, projectFilter]);
 
   const formModel = useMemo(() => {
     const formObj = formData?.surveyForm?.[0];
@@ -215,6 +216,16 @@ const CustomForms = () => {
     navigate('/custom-forms');
     toggleShowEditSurvey();
   }, [navigate, toggleShowEditSurvey]);
+
+  const projectNames = useMemo(() => (data?.survey || []).map(getProjectNameFromFormData).filter(identity), [data]);
+  const handleProjectChange = useCallback(({option}: {option?: string}) => {
+    setProjectFilter(option ?? '');
+  }, []);
+
+  const handleClearClick = useCallback(() => {
+    setDateRange([minDate as Date, maxDate as Date]);
+    setProjectFilter('');
+  }, [minDate, maxDate]);
 
   const handleEditSurvey = useCallback((_formData) => {
     updateSurvey({
@@ -323,6 +334,12 @@ const CustomForms = () => {
         <div className={classes.container}>
           <h2 className={classes.title}>METT List</h2>
           <div className={classes.header}>
+            <Button
+              className={classes.addNewButton}
+              textClassName={classes.addNewButtonText}
+              onClick={toggleShowAddSurvey}
+              text='Add New Entry'
+            />
             <div className='cursor-pointer'>
               <DatePicker
                 selectsRange
@@ -335,15 +352,23 @@ const CustomForms = () => {
                 customInput={<CustomInput />}
               />
             </div>
-            <Button
-              className={classes.addNewButton}
-              textClassName={classes.addNewButtonText}
-              onClick={toggleShowAddSurvey}
-              text='Add New Entry'
+            <SelectInput
+              className={classes.selectInput}
+              defaultValue={projectFilter || undefined}
+              valueExtractor={identity}
+              keyExtractor={identity}
+              options={projectNames}
+              placeholder='Project'
+              onChange={handleProjectChange}
             />
+            {(projectFilter || (minDate && +startDate !== +minDate) || (maxDate && +endDate !== +maxDate)) && (
+              <span className={classes.clear} onClick={handleClearClick}>
+                Clear filters
+              </span>
+            )}
             {surveyFormData?.length > 0 && (
               <CSVLink
-                className='ml-auto h-[44px] px-[12px] flex items-center rounded-lg border-[#CCDCE8] bg-[#E7E8EA] font-interMedium text-[14px] text-[#70747E] hover:brightness-[1.02] transition duration-300'
+                className='h-[44px] px-[12px] flex items-center rounded-lg border-[#CCDCE8] bg-[#E7E8EA] font-interMedium text-[14px] text-[#70747E] hover:brightness-[1.02] transition duration-300'
                 filename={`Custom-Survey-Report-${new Date().toISOString()}.csv`}
                 data={flatCustomSurveys}
               >
