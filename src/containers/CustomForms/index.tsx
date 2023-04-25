@@ -32,7 +32,7 @@ import {flattenObject} from '@containers/Dashboard';
 
 import useToggle from '@ra/hooks/useToggle';
 import useToast from '@hooks/useToast';
-import {UPDATE_SURVEY, CREATE_SURVEY} from '@services/queries';
+import {UPDATE_SURVEY, CREATE_SURVEY, GET_PROJECTS} from '@services/queries';
 
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -106,6 +106,9 @@ const CustomForms = () => {
 
   const toast = useToast();
 
+  const {data: myProjects} = useQuery(GET_PROJECTS, {
+    variables: {tab: 'my_project'},
+  });
   const [updateSurvey, {loading: updateLoading}] = useMutation(UPDATE_SURVEY, {
     onCompleted: () => {
       toast('success', 'Survey has been updated successfully!');
@@ -392,6 +395,7 @@ const CustomForms = () => {
           formData={surveyFormData[activeIndex]}
           formObj={formData?.surveyForm?.[0]}
           handleSubmit={handleEditSurvey}
+          projects={myProjects?.projects || []}
         />
       )}
       {showAddSurvey && (
@@ -402,6 +406,7 @@ const CustomForms = () => {
           formData={{}}
           formObj={formData?.surveyForm?.[0]}
           handleSubmit={handleAddSurvey}
+          projects={myProjects?.projects || []}
         />
       )}
     </>

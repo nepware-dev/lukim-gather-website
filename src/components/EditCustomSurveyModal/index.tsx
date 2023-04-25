@@ -19,6 +19,7 @@ interface Props {
   handleSubmit: (formData: any) => void;
   title: string;
   loading: boolean;
+  projects: Array<any>;
 }
 
 interface IframeElement extends HTMLIFrameElement {
@@ -31,7 +32,7 @@ const STORE = {
 };
 
 const EditCustomSurvey: React.FC<Props> = ({
-  title, onClose, formData, formObj, handleSubmit, loading,
+  title, onClose, formData, formObj, handleSubmit, loading, projects,
 }) => {
   const iframeRef = useRef<IframeElement>(null);
   const toast = useToast();
@@ -47,7 +48,7 @@ const EditCustomSurvey: React.FC<Props> = ({
 
   useEffect(() => {
     let {model} = formObj.xform;
-    const {form} = formObj.xform;
+    let {form} = formObj.xform;
 
     if (formData?.answer) {
       const builder = new XMLBuilder({
@@ -56,6 +57,8 @@ const EditCustomSurvey: React.FC<Props> = ({
       const xmlContent = builder.build(JSON.parse(formData.answer));
       model = model.replace(/<data(.*?)<\/data>/, xmlContent);
     }
+    const projectsXML = projects.reduce((a, c) => `${a}<option value="${c.id}">${c.title}</option>`, '');
+    form = form.replace(/(<select name=.*project_name.*None<\/option>)(.*?)(<\/select>)/, `$1${projectsXML}$3`);
 
     if (iframeRef && iframeRef.current) {
       // eslint-disable-next-line no-underscore-dangle
@@ -64,7 +67,7 @@ const EditCustomSurvey: React.FC<Props> = ({
       iframeRef.current.contentWindow._formStr = form;
       // iframeRef.current.src = '/xforms';
     }
-  }, [formData.answer, formObj.xform]);
+  }, [formData.answer, formObj.xform, projects]);
 
   useEffect(() => {
     const queue: Promise<any>[] = [];

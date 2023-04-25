@@ -1,6 +1,6 @@
 import React, {useCallback, useRef} from 'react';
 import {Link} from 'react-router-dom';
-import {gql, useQuery} from '@apollo/client';
+import {useQuery} from '@apollo/client';
 
 import DashboardHeader from '@components/DashboardHeader';
 import DashboardLayout from '@components/DashboardLayout';
@@ -10,18 +10,10 @@ import List from '@ra/components/List';
 import cs from '@utils/cs';
 import organizationPlaceholder from '@images/organization-placeholder.svg';
 
+import {GET_PROJECTS} from '@services/queries';
 import classes from './styles';
 
 const keyExtractor = (item: {id: string}) => item.id;
-
-const GET_PROJECTS = gql`
-  query Projects($tab: String) {
-    projects(tab: $tab) {
-      id
-      title
-    }
-  }
-`;
 
 const Project = () => {
   const ref = useRef();

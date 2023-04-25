@@ -334,3 +334,12 @@ export const UPLOAD_MEDIA = gql`
         }
     }
 `;
+
+export const GET_PROJECTS = gql`
+  query Projects($tab: String) {
+    projects(tab: $tab) {
+      id
+      title
+    }
+  }
+`;
