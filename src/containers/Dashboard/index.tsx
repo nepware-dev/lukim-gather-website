@@ -31,6 +31,7 @@ import jsPDF from 'jspdf';
 
 import {FormDataType} from '@components/FormTable';
 import {SurveyDataType} from '@components/SurveyTable';
+import Button from '@components/Button';
 
 import {rootState} from '@store/rootReducer';
 import cs from '@utils/cs';
@@ -210,6 +211,19 @@ const Dashboard = () => {
 
   const handleProjectChange = useCallback(({option}) => {
     setSelectInputProject(option);
+  }, []);
+
+  const showClearFilter = useMemo(
+    () => (
+      selectInputCategory || selectInputRegion || selectInputProject || selectInputProtectedArea)
+    , [selectInputCategory, selectInputProject, selectInputProtectedArea, selectInputRegion],
+  );
+
+  const handleClearFilter = useCallback(() => {
+    setSelectInputCategory(null);
+    setSelectInputRegion(null);
+    setSelectInputProject(null);
+    setSelectInputProtectedArea(null);
   }, []);
 
   const surveyGeoJSON: any = useMemo(() => {
@@ -526,6 +540,7 @@ const Dashboard = () => {
             options={regionOptions}
             placeholder='Province'
             onChange={handleRegionChange}
+            defaultValue={selectInputRegion}
           />
           <SelectInput
             className={cs('h-[44px]', 'min-w-[12em] w-max', 'rounded-lg', 'border-[#CCDCE8]')}
@@ -534,6 +549,7 @@ const Dashboard = () => {
             options={category?.protectedAreaCategories}
             placeholder='Category'
             onChange={handleCategoryChange}
+            defaultValue={selectInputCategory}
           />
           <SelectInput
             className={cs('h-[44px]', 'min-w-[12em] w-max', 'rounded-lg', 'border-[#CCDCE8]')}
@@ -542,6 +558,7 @@ const Dashboard = () => {
             options={protectedAreasOptions}
             placeholder='Protected Areas'
             onChange={handleProtectedAreaChange}
+            defaultValue={selectInputProtectedArea}
           />
           <SelectInput
             className={cs('h-[44px]', 'min-w-[12em] w-max', 'rounded-lg', 'border-[#CCDCE8]')}
@@ -550,7 +567,11 @@ const Dashboard = () => {
             options={projectOptions}
             placeholder='Project'
             onChange={handleProjectChange}
+            defaultValue={selectInputProject}
           />
+          {showClearFilter && (
+            <Button className='min-w-[12em] w-max h-[44px]' onClick={handleClearFilter} text='Clear' />
+          )}
         </div>
         {filteredData && (
           <div className={classes.exportDropdown}>
