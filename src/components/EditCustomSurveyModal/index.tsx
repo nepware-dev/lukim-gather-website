@@ -57,7 +57,7 @@ const EditCustomSurvey: React.FC<Props> = ({
       const xmlContent = builder.build(JSON.parse(formData.answer));
       model = model.replace(/<data(.*?)<\/data>/, xmlContent);
     }
-    const projectsXML = projects.reduce((a, c) => `${a}<option value="${c.id}">${c.title}</option>`, '');
+    const projectsXML = projects.reduce((a, c) => `${a}<option value="${c.title}">${c.title}</option>`, '');
     form = form.replace(/(<select name=.*project_name.*None<\/option>)(.*?)(<\/select>)/, `$1${projectsXML}$3`);
 
     if (iframeRef && iframeRef.current) {
