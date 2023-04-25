@@ -31,7 +31,6 @@ import jsPDF from 'jspdf';
 
 import {FormDataType} from '@components/FormTable';
 import {SurveyDataType} from '@components/SurveyTable';
-import Button from '@components/Button';
 
 import {rootState} from '@store/rootReducer';
 import cs from '@utils/cs';
@@ -570,7 +569,9 @@ const Dashboard = () => {
             defaultValue={selectInputProject}
           />
           {showClearFilter && (
-            <Button className='min-w-[12em] w-max h-[44px]' onClick={handleClearFilter} text='Clear' />
+            <span className={classes.clearButton} onClick={handleClearFilter}>
+              Clear filters
+            </span>
           )}
         </div>
         {filteredData && (
