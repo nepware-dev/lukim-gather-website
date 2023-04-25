@@ -71,10 +71,16 @@ const FormValueRenderer = ({
       ) {
         let answerObj: InstanceItemType | undefined;
         formModel.model.instance.find((ins) => {
-          answerObj = ins?.root?.item?.find(
-            (itm) => itm.name === value,
-          );
-          if (answerObj) {
+          if (Array.isArray(ins?.root?.item)) {
+            answerObj = ins?.root?.item?.find(
+              (itm) => itm.name === value,
+            );
+            if (answerObj) {
+              return true;
+            }
+          }
+          if (ins?.root?.item) {
+            answerObj = ins.root.item as unknown as InstanceItemType;
             return true;
           }
           return false;
