@@ -14,8 +14,8 @@ export default {
   info: 'font-inter text-[16px] text-color-text leading-[24px]',
   closeIcon:
     'flex items-center justify-center min-h-[24px] min-w-[24px] bg-color-white rounded-full cursor-pointer',
-  formItem: 'mb-[12px] px-2',
-  formKey: 'inline-block w-1/3 font-inter font-semibold capitalize',
+  formItem: 'flex mb-[18px] px-2',
+  formKey: 'inline-block w-3/5 font-inter font-semibold capitalize',
   formValue: 'inline-block font-normal ml-8',
   formNested: 'pl-12',
   formItemTopic: 'mb-[12px] capitalize pl-2 font-bold text-[18px]',

@@ -573,18 +573,18 @@ const Dashboard = () => {
               Clear filters
             </span>
           )}
+          {filteredData && (
+            <div className={classes.exportDropdown}>
+              <Dropdown renderLabel={renderLabel}>
+                <div className={classes.exportOptions}>
+                  <ExportOption icon={pdfIcon} title='PDF' onClick={onExportPDF} />
+                  <ExportOption icon={pngIcon} title='Image (PNG)' onClick={onExportImage} />
+                  <ExportOption icon={csvIcon} title='Data (CSV)' onClick={onExportCSV} />
+                </div>
+              </Dropdown>
+            </div>
+          )}
         </div>
-        {filteredData && (
-          <div className={classes.exportDropdown}>
-            <Dropdown renderLabel={renderLabel}>
-              <div className={classes.exportOptions}>
-                <ExportOption icon={pdfIcon} title='PDF' onClick={onExportPDF} />
-                <ExportOption icon={pngIcon} title='Image (PNG)' onClick={onExportImage} />
-                <ExportOption icon={csvIcon} title='Data (CSV)' onClick={onExportCSV} />
-              </div>
-            </Dropdown>
-          </div>
-        )}
       </div>
       <div className={classes.mapWrapper} ref={contentRef}>
         <Map
