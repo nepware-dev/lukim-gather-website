@@ -217,7 +217,7 @@ const CustomForms = () => {
     toggleShowEditSurvey();
   }, [navigate, toggleShowEditSurvey]);
 
-  const projectNames = useMemo(() => (data?.survey || []).map(getProjectNameFromFormData).filter(identity), [data]);
+  const projectNames = useMemo(() => [...new Set((data?.survey || []).map(getProjectNameFromFormData).filter(identity))], [data]);
   const handleProjectChange = useCallback(({option}: {option?: string}) => {
     setProjectFilter(option ?? '');
   }, []);

@@ -91,7 +91,6 @@ const FormValueRenderer = ({
         if ((name === 'image' || name === 'management_img') && value?.startsWith('http')) {
           return <img alt='photos' className='w-[200px]' src={value} />;
         }
-
         return answerObj?.label || value.replace(/_/g, ' ');
       }
       return value;
