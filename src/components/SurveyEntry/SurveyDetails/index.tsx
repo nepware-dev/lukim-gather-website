@@ -310,6 +310,7 @@ const SurveyDetails: React.FC<SurveyDetailsProps> = (props) => {
       'Created By': data?.createdBy?.id,
       'Created At': formatDate(data?.createdAt),
       Status: data?.status,
+      Audio: data?.audioFile,
     };
     const csv = parse(csvData);
     const url = window.URL.createObjectURL(new Blob([csv]));

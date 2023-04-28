@@ -108,6 +108,7 @@ const headers = [
   {label: 'Boundary', value: 'boundary.coordinates'},
   {label: 'Status', value: 'status'},
   {label: 'Attachment', value: 'attachment'},
+  {label: 'Audio', value: 'audioFile'},
   {label: 'Created Date', value: 'createdAt'},
 ];
 

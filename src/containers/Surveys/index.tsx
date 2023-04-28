@@ -212,6 +212,8 @@ const headers = [
   {label: 'Latitude', value: 'location.coordinates[1]'},
   {label: 'Boundary', value: 'boundary.coordinates'},
   {label: 'Status', value: 'status'},
+  {label: 'Attachment', value: 'attachment'},
+  {label: 'Audio', value: 'audioFile'},
   {label: 'Created Date', value: 'createdAt'},
 ];
 
@@ -532,6 +534,7 @@ const Surveys = () => {
     const data = surveyData.map((item) => ({
       ...item,
       sentiment: sentimentName[item.sentiment],
+      attachment: item?.attachment.map((_attachment: any) => _attachment.media),
     }));
     const dateVal = formatISO(new Date(), {format: 'basic'}).replace(/\+|:/g, '');
     const happeningSurveyLocationCSV = happeningSurveyLocationParser.parse(
