@@ -89,7 +89,10 @@ const CustomForms = () => {
       user: {id: userId, isStaff},
     },
   } = useSelector((state: rootState) => state);
-  const {data, loading: surveyLoading, refetch: refetchSurveys} = useQuery(GET_SURVEY_DATA);
+  const {
+    data, loading: surveyLoading, refetch: refetchSurveys, error,
+  } = useQuery(GET_SURVEY_DATA);
+
   const {refetch} = useQuery(GET_SURVEY, {
     variables: {id: Number(id)},
     fetchPolicy: !id ? 'cache-only' : 'cache-first',
@@ -380,7 +383,7 @@ const CustomForms = () => {
           <div className={classes.surveyTable}>
             <FormTable
               data={surveyFormData}
-              loading={surveyLoading}
+              loading={surveyLoading || (!surveyFormData?.length && !error)}
               setActiveIndex={setActiveIndex}
               setShowDetails={setShowDetails}
             />
