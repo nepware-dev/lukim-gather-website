@@ -100,6 +100,16 @@ const Navbar: React.FC<Props> = ({hideButton = false, isDark = false}) => {
             title='Contact Us'
             isDarkNav={isDark}
           />
+          <div className={classes.linkWrapper}>
+            <a
+              className={`${cs(classes.externalLink, isDark ? classes.darkLink : classes.lightLink)}`}
+              href='https://community.lukimgather.org/'
+              target='_blank'
+              rel='noreferrer'
+            >
+              Forum
+            </a>
+          </div>
           <div className={cs(classes.buttonWrapper, ['pt-[2vh]', open])}>
             {isAuthenticated ? (
               <Button text='Dashboard' onClick={onDashboardClick} />
