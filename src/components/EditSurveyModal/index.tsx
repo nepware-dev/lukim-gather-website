@@ -154,8 +154,8 @@ const EditSurveyModal: React.FC<Props> = ({
   ]);
 
   const handleAddImages = useCallback(({files = []}: {files: any}) => {
-    setPhotos([...files]);
-  }, []);
+    setPhotos([...photos, ...files]);
+  }, [photos]);
 
   const handleAddAudio = useCallback(({files}: {files: any}) => {
     setAudioFile(files[0]);
@@ -271,19 +271,6 @@ const EditSurveyModal: React.FC<Props> = ({
           </div>
           <Title title='PHOTOS' />
           <div className={classes.photosWrapper}>
-            {attachmentLink?.length > 0 ? attachmentLink.map((item, index) => (
-              <ImageItem
-                index={index}
-                item={item.media}
-                onRemove={updateMode ? undefined : handleDeleteImage}
-              />
-            )) : ''}
-            {allImages?.map((item, index) => (
-              <ImageItem index={index} item={item} onRemove={handleRemoveImage} />
-            ))}
-            {attachmentLink?.length === 0 && allImages?.length === 0 && (
-              <div className={cs(classes.photo, classes.emptyComponent)}>No photos found</div>
-            )}
             <div className={classes.uploadButton}>
               <FileInput
                 id='surveyPhoto'
@@ -297,6 +284,19 @@ const EditSurveyModal: React.FC<Props> = ({
                 <AiOutlinePlus size={25} color='#FFF' />
               </label>
             </div>
+            {attachmentLink?.length > 0 ? attachmentLink.map((item, index) => (
+              <ImageItem
+                index={index}
+                item={item.media}
+                onRemove={updateMode ? undefined : handleDeleteImage}
+              />
+            )) : ''}
+            {allImages?.map((item, index) => (
+              <ImageItem index={index} item={item} onRemove={handleRemoveImage} />
+            ))}
+            {attachmentLink?.length === 0 && allImages?.length === 0 && (
+              <div className={cs(classes.photo, classes.emptyComponent)}>No photos found</div>
+            )}
           </div>
           <Title title='LOCATION' />
           <p className={classes.fieldValue}>{locationName || ''}</p>
