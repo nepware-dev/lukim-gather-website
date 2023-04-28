@@ -7,8 +7,10 @@ import {useNavigate} from 'react-router-dom';
 
 import Layout from '@components/Layout';
 import Button from '@ra/components/Button';
+import TextareaInput from '@components/TextareaInput';
 
 import TextInput from '@ra/components/Form/TextInput';
+import Input from '@ra/components/Form/Input';
 import Form, {FormSubmitCallback, InputField} from '@ra/components/Form';
 
 import useToast from '@hooks/useToast';
@@ -22,7 +24,7 @@ const ContactUs = () => {
 
   const [sendMessage, {loading}] = useMutation(SEND_MESSAGE, {
     onCompleted: () => {
-      toast('success', 'Successfully message sent!!');
+      toast('success', 'Your message has been successfully sent!');
       navigate('/');
     },
     onError: ({graphQLErrors}) => {
@@ -31,17 +33,29 @@ const ContactUs = () => {
   });
 
   const handleSaveDeliverables: FormSubmitCallback = useCallback(async (formData) => {
-    await sendMessage({
-      variables: {
-        input: {
-          name: `${formData.firstName} ${formData.firstName}`,
-          email: formData.email,
-          subject: 'subject',
-          message: formData.message,
+    const fullName = `${formData.firstName?.trim?.() || ''} ${formData.lastName?.trim?.() || ''}`;
+
+    if (!fullName?.trim?.()) {
+      toast('error', 'Please enter a valid name!');
+    } else if (!formData?.email?.match(
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+    )) {
+      toast('error', 'Please enter a valid email address');
+    } else if (!formData.message?.trim?.()) {
+      toast('error', 'Please enter a valid message to send!');
+    } else {
+      await sendMessage({
+        variables: {
+          input: {
+            name: fullName,
+            email: formData.email,
+            subject: 'subject',
+            message: formData.message,
+          },
         },
-      },
-    });
-  }, [sendMessage]);
+      });
+    }
+  }, [sendMessage, toast]);
 
   return (
     <Layout>
@@ -108,7 +122,7 @@ const ContactUs = () => {
             <div className={classes.col}>
               <p className={classes.label}>Email</p>
               <InputField
-                component={TextInput}
+                component={Input}
                 name='email'
                 type='email'
                 placeholder='Enter your email address'
@@ -119,7 +133,7 @@ const ContactUs = () => {
             <div className={classes.col}>
               <p className={classes.label}>Message</p>
               <InputField
-                component='textarea'
+                component={TextareaInput}
                 name='message'
                 className={classes.input}
                 rows={5}
