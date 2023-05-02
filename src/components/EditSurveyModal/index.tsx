@@ -154,7 +154,7 @@ const EditSurveyModal: React.FC<Props> = ({
   ]);
 
   const handleAddImages = useCallback(({files = []}: {files: any}) => {
-    setPhotos([...photos, ...files]);
+    setPhotos([...files, ...photos]);
   }, [photos]);
 
   const handleAddAudio = useCallback(({files}: {files: any}) => {
@@ -284,6 +284,12 @@ const EditSurveyModal: React.FC<Props> = ({
                 <AiOutlinePlus size={25} color='#FFF' />
               </label>
             </div>
+            {attachmentLink?.length === 0 && allImages?.length === 0 && (
+              <div className={cs(classes.photo, classes.emptyComponent)}>No photos found</div>
+            )}
+            {allImages?.map((item, index) => (
+              <ImageItem index={index} item={item} onRemove={handleRemoveImage} />
+            ))}
             {attachmentLink?.length > 0 ? attachmentLink.map((item, index) => (
               <ImageItem
                 index={index}
@@ -291,12 +297,6 @@ const EditSurveyModal: React.FC<Props> = ({
                 onRemove={updateMode ? undefined : handleDeleteImage}
               />
             )) : ''}
-            {allImages?.map((item, index) => (
-              <ImageItem index={index} item={item} onRemove={handleRemoveImage} />
-            ))}
-            {attachmentLink?.length === 0 && allImages?.length === 0 && (
-              <div className={cs(classes.photo, classes.emptyComponent)}>No photos found</div>
-            )}
           </div>
           <Title title='LOCATION' />
           <p className={classes.fieldValue}>{locationName || ''}</p>
