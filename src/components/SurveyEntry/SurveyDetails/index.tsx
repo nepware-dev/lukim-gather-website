@@ -296,7 +296,10 @@ const SurveyDetails: React.FC<SurveyDetailsProps> = (props) => {
     });
   }, [data, currentDate]);
 
-  const onExportCSV = useCallback(() => {
+  const [getEntireHappeningSurveyHistoryData] = useLazyQuery(GET_HAPPENING_SURVEY_HISTORY_ITEM);
+
+  const toast = useToast();
+  const onExportCSV = useCallback(async () => {
     const csvData = {
       ID: data?.id,
       Title: data?.title,
@@ -312,15 +315,49 @@ const SurveyDetails: React.FC<SurveyDetailsProps> = (props) => {
       Status: data?.status,
       Audio: data?.audioFile,
     };
-    const csv = parse(csvData);
+    const csvArray = [];
+    if (versionsData.length > 1) {
+      try {
+        const res = await getEntireHappeningSurveyHistoryData({
+          variables: {
+            surveyId: data?.id,
+          },
+        });
+        (res?.data?.happeningSurveysHistory || []).forEach(
+          (surveyHistoryItem: {serializedData: {fields: SurveyDataType}}, idx: number) => {
+            csvArray.push({
+              ID: idx === 0 ? data?.id : null,
+              Title: surveyHistoryItem?.serializedData?.fields?.title,
+              Description: surveyHistoryItem?.serializedData?.fields?.description,
+              Category: surveyHistoryItem?.serializedData?.fields?.category?.title,
+              Location: surveyHistoryItem?.serializedData?.fields?.location?.coordinates,
+              Boundary: surveyHistoryItem?.serializedData?.fields?.boundary?.coordinates,
+              Region: surveyHistoryItem?.serializedData?.fields?.region?.id,
+              Condition: surveyHistoryItem?.serializedData?.fields?.improvement,
+              Sentiment: sentimentName[surveyHistoryItem?.serializedData?.fields?.sentiment],
+              'Created By': surveyHistoryItem?.serializedData?.fields?.createdBy?.id,
+              'Created At': formatDate(surveyHistoryItem?.serializedData?.fields?.createdAt),
+              'Modified At': formatDate(surveyHistoryItem?.serializedData?.fields?.modifiedAt),
+              Status: surveyHistoryItem?.serializedData?.fields?.status,
+              Audio: surveyHistoryItem?.serializedData?.fields?.audioFile,
+            });
+          },
+        );
+      } catch (err) {
+        csvArray.push(csvData);
+        toast('error', 'Something went wrong while exporting update history!');
+      }
+    } else {
+      csvArray.push(csvData);
+    }
+    const csv = parse(csvArray);
     const url = window.URL.createObjectURL(new Blob([csv]));
     const a = document.createElement('a');
     a.href = url;
     a.download = `${data?.title}-${currentDate}.csv`;
     a.click();
-  }, [data, currentDate]);
+  }, [data, currentDate, getEntireHappeningSurveyHistoryData, versionsData, toast]);
 
-  const toast = useToast();
   const handleCopyLink = useCallback(async () => {
     const link = `${window.location.origin}/public/survey/${data?.id}/`;
     try {
