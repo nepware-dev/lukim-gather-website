@@ -13,8 +13,6 @@ import {RiArrowDownSLine} from 'react-icons/ri';
 
 import {formatISO} from 'date-fns';
 import {Parser} from 'json2csv';
-import JSZip from 'jszip';
-import {saveAs} from 'file-saver';
 
 import {rootState} from '@store/rootReducer';
 import cs from '@utils/cs';
@@ -205,21 +203,20 @@ const headers = [
   {label: 'Category', value: 'category.title'},
   {label: 'Title', value: 'title'},
   {label: 'Description', value: 'description'},
+  {label: 'Project', value: 'project.title'},
   {label: 'Sentiment', value: 'sentiment'},
   {label: 'Condition', value: 'improvement'},
   {label: 'Location', value: 'location.coordinates'},
-  {label: 'Longitude', value: 'location.coordinates[0]'},
-  {label: 'Latitude', value: 'location.coordinates[1]'},
   {label: 'Boundary', value: 'boundary.coordinates'},
+  {label: 'Created At', value: 'createdAt'},
   {label: 'Status', value: 'status'},
-  {label: 'Attachment', value: 'attachment'},
   {label: 'Audio', value: 'audioFile'},
-  {label: 'Created Date', value: 'createdAt'},
+  {label: 'Photos', value: 'attachment'},
 ];
 
-const happeningSurveyLocationParser = new Parser({
-  fields: headers.filter((header) => header.label !== 'Boundary'),
-  defaultValue: 'No matching data found in selection',
+const happeningSurveyParser = new Parser({
+  fields: headers,
+  defaultValue: '',
 });
 
 type State = {
@@ -228,11 +225,6 @@ type State = {
     title: string;
   }
 }
-
-const happeningSurveyBoundaryParser = new Parser({
-  fields: headers.filter((header) => !(header.label === 'Location' || header.label === 'Longitude' || header.label === 'Latitude')),
-  defaultValue: 'No matching data found in selection',
-});
 
 const Surveys = () => {
   const {
@@ -537,18 +529,12 @@ const Surveys = () => {
       attachment: item?.attachment.map((_attachment: any) => _attachment.media),
     }));
     const dateVal = formatISO(new Date(), {format: 'basic'}).replace(/\+|:/g, '');
-    const happeningSurveyLocationCSV = happeningSurveyLocationParser.parse(
-      data.filter((surveyLocation) => surveyLocation.location !== null),
-    );
-    const happeningSurveyBoundaryCSV = happeningSurveyBoundaryParser.parse(
-      data.filter((surveyBoundary) => surveyBoundary.boundary !== null),
-    );
-    const zip = new JSZip();
-    zip.file(`Happening_survey_report_location_${dateVal}.csv`, happeningSurveyLocationCSV);
-    zip.file(`Happening_survey_report_boundary_${dateVal}.csv`, happeningSurveyBoundaryCSV);
-    zip.generateAsync({type: 'blob'}).then((content) => {
-      saveAs(content, `Survey_report_${dateVal}.zip`);
-    });
+    const happeningSurveyCSV = happeningSurveyParser.parse(data);
+    const url = window.URL.createObjectURL(new Blob([happeningSurveyCSV]));
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Happening_survey_report_${dateVal}.csv`;
+    a.click();
   }, [surveyData]);
 
   const handleAnalyticsClick = useCallback(() => {

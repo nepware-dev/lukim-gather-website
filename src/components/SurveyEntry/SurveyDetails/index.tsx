@@ -305,6 +305,7 @@ const SurveyDetails: React.FC<SurveyDetailsProps> = (props) => {
       Title: data?.title,
       Description: data?.description,
       Category: data?.category?.title,
+      Project: data?.project?.title,
       Location: data?.location?.coordinates,
       Boundary: data?.boundary?.coordinates,
       Region: data?.region?.id,
@@ -314,6 +315,7 @@ const SurveyDetails: React.FC<SurveyDetailsProps> = (props) => {
       'Created At': formatDate(data?.createdAt),
       Status: data?.status,
       Audio: data?.audioFile,
+      Photos: data?.attachment?.map?.((a: {id: string; media: string}) => a.media).join(', '),
     };
     const csvArray = [];
     if (versionsData.length > 1) {
@@ -330,6 +332,7 @@ const SurveyDetails: React.FC<SurveyDetailsProps> = (props) => {
               Title: surveyHistoryItem?.serializedData?.fields?.title,
               Description: surveyHistoryItem?.serializedData?.fields?.description,
               Category: surveyHistoryItem?.serializedData?.fields?.category?.title,
+              Project: surveyHistoryItem?.serializedData?.fields?.project?.title,
               Location: surveyHistoryItem?.serializedData?.fields?.location?.coordinates,
               Boundary: surveyHistoryItem?.serializedData?.fields?.boundary?.coordinates,
               Region: surveyHistoryItem?.serializedData?.fields?.region?.id,
@@ -340,6 +343,7 @@ const SurveyDetails: React.FC<SurveyDetailsProps> = (props) => {
               'Modified At': formatDate(surveyHistoryItem?.serializedData?.fields?.modifiedAt),
               Status: surveyHistoryItem?.serializedData?.fields?.status,
               Audio: surveyHistoryItem?.serializedData?.fields?.audioFile,
+              Photos: data?.attachment?.map?.((a: {id: string; media: string}) => a.media).join(', '),
             });
           },
         );
