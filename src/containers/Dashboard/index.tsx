@@ -100,26 +100,20 @@ const headers = [
   {label: 'Category', value: 'category.title'},
   {label: 'Title', value: 'title'},
   {label: 'Description', value: 'description'},
+  {label: 'Project', value: 'project.title'},
   {label: 'Sentiment', value: 'sentiment'},
   {label: 'Condition', value: 'improvement'},
   {label: 'Location', value: 'location.coordinates'},
-  {label: 'Longitude', value: 'location.coordinates[0]'},
-  {label: 'Latitude', value: 'location.coordinates[1]'},
   {label: 'Boundary', value: 'boundary.coordinates'},
+  {label: 'Created At', value: 'createdAt'},
   {label: 'Status', value: 'status'},
-  {label: 'Attachment', value: 'attachment'},
   {label: 'Audio', value: 'audioFile'},
-  {label: 'Created Date', value: 'createdAt'},
+  {label: 'Photos', value: 'attachment'},
 ];
 
-const happeningSurveyLocationParser = new Parser({
-  fields: headers.filter((header) => header.label !== 'Boundary'),
-  defaultValue: 'No matching data found in selection',
-});
-
-const happeningSurveyBoundaryParser = new Parser({
-  fields: headers.filter((header) => !(header.label === 'Location' || header.label === 'Longitude' || header.label === 'Latitude')),
-  defaultValue: 'No matching data found in selection',
+const happeningSurveyParser = new Parser({
+  fields: headers,
+  defaultValue: '',
 });
 
 const customSurveyParser = new Parser();
@@ -431,18 +425,12 @@ const Dashboard = () => {
         sentiment: sentimentName[surveyItem.sentiment],
       };
     });
-    const happeningSurveyLocationCSV = happeningSurveyLocationParser.parse(
-      surveyExportData.filter((locationData: SurveyDataType) => locationData?.location !== null),
-    );
-    const happeningSurveyBoundaryCSV = happeningSurveyBoundaryParser.parse(
-      surveyExportData.filter((boundaryData: SurveyDataType) => boundaryData?.boundary !== null),
-    );
+    const happeningSurveyCSV = happeningSurveyParser.parse(surveyExportData);
     const zip = new JSZip();
-    zip.file(`Happening_survey_report_location_${currentDate}.csv`, happeningSurveyLocationCSV);
-    zip.file(`Happening_survey_report_boundary_${currentDate}.csv`, happeningSurveyBoundaryCSV);
+    zip.file(`Happening_survey_report_${currentDate}.csv`, happeningSurveyCSV);
     if (flatCustomForms?.length > 0) {
       const customFormCSV = customSurveyParser.parse(flatCustomForms);
-      zip.file(`Custom_survey_report_${currentDate}.csv`, customFormCSV);
+      zip.file(`METT_survey_report_${currentDate}.csv`, customFormCSV);
     }
     zip.generateAsync({type: 'blob'}).then((content) => {
       saveAs(content, `Survey_report_${currentDate}.zip`);
