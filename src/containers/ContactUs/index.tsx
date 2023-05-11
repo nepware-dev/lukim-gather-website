@@ -23,7 +23,12 @@ const ContactUs = () => {
   const navigate = useNavigate();
 
   const [sendMessage, {loading}] = useMutation(SEND_MESSAGE, {
-    onCompleted: () => {
+    onCompleted: (response) => {
+      const {contactUs: {errors}} = response;
+      if (errors) {
+        toast('error', errors[0].messages[0] || 'Something went wrong !!');
+        return;
+      }
       toast('success', 'Your message has been successfully sent!');
       navigate('/');
     },
