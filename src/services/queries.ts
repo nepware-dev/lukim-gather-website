@@ -190,6 +190,10 @@ export const SEND_MESSAGE = gql`
     mutation ContactUs($input: ContactUsMutationInput!) {
         contactUs (input: $input) {
             name
+            errors {
+              field
+              messages
+            }
         }
     }
 `;
