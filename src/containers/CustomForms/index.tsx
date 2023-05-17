@@ -144,16 +144,18 @@ const CustomForms = () => {
   });
 
   useEffect(() => {
-    if (!id) return;
+    if (id) {
+      refetch({id: Number(id)}).then((res) => {
+        setShowDetails(true);
+        setActiveSurveyFormData(res?.data?.survey?.[0]);
+      });
+    } else {
+      return;
+    }
     if (surveyFormData[activeIndex]) {
       setShowDetails(true);
       setActiveSurveyFormData(surveyFormData[activeIndex]);
-      return;
     }
-    refetch({id: Number(id)}).then((res) => {
-      setShowDetails(true);
-      setActiveSurveyFormData(res?.data?.survey?.[0]);
-    });
   }, [id, activeIndex, refetch, surveyFormData]);
 
   useEffect(() => {
@@ -220,7 +222,7 @@ const CustomForms = () => {
     toggleShowEditSurvey();
   }, [navigate, toggleShowEditSurvey]);
 
-  const projectNames = useMemo(() => [...new Set((data?.survey || []).map(getProjectNameFromFormData).filter(identity))], [data]);
+  const projectNames = useMemo(() => [...new Set((data?.survey || []).map(getProjectNameFromFormData).filter((pr: string) => Boolean(pr) && pr !== 'none'))], [data]);
   const handleProjectChange = useCallback(({option}: {option?: string}) => {
     setProjectFilter(option ?? '');
   }, []);

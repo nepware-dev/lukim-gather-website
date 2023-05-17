@@ -15,27 +15,27 @@ import cs from '@ra/cs';
 import classes from './styles';
 
 type Entries<T> = {
-  [K in keyof T]: [K, T[K]];
+    [K in keyof T]: [K, T[K]];
 }[keyof T][];
 
 type AnswerItemType = {
-  [key: string]: string | number | object;
+    [key: string]: string | number | object;
 };
 
 type InstanceItemType = {
-  name: string;
-  label: string;
-  [key: string]: string;
+    name: string;
+    label: string;
+    [key: string]: string;
 };
 
 type FormModelInstanceType = {
-  root?: {
-    item?: InstanceItemType[];
-  };
+    root?: {
+        item?: InstanceItemType[];
+    };
 };
 
 type FormModelType = {
-  model: { instance: FormModelInstanceType[] };
+    model: { instance: FormModelInstanceType[] };
 };
 
 interface QuestionObject {
@@ -43,11 +43,11 @@ interface QuestionObject {
 }
 
 interface FormValueRendererProps {
-  name: string;
-  value: string | number | object;
-  formModel: FormModelType;
-  formQuestion: QuestionObject;
-  level: number;
+    name: string;
+    value: string | number | object;
+    formModel: FormModelType;
+    formQuestion: QuestionObject;
+    level: number;
 }
 
 const Title = ({text}: { text: string }) => (
@@ -67,7 +67,7 @@ const FormValueRenderer = ({
     if (typeof value === 'string') {
       if (
         formModel?.model?.instance?.length
-        && name?.toLowerCase() !== 'enter_email'
+                && name?.toLowerCase() !== 'enter_email'
       ) {
         let answerObj: InstanceItemType | undefined;
         formModel.model.instance.find((ins) => {
@@ -80,7 +80,8 @@ const FormValueRenderer = ({
             }
           }
           if (ins?.root?.item) {
-            answerObj = ins.root.item as unknown as InstanceItemType;
+            answerObj = ins.root
+              .item as unknown as InstanceItemType;
             return true;
           }
           return false;
@@ -88,8 +89,13 @@ const FormValueRenderer = ({
         if (name?.toLowerCase() === 'why_area_important') {
           return value?.replace(/ /g, ', ').replace(/_/g, ' ');
         }
-        if ((name === 'image' || name === 'management_img') && value?.startsWith('http')) {
-          return <img alt='photos' className='w-[200px]' src={value} />;
+        if (
+          (name === 'image' || name === 'management_img')
+                    && value?.startsWith('http')
+        ) {
+          return (
+            <img alt='photos' className='w-[200px]' src={value} />
+          );
         }
         return answerObj?.label || value.replace(/_/g, ' ');
       }
@@ -132,7 +138,9 @@ const FormValueRenderer = ({
                     }}
                     style={{width: 600, height: 400}}
                     mapStyle='mapbox://styles/mapbox/streets-v9'
-                    mapboxAccessToken={process.env.REACT_APP_MAPBOX_TOKEN}
+                    mapboxAccessToken={
+                      process.env.REACT_APP_MAPBOX_TOKEN
+                    }
                   >
                     <Marker
                       longitude={mapValue[1]}
@@ -181,13 +189,13 @@ const FormValueRenderer = ({
 };
 
 type FormDetailsProps = {
-  formModel: FormModelType;
-  formQuestion: QuestionObject;
-  data: FormDataType;
-  allowEdit: boolean;
-  className?: string;
-  onClose?: () => void;
-  onEdit?: () => void;
+    formModel: FormModelType;
+    formQuestion: QuestionObject;
+    data: FormDataType;
+    allowEdit: boolean;
+    className?: string;
+    onClose?: () => void;
+    onEdit?: () => void;
 };
 
 export const FormDetails: React.FC<FormDetailsProps> = (props) => {
@@ -211,7 +219,10 @@ export const FormDetails: React.FC<FormDetailsProps> = (props) => {
     const link = `${window.location.origin}/public/mett-survey/${data?.id}/`;
     try {
       await navigator.clipboard.writeText(link);
-      toast('success', 'Public link to the METT survey has been successfully copied to clipboard!');
+      toast(
+        'success',
+        'Public link to the METT survey has been successfully copied to clipboard!',
+      );
     } catch (err) {
       toast('error', 'Something went wrong while getting the link!');
     }
@@ -227,11 +238,15 @@ export const FormDetails: React.FC<FormDetailsProps> = (props) => {
       <div className={classes.header}>
         <h2 className={classes.headerTitle}>{data?.title}</h2>
         <div className={classes.rightContent}>
-          {allowEdit
-          && <span onClick={onEdit} className='material-symbols-rounded text-[32px] text-[#70747e] cursor-pointer'>edit</span>}
-          <SurveyExportDropdown
-            onCopyLink={handleCopyLink}
-          />
+          {allowEdit && (
+            <span
+              onClick={onEdit}
+              className='material-symbols-rounded text-[32px] text-[#70747e] cursor-pointer'
+            >
+              edit
+            </span>
+          )}
+          <SurveyExportDropdown onCopyLink={handleCopyLink} />
         </div>
       </div>
       <p className={classes.date}>{formatDate(data.createdAt)}</p>
@@ -250,12 +265,12 @@ export const FormDetails: React.FC<FormDetailsProps> = (props) => {
 };
 
 type FormEntryProps = {
-  formModel: FormModelType;
-  formQuestion: QuestionObject;
-  data: FormDataType;
-  setShowDetails(value: boolean): void;
-  onEditClick(): void;
-  allowEdit: boolean;
+    formModel: FormModelType;
+    formQuestion: QuestionObject;
+    data: FormDataType;
+    setShowDetails(value: boolean): void;
+    onEditClick(): void;
+    allowEdit: boolean;
 };
 
 const FormEntry: React.FC<FormEntryProps> = ({
