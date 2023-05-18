@@ -1,10 +1,12 @@
 export default {
+  valuesContainer: 'opacity-100 trasition-opacity duration-100 ease-in',
+  valuesContainerHidden: 'opacity-0',
   titleWrapper:
     'h-[32px] mt-[32px] mb-[12px] flex items-center bg-[#E6EEF3] px-[10px] rounded',
   titleText: 'font-inter text-[14px] text-[#585D69] uppercase',
   detailsContainer:
     'flex justify-end fixed top-0 bottom-0 left-0 right-0 bg-[#10182880] overflow-y-scroll z-10',
-  detailsModal: 'h-fit w-[725px] bg-color-white pt-[28px] px-[18px]',
+  detailsModal: 'h-fit min-h-screen w-[725px] bg-color-white pt-[28px] px-[18px]',
   iconWrapper:
     'flex items-center justify-center h-[24px] w-[24px] bg-[#E7E8EA] rounded-full cursor-pointer',
   header: 'flex items-center justify-between mt-[35px] mb-[12px]',

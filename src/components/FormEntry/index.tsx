@@ -1,4 +1,6 @@
-import React, {useCallback, useEffect, useMemo} from 'react';
+import React, {
+  useCallback, useEffect, useMemo, useState,
+} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {HiOutlineX} from 'react-icons/hi';
 import Map, {Marker} from 'react-map-gl';
@@ -214,6 +216,12 @@ export const FormDetails: React.FC<FormDetailsProps> = (props) => {
     return Object.entries(dataObject).filter(([key]) => key.startsWith('section'));
   }, [data]);
 
+  const [showData, setShowData] = useState<boolean>(false);
+  useEffect(() => {
+    setShowData(true);
+    return () => setShowData(false);
+  }, []);
+
   const toast = useToast();
   const handleCopyLink = useCallback(async () => {
     const link = `${window.location.origin}/public/mett-survey/${data?.id}/`;
@@ -229,7 +237,11 @@ export const FormDetails: React.FC<FormDetailsProps> = (props) => {
   }, [toast, data]);
 
   return (
-    <div className={className}>
+    <div className={cs(className, {
+      [classes.valuesContainer]: showData,
+      [classes.valuesContainerHidden]: !showData,
+    })}
+    >
       {onClose && (
         <div className={classes.iconWrapper} onClick={onClose}>
           <HiOutlineX size={14} />
