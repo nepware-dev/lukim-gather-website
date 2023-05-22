@@ -318,7 +318,7 @@ const Dashboard = () => {
       const clusterId = cluster.properties.cluster_id;
       const source: mapboxgl.GeoJSONSource = mapRef?.current
         ?.getSource(cluster.source) as mapboxgl.GeoJSONSource;
-      return source?.getClusterExpansionZoom(clusterId, (err, zoom) => {
+      source?.getClusterExpansionZoom(clusterId, (err, zoom) => {
         if (err) return;
 
         mapRef?.current?.easeTo({
@@ -327,80 +327,95 @@ const Dashboard = () => {
           duration: 1500,
         });
       });
-    }
-    let item;
-    if (
-      !event.features.some((feat: mapboxgl.MapboxGeoJSONFeature) => feat.layer?.id === 'unclustered-point' || feat.layer?.id === 'unclustered-form-point')
-    ) {
-      item = JSON.parse(
-        event.features[event.features.length - 1].properties?.surveyItem
-        || event.features[event.features.length - 1].properties?.customForm,
-      );
     } else {
-      item = JSON.parse(event.features[0].properties.surveyItem
-        || event.features[0].properties?.customForm);
-    }
-
-    if (item?.formAnswers?.data?.section_1) {
-      const popUpData = Object.entries(item.formAnswers.data.section_1)?.map(([key, val]) => {
-        if (val === '') {
-          return null;
-        }
-        return (
-          <span key={key} className='capitalize'>
-            {key.replace(/_/g, ' ')}
-            :
-            {' '}
-            {val}
-            <br />
-          </span>
+      let featureItems: any[] = [];
+      const pointFeatures = event.features.filter((feat: mapboxgl.MapboxGeoJSONFeature) => feat.layer?.id === 'unclustered-point' || feat.layer?.id === 'unclustered-form-point');
+      if (pointFeatures.length === 0) {
+        featureItems = [JSON.parse(
+          event.features[event.features.length - 1].properties?.surveyItem
+        || event.features[event.features.length - 1].properties?.customForm,
+        )];
+      } else {
+        pointFeatures.forEach(
+          (pFeat: mapboxgl.MapboxGeoJSONFeature) => {
+            if (pFeat.properties?.surveyItem) {
+              featureItems.push(JSON.parse(pFeat.properties?.surveyItem));
+            }
+            if (pFeat.properties?.customForm) {
+              const customFormData = JSON.parse(pFeat.properties.customForm);
+              if (!featureItems.some(
+                (ftItem) => ftItem.formAnswers && ftItem.id === customFormData.id,
+              )) {
+                featureItems.push(customFormData);
+              }
+            }
+          },
         );
-      });
-      setPopUpLngLat(event.lngLat);
-      return setPopUp(
-        <div>
-          <h6 className='text-[14px] font-medium mb-[4]'>{item.title}</h6>
-          {popUpData}
-          <div className='pt-[14px]'>
-            <Link className='cursor-pointer underline' to={`/custom-forms/${item.id}`}>View Details</Link>
+      }
+      if (featureItems.length > 0) {
+        setPopUpLngLat(event.lngLat);
+        const newPopupData = (
+          <div className={`max-h-[20rem] overflow-y-auto ${featureItems.length === 1 ? 'py-2px' : 'pt-[12px]'}`}>
+            {featureItems.map((item: any) => {
+              if (item?.formAnswers?.data?.section_1) {
+                const popUpData = Object.entries(item.formAnswers.data.section_1)
+                  ?.map(([key, val]) => {
+                    if (val === '') {
+                      return null;
+                    }
+                    return (
+                      <span key={key} className='capitalize'>
+                        {key.replace(/_/g, ' ')}
+                        {': '}
+                        {val}
+                        <br />
+                      </span>
+                    );
+                  });
+                return (
+                  <div key={item.id} className='border border-b-0 last:border-b only:border-0 border-color-border p-[6px] only:p-[2px]'>
+                    <h6 className='text-[14px] font-medium mb-[4]'>{item.title}</h6>
+                    {popUpData}
+                    <div className='pt-[14px]'>
+                      <Link className='cursor-pointer underline' to={`/custom-forms/${item.id}`}>View Details</Link>
+                    </div>
+                  </div>
+                );
+              }
+              const submittedBy = (item?.createdBy?.firstName && item?.createdBy?.lastName) ? `${item?.createdBy?.firstName} ${item?.createdBy?.lastName}` : 'Anonymous';
+              return (
+                <div key={item.id} className='border border-b-0 last:border-b only:border-0 border-color-border p-[6px] only:p-[2px]'>
+                  <b>
+                    {'Category: '}
+                    {item.category.title}
+                  </b>
+                  <br />
+                  {'Title: '}
+                  {item.title}
+                  <br />
+                  {'Description: '}
+                  {item.description}
+                  <br />
+                  {'Feel: '}
+                  {item.sentiment}
+                  <br />
+                  {'Created At: '}
+                  {formatDate(item.createdAt)}
+                  <br />
+                  {'Created By: '}
+                  {submittedBy}
+                  <br />
+                  <div className='pt-[14px]'>
+                    <Link className='cursor-pointer underline' to={`/surveys/${item.id}`}>View Details</Link>
+                  </div>
+                </div>
+              );
+            })}
           </div>
-        </div>,
-      );
+        );
+        setPopUp(newPopupData);
+      }
     }
-
-    setPopUpLngLat(event.lngLat);
-    const submittedBy = (item?.createdBy?.firstName && item?.createdBy?.lastName) ? `${item?.createdBy?.firstName} ${item?.createdBy?.lastName}` : 'Anonymous';
-    return setPopUp(
-      <div className='p-[2px]'>
-        Category:
-        {' '}
-        {item.category.title}
-        <br />
-        Title:
-        {' '}
-        {item.title}
-        <br />
-        Description:
-        {' '}
-        {item.description}
-        <br />
-        Feel:
-        {' '}
-        {item.sentiment}
-        <br />
-        Created At:
-        {' '}
-        {formatDate(item.createdAt)}
-        <br />
-        Created By:
-        {' '}
-        {submittedBy}
-        <br />
-        <div className='pt-[14px]'>
-          <Link className='cursor-pointer underline' to={`/surveys/${item.id}`}>View Details</Link>
-        </div>
-      </div>,
-    );
   }, []);
 
   const onLoad = useCallback(() => {
