@@ -18,21 +18,16 @@ export type FormDataType = {
 interface Props {
   data: FormDataType[];
   loading: boolean;
-  setActiveIndex(i: number): void;
   setShowDetails(value: boolean): void;
 }
 
 interface ItemProps {
   item: FormDataType;
-  index: number;
-  setIndex(i: number): void;
   setShowDetails(value: boolean): void;
 }
 
 const FormItem: React.FC<ItemProps> = ({
   item,
-  index,
-  setIndex,
   setShowDetails,
 }) => {
   const navigate = useNavigate();
@@ -40,9 +35,8 @@ const FormItem: React.FC<ItemProps> = ({
 
   const handleClick = useCallback((id: string|number) => {
     navigate(`/custom-forms/${id}`);
-    setIndex(index);
     setShowDetails(true);
-  }, [index, navigate, setIndex, setShowDetails]);
+  }, [navigate, setShowDetails]);
 
   const interviewerName = useMemo(
     () => findPropertyAnywhere(formAnswers, 'interviewer_name'),
@@ -75,7 +69,7 @@ const FormItem: React.FC<ItemProps> = ({
 };
 
 const FormTable: React.FC<Props> = ({
-  data, loading, setActiveIndex, setShowDetails,
+  data, loading, setShowDetails,
 }) => (
   <div className={classes.container}>
     <table className={classes.table}>
@@ -94,12 +88,10 @@ const FormTable: React.FC<Props> = ({
       </thead>
       <tbody>
         {data.length ? (
-          data.map((item: FormDataType, index: number) => (
+          data.map((item: FormDataType) => (
             <FormItem
               key={item.id}
               item={item}
-              index={index}
-              setIndex={setActiveIndex}
               setShowDetails={setShowDetails}
             />
           ))

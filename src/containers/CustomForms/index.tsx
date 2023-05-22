@@ -103,7 +103,6 @@ const CustomForms = () => {
   const [activePage, setActivePage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(0);
   const [rows, setRows] = useState<number>(10);
-  const [activeIndex, setActiveIndex] = useState<number>(0);
   const [showDetails, setShowDetails] = useState<boolean>(false);
   const [dateRange, setDateRange] = useState([new Date(), new Date()]);
   const [maxDate, setMaxDate] = useState<Date>();
@@ -150,13 +149,10 @@ const CustomForms = () => {
         setActiveSurveyFormData(res?.data?.survey?.[0]);
       });
     } else {
-      return;
+      setShowDetails(false);
+      setActiveSurveyFormData(undefined);
     }
-    if (surveyFormData[activeIndex]) {
-      setShowDetails(true);
-      setActiveSurveyFormData(surveyFormData[activeIndex]);
-    }
-  }, [id, activeIndex, refetch, surveyFormData]);
+  }, [id, refetch, surveyFormData]);
 
   useEffect(() => {
     if (!data?.survey.length) return;
@@ -233,13 +229,15 @@ const CustomForms = () => {
   }, [minDate, maxDate]);
 
   const handleEditSurvey = useCallback((_formData) => {
-    updateSurvey({
-      variables: {
-        id: surveyFormData[activeIndex].id,
-        answer: _formData,
-      },
-    });
-  }, [updateSurvey, surveyFormData, activeIndex]);
+    if (id) {
+      updateSurvey({
+        variables: {
+          id,
+          answer: _formData,
+        },
+      });
+    }
+  }, [id, updateSurvey]);
 
   const handleAddSurvey = useCallback((_formData) => {
     addSurvey({
@@ -386,7 +384,6 @@ const CustomForms = () => {
             <FormTable
               data={surveyFormData}
               loading={surveyLoading || (!surveyFormData?.length && !error)}
-              setActiveIndex={setActiveIndex}
               setShowDetails={setShowDetails}
             />
           </div>
@@ -417,12 +414,12 @@ const CustomForms = () => {
           onEditClick={toggleShowEditSurvey}
         />
       )}
-      {showEditSurvey && formData?.surveyForm?.[0] && surveyFormData[activeIndex] && (
+      {showEditSurvey && formData?.surveyForm?.[0] && activeSurveyFormData && (
         <EditCustomSurveyModal
           title='Edit Survey'
           loading={updateLoading}
           onClose={handleCloseEditSurvey}
-          formData={surveyFormData[activeIndex]}
+          formData={activeSurveyFormData}
           formObj={formData?.surveyForm?.[0]}
           handleSubmit={handleEditSurvey}
           projects={myProjects?.projects || []}
