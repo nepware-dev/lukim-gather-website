@@ -243,7 +243,7 @@ const Dashboard = () => {
     let shape = [];
     if (customSurveyData?.survey?.length > 0) {
       shape = customSurveyData?.survey.reduce((features: any, survey: FormDataType) => {
-        if (survey?.createdBy?.id !== userId) {
+        if (status === 'My Entries' && survey?.createdBy?.id !== userId) {
           return features;
         }
         const formAnswers = JSON.parse(survey.answer);
@@ -282,7 +282,14 @@ const Dashboard = () => {
       type: 'FeatureCollection',
       features: [...shape],
     };
-  }, [customSurveyData, selectInputRegion, selectInputCategory, selectInputProtectedArea, userId]);
+  }, [
+    customSurveyData,
+    selectInputRegion,
+    selectInputCategory,
+    selectInputProtectedArea,
+    userId,
+    status,
+  ]);
 
   const flatCustomForms = useMemo(() => customFormGeoJSON.features.map(
     ({properties: {customForm: {formAnswers: {data: formData}}}}: any) => flattenObject(formData),

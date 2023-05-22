@@ -82,21 +82,21 @@ const ContactUs = () => {
               </div>
               <div className={classes.info}>
                 <IoLocationSharp size={32} color='#fff' />
-                <p className={classes.mail}>
-                  Level 14, Kina Bank Haus
-                  N.C.D, Port Moresby
-                  Papua New Guinea
-                </p>
+                <div className={classes.mail}>
+                  <p>Level 14, Kina Bank Haus</p>
+                  <p>N.C.D, Port Moresby</p>
+                  <p>Papua New Guinea</p>
+                </div>
               </div>
             </div>
             <div className={classes.socialMedia}>
-              <a href='https://facebook.com/' target='_blank' rel='noreferrer'>
+              <a href='https://www.facebook.com/undpinpng/' target='_blank' rel='noreferrer'>
                 <FaFacebookF size={28} color='#fff' />
               </a>
-              <a href='https://linkedin.com/' target='_blank' rel='noreferrer'>
+              <a href='https://www.linkedin.com/company/undp-papua-new-guinea/' target='_blank' rel='noreferrer'>
                 <FaLinkedinIn size={32} color='#fff' />
               </a>
-              <a href='https://twitter.com/' target='_blank' rel='noreferrer'>
+              <a href='https://twitter.com/UNDPinPNG/' target='_blank' rel='noreferrer'>
                 <FaTwitter size={32} color='#fff' />
               </a>
             </div>
