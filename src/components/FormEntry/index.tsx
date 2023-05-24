@@ -7,6 +7,7 @@ import Map, {Marker} from 'react-map-gl';
 
 import {formatDate} from '@utils/formatDate';
 
+import Gallery from '@components/Gallery';
 import {FormDataType} from '@components/FormTable';
 import SurveyExportDropdown from '@components/SurveyExportDropdown';
 
@@ -58,6 +59,26 @@ const Title = ({text}: { text: string }) => (
   </div>
 );
 
+const ImageItem = ({src}: {src: string}) => {
+  const [showGalleryImage, setShowGalleryImage] = useState<boolean>(false);
+
+  const handleShowGalleryImage = useCallback(() => setShowGalleryImage(true), []);
+
+  return (
+    <>
+      <div className='cursor-pointer' onClick={handleShowGalleryImage}>
+        <img alt='Survey attachment' className='w-[200px]' src={src} />
+      </div>
+      <Gallery
+        galleryIndex={0}
+        images={[{media: src}]}
+        showGallery={showGalleryImage}
+        toggleGalleryVisibility={setShowGalleryImage}
+      />
+    </>
+  );
+};
+
 const FormValueRenderer = ({
   name,
   value,
@@ -96,7 +117,7 @@ const FormValueRenderer = ({
                     && value?.startsWith('http')
         ) {
           return (
-            <img alt='photos' className='w-[200px]' src={value} />
+            <ImageItem src={value} />
           );
         }
         return answerObj?.label || value.replace(/_/g, ' ');

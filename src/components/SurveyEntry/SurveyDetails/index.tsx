@@ -85,6 +85,7 @@ type SurveyDetailsProps = {
   onUpdate?: () => void;
   onAcceptSurvey?: () => void;
   onDeclineSurvey?: () => void;
+  updatingStatus?: boolean;
 } & Partial<SurveyExportDropdownProps>;
 
 const SurveyDetails: React.FC<SurveyDetailsProps> = (props) => {
@@ -97,6 +98,7 @@ const SurveyDetails: React.FC<SurveyDetailsProps> = (props) => {
     onUpdate,
     onAcceptSurvey,
     onDeclineSurvey,
+    updatingStatus,
   } = props;
 
   const currentDate = new Date().toISOString();
@@ -574,6 +576,8 @@ const SurveyDetails: React.FC<SurveyDetailsProps> = (props) => {
           <div className={cs(classes.buttons, ['hidden', !isStaff || !isEditable])}>
             {data?.status.toLowerCase() !== 'approved' && (
               <Button
+                disabled={updatingStatus}
+                loading={updatingStatus}
                 text={data?.status.toLowerCase() === 'approved' ? 'Accepted' : 'Accept'}
                 className={classes.acceptBtn}
                 onClick={onAcceptSurvey}
@@ -581,6 +585,8 @@ const SurveyDetails: React.FC<SurveyDetailsProps> = (props) => {
             )}
             {data?.status.toLowerCase() !== 'rejected' && (
               <Button
+                disabled={updatingStatus}
+                loading={updatingStatus}
                 text={data?.status.toLowerCase() === 'rejected' ? 'Declined' : 'Decline'}
                 className={classes.declineBtn}
                 textClassName={classes.declineBtnText}

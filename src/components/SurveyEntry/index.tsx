@@ -84,7 +84,7 @@ const SurveyEntry: React.FC<Props> = (
   const navigate = useNavigate();
   const toast = useToast();
 
-  const [updateHappeningSurvey] = useMutation(UPDATE_SURVEY_STATUS, {
+  const [updateHappeningSurvey, {loading: updating}] = useMutation(UPDATE_SURVEY_STATUS, {
     refetchQueries: [GET_SURVEY_DATA, 'happeningSurveys'],
     onError: (err) => {
       toast('error', String(err));
@@ -131,16 +131,18 @@ const SurveyEntry: React.FC<Props> = (
     await updateHappeningSurvey({
       variables: {data: {status: 'APPROVED'}, id: data?.id},
     });
+    toast('success', 'Survey has been accepted!');
     setShowDetails(false);
-  }, [data?.id, setShowDetails, updateHappeningSurvey]);
+  }, [data?.id, setShowDetails, updateHappeningSurvey, toast]);
 
   const handleDecline = useCallback(async () => {
     await updateHappeningSurvey({
       variables: {data: {status: 'REJECTED'}, id: data?.id},
     });
+    toast('success', 'Survey has been declined!');
     setShowDeclineModal(false);
     setShowDetails(false);
-  }, [data?.id, setShowDetails, updateHappeningSurvey]);
+  }, [data?.id, setShowDetails, updateHappeningSurvey, toast]);
 
   const handleEditButtonClick = useCallback(() => onEditClick?.(), [onEditClick]);
   const handleUpdateButtonClick = useCallback(() => onEditClick?.(true), [onEditClick]);
@@ -157,6 +159,7 @@ const SurveyEntry: React.FC<Props> = (
           onAcceptSurvey={handleAccept}
           onDeclineSurvey={handleShowDeclineModal}
           onClose={hideDetails}
+          updatingStatus={updating}
         />
         <div
           className={cs(classes.declineModalOverlay, [
@@ -186,6 +189,8 @@ const SurveyEntry: React.FC<Props> = (
                   textClassName={classes.cancelBtnText}
                 />
                 <Button
+                  loading={updating}
+                  disabled={updating}
                   text='Yes, decline'
                   onClick={handleDecline}
                   className={classes.yesDeclineBtn}

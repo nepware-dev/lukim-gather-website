@@ -11,9 +11,9 @@ export const clusterLayer: LayerProps = {
       ['get', 'point_count'],
       '#5486BD',
       100,
-      '#f1f075',
-      750,
       '#f28cb1',
+      750,
+      '#ec6025',
     ],
     'circle-radius': [
       'step',
