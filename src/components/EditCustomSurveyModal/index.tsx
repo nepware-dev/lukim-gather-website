@@ -1,4 +1,4 @@
-import React, {useEffect, useRef} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {XMLBuilder, XMLParser} from 'fast-xml-parser';
 import {useMutation} from '@apollo/client';
 
@@ -8,6 +8,7 @@ import Loader from '@components/Loader';
 import {UPLOAD_MEDIA} from '@services/queries';
 import useToast from '@hooks/useToast';
 
+import cs from '@ra/cs';
 import {b64toBlob} from '@utils/blob';
 
 import classes from './styles';
@@ -37,10 +38,7 @@ const EditCustomSurvey: React.FC<Props> = ({
   const iframeRef = useRef<IframeElement>(null);
   const toast = useToast();
 
-  const [uploadMedia] = useMutation(UPLOAD_MEDIA, {
-    onCompleted: ({uploadMedia}) => {
-      STORE.data = STORE.data.replace(uploadMedia.result.title, uploadMedia.result.media);
-    },
+  const [uploadMedia, {loading: uploadingMedia}] = useMutation(UPLOAD_MEDIA, {
     onError: ({graphQLErrors}) => {
       toast('error', graphQLErrors[0]?.message || 'Something went wrong, Please enter valid credentials');
     },
@@ -69,12 +67,10 @@ const EditCustomSurvey: React.FC<Props> = ({
     }
   }, [formData.answer, formObj.xform, projects]);
 
-  useEffect(() => {
-    const queue: Promise<any>[] = [];
+  const [processing, setProcessing] = useState<boolean>(false);
 
-    // reset store
-    STORE.data = '';
-    STORE.media = '';
+  useEffect(() => {
+    const queue: {name: string; upload: Promise<any>}[] = [];
 
     const handleMessage = async (event: MessageEvent) => {
       const {data} = event;
@@ -89,19 +85,39 @@ const EditCustomSurvey: React.FC<Props> = ({
           const imageParts = data.split(';');
           const name = imageParts.pop() as string;
           const imgBlob = await b64toBlob(imageParts.join(';'));
-          queue.push(uploadMedia({
-            variables: {
-              media: new File([imgBlob], name, {type: imageParts[0].split(':')[1]}),
-              title: name,
-              type: 'image',
-            },
-          }));
-        } else if (data === 'submit') {
-          await Promise.all(queue);
-          const parser = new XMLParser({
-            attributeNamePrefix: '_',
-          });
-          handleSubmit(JSON.stringify(parser.parse(STORE.data)));
+          if (!queue.some((q) => q.name === name)) {
+            queue.push({
+              name,
+              upload: uploadMedia({
+                variables: {
+                  media: new File([imgBlob], name, {type: imageParts[0].split(':')[1]}),
+                  title: name,
+                  type: 'image',
+                },
+              }),
+            });
+          }
+        } else if (data === 'submit' && !processing && STORE.data?.trim?.()?.length > 0) {
+          setProcessing(true);
+          try {
+            const uploadResults = await Promise.all(queue.map((q) => q.upload));
+            uploadResults.forEach((uploadResult) => {
+              const result = uploadResult?.data?.uploadMedia?.result;
+              if (result?.title && result?.media) {
+                STORE.data = STORE.data.replace(new RegExp(result.title, 'g'), result.media);
+              }
+            });
+            const parser = new XMLParser({
+              attributeNamePrefix: '_',
+            });
+            await handleSubmit(JSON.stringify(parser.parse(STORE.data)));
+            setProcessing(false);
+            // reset store
+            STORE.data = '';
+            STORE.media = '';
+          } catch (err) {
+            setProcessing(false);
+          }
         }
       }
     };
@@ -110,18 +126,20 @@ const EditCustomSurvey: React.FC<Props> = ({
     return () => {
       window.removeEventListener('message', handleMessage, false);
     };
-  }, [onClose, handleSubmit, formData.id, uploadMedia]);
+  }, [onClose, handleSubmit, formData.id, uploadMedia, processing]);
 
   return (
     <Modal
       isVisible
       title={title}
-      className={classes.modal}
+      className={cs(classes.modal, {
+        [classes.modalLoading]: loading || uploadingMedia || processing,
+      })}
       onClose={onClose}
       actions={[]}
     >
       <>
-        {loading && <Loader className={classes.loader} />}
+        {(loading || uploadingMedia || processing) && <Loader className={classes.loader} />}
         <iframe className={classes.iframe} ref={iframeRef} src={`/xforms?xform=${formData.id}`} title='Edit Custom Survey' />
       </>
     </Modal>

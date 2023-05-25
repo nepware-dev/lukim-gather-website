@@ -31,7 +31,6 @@ import SelectInput from '@ra/components/Form/SelectInput'; // eslint-disable-lin
 
 import {flattenObject} from '@containers/Dashboard';
 
-import useToggle from '@ra/hooks/useToggle';
 import useToast from '@hooks/useToast';
 import {UPDATE_SURVEY, CREATE_SURVEY, GET_PROJECTS} from '@services/queries';
 
@@ -108,8 +107,12 @@ const CustomForms = () => {
   const [maxDate, setMaxDate] = useState<Date>();
   const [minDate, setMinDate] = useState<Date>();
   const [startDate, endDate] = dateRange;
-  const [showEditSurvey, toggleShowEditSurvey] = useToggle(false);
-  const [showAddSurvey, toggleShowAddSurvey] = useToggle(false);
+
+  const [showEditSurvey, setShowEditSurvey] = useState<boolean>(false);
+  const toggleShowEditSurvey = useCallback(() => setShowEditSurvey((ses) => !ses), []);
+
+  const [showAddSurvey, setShowAddSurvey] = useState<boolean>(false);
+  const toggleShowAddSurvey = useCallback(() => setShowAddSurvey((sas) => !sas), []);
 
   const [projectFilter, setProjectFilter] = useState<string>('');
 
@@ -123,7 +126,7 @@ const CustomForms = () => {
   const [updateSurvey, {loading: updateLoading}] = useMutation(UPDATE_SURVEY, {
     onCompleted: () => {
       toast('success', 'Survey has been updated successfully!');
-      toggleShowEditSurvey();
+      setShowEditSurvey(false);
       refetchSurveys();
     },
     onError: () => {
@@ -134,7 +137,7 @@ const CustomForms = () => {
   const [addSurvey, {loading: addLoading}] = useMutation(CREATE_SURVEY, {
     onCompleted: () => {
       toast('success', 'Survey has been added successfully!');
-      toggleShowAddSurvey();
+      setShowAddSurvey(false);
       refetchSurveys();
     },
     onError: () => {
@@ -215,8 +218,8 @@ const CustomForms = () => {
 
   const handleCloseEditSurvey = useCallback(() => {
     navigate('/custom-forms');
-    toggleShowEditSurvey();
-  }, [navigate, toggleShowEditSurvey]);
+    setShowEditSurvey(false);
+  }, [navigate]);
 
   const projectNames = useMemo(() => [...new Set((data?.survey || []).map(getProjectNameFromFormData).filter((pr: string) => Boolean(pr) && pr !== 'none'))], [data]);
   const handleProjectChange = useCallback(({option}: {option?: string}) => {
@@ -228,9 +231,9 @@ const CustomForms = () => {
     setProjectFilter('');
   }, [minDate, maxDate]);
 
-  const handleEditSurvey = useCallback((_formData) => {
+  const handleEditSurvey = useCallback(async (_formData) => {
     if (id) {
-      updateSurvey({
+      await updateSurvey({
         variables: {
           id,
           answer: _formData,
@@ -239,8 +242,8 @@ const CustomForms = () => {
     }
   }, [id, updateSurvey]);
 
-  const handleAddSurvey = useCallback((_formData) => {
-    addSurvey({
+  const handleAddSurvey = useCallback(async (_formData) => {
+    await addSurvey({
       variables: {
         input: {
           title: formData?.surveyForm?.[0].title,
