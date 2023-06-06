@@ -38,6 +38,8 @@ const EditCustomSurvey: React.FC<Props> = ({
   const iframeRef = useRef<IframeElement>(null);
   const toast = useToast();
 
+  const [mediaUploadResults, setMediaUploadResults] = useState<any>([]);
+
   const [uploadMedia, {loading: uploadingMedia}] = useMutation(UPLOAD_MEDIA, {
     onError: ({graphQLErrors}) => {
       toast('error', graphQLErrors[0]?.message || 'Something went wrong, Please enter valid credentials');
@@ -77,6 +79,14 @@ const EditCustomSurvey: React.FC<Props> = ({
       if (typeof (data) === 'string') {
         if (data.startsWith('data://')) {
           STORE.data = data.substring(7);
+          if (mediaUploadResults.length > 0) {
+            mediaUploadResults.forEach((uploadResult: any) => {
+              const result = uploadResult?.data?.uploadMedia?.result;
+              if (result?.title && result?.media && !STORE.data.includes(result.media)) {
+                STORE.data = STORE.data.replace(new RegExp(result.title, 'g'), result.media);
+              }
+            });
+          }
         } else if (data.startsWith('media://')) {
           if (data?.length > 8) {
             STORE.media = data.substring(8);
@@ -101,9 +111,10 @@ const EditCustomSurvey: React.FC<Props> = ({
           setProcessing(true);
           try {
             const uploadResults = await Promise.all(queue.map((q) => q.upload));
+            setMediaUploadResults(uploadResults);
             uploadResults.forEach((uploadResult) => {
               const result = uploadResult?.data?.uploadMedia?.result;
-              if (result?.title && result?.media) {
+              if (result?.title && result?.media && !STORE.data.includes(result.media)) {
                 STORE.data = STORE.data.replace(new RegExp(result.title, 'g'), result.media);
               }
             });
@@ -112,9 +123,6 @@ const EditCustomSurvey: React.FC<Props> = ({
             });
             await handleSubmit(JSON.stringify(parser.parse(STORE.data)));
             setProcessing(false);
-            // reset store
-            STORE.data = '';
-            STORE.media = '';
           } catch (err) {
             setProcessing(false);
           }
@@ -126,7 +134,13 @@ const EditCustomSurvey: React.FC<Props> = ({
     return () => {
       window.removeEventListener('message', handleMessage, false);
     };
-  }, [onClose, handleSubmit, formData.id, uploadMedia, processing]);
+  }, [onClose, handleSubmit, formData.id, uploadMedia, processing, mediaUploadResults]);
+
+  useEffect(() => () => {
+    STORE.data = '';
+    STORE.media = '';
+    setMediaUploadResults([]);
+  }, []);
 
   return (
     <Modal
