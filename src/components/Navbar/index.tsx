@@ -33,21 +33,29 @@ const NavItem = ({to, title, isDarkNav} : {to: string, title: string, isDarkNav:
 
 const Navbar: React.FC<Props> = ({hideButton = false, isDark = false}) => {
   const {width} = useSize();
-  const [open, setOpen] = useState(false);
   const navigate = useNavigate();
+
   const isAuthenticated = useSelector((state: RootStateOrAny) => state.auth.isAuthenticated);
+
+  const [open, setOpen] = useState(false);
+
   const onDashboardClick = () => navigate('/dashboard');
+
   const onLoginClick = () => navigate('/login');
+
   const handleLogoClick = useCallback(() => {
     setOpen(false);
     navigate('/');
   }, [navigate]);
+
   const toggleMenu = useCallback(() => setOpen(!open), [open]);
+
   const screenWidth = useMemo(() => (width || 0), [width]);
-  // eslint-disable-next-line consistent-return
+
   const mobileMenuStyle = 'fixed w-full pt-[10vh] px-[5vw] pb-[20px] left-0 top-[100px] shadow z-10 transition-transform bg-color-white';
+
   const isMobile = useMemo(() => {
-    if (screenWidth < 640) {
+    if (screenWidth < 1024) {
       if (open) {
         return `${mobileMenuStyle} translate-x-0`;
       }
@@ -55,12 +63,18 @@ const Navbar: React.FC<Props> = ({hideButton = false, isDark = false}) => {
     }
     return 'translate-x-0';
   }, [open, screenWidth]);
+
   useLayoutEffect(() => setOpen(false), []);
+
   return (
     <div className={cs(isDark ? 'bg-[#05375A]' : '')}>
       <nav className={cs(classes.navbar, isDark ? classes.darkBar : classes.lightBar)}>
         <div
-          className={cs(classes.toggle, 'HAMBURGER-ICON space-y-2 sm:hidden')}
+          className={cs(
+            classes.toggle,
+            'HAMBURGER-ICON space-y-2 lg:hidden',
+            hideButton ? 'hidden' : '',
+          )}
           onClick={toggleMenu}
         >
           {open ? (
@@ -75,7 +89,7 @@ const Navbar: React.FC<Props> = ({hideButton = false, isDark = false}) => {
         <div
           className={cs(
             classes.menuList,
-            hideButton ? 'hidden' : 'sm:flex',
+            hideButton ? 'hidden' : 'lg:flex',
             isDark ? classes.darkMenuList : classes.lightMenuList,
             isMobile,
           )}
@@ -114,7 +128,7 @@ const Navbar: React.FC<Props> = ({hideButton = false, isDark = false}) => {
             {isAuthenticated ? (
               <Button text='Dashboard' onClick={onDashboardClick} />
             ) : (
-              <Button className='sm:w-[90px]' text='Log in' onClick={onLoginClick} />
+              <Button className='lg:w-[90px]' text='Log in' onClick={onLoginClick} />
             )}
           </div>
         </div>

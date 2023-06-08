@@ -1,5 +1,5 @@
 export default {
-  container: 'mt-[80px]',
+  container: 'mt-[80px] sm:pt-[80px] lg:pt-[0]',
   header: 'text-center',
   heading: 'text-[64px] leading-[68px] font-interBold text-color-blue mb-[16px]',
   desc: 'text-[18px] leading-[32px]',

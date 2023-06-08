@@ -1,5 +1,5 @@
 export default {
-  heroSection: 'py-[20px] flex flex-col gap-[50px] sm:py-[50px] lg:py-[120px] lg:flex-row lg:gap-[20px]',
+  heroSection: 'py-[20px] flex flex-col gap-[50px] sm:py-[150px] lg:py-[120px] lg:flex-row lg:gap-[20px]',
   heroContent: 'lg:w-[50%]',
   heroTitle: 'leading-[44px] -tracking-[0.025px] text-[36px] font-interBold text-color-blue sm:leading-[68px] sm:text-[64px] max-w-[510px]',
   heroText: 'font-inter text-[16px] leading-[24px] text-color-text my-[28px] sm:text-[18px] sm:leading-[26px] max-w-[510px]',

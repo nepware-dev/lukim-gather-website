@@ -52,11 +52,16 @@ const Login = () => {
   const [selectedTab, setSelectedTab] = useState<string>('email');
 
   const handlePhoneSelect = useCallback(
-    () => setSelectedTab('phone'),
-    [setSelectedTab],
+    () => {
+      setSelectedTab('phone');
+      setUsername('');
+      setPassword('');
+    },
+    [],
   );
   const handleEmailSelect = useCallback(() => {
     setSelectedTab('email');
+    setPhoneNumber('');
   }, [setSelectedTab]);
 
   const [login, {loading}] = useMutation(LOGIN, {
