@@ -1,6 +1,6 @@
 export default {
   content: '',
-  tutorialHeader: 'bg-[#05375A] pb-16 pt-[120px]',
+  tutorialHeader: 'bg-[#05375A] pb-16 pt-[120px] sm:pt-[150px]',
   heading: 'font-interBold text-[48px] text-color-white mb-[48px] text-center',
   inputWrapper: 'max-w-[740px] mx-auto mb-[48px] w-[100%] mx-auto flex flex-col justify-center sm:flex-row gap-1 sm:gap-[0] px-10 md:px-5 lg:px-0',
   input: 'w-[100%] sm:w-[45%] h-[50px] pl-[20px] pr-[5px] font-inter rounded-l-lg rounded-r-lg sm:rounded-r-none',
