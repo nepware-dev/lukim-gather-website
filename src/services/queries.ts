@@ -344,6 +344,7 @@ export const GET_PROJECTS = gql`
     projects(tab: $tab) {
       id
       title
+      logo
     }
   }
 `;
