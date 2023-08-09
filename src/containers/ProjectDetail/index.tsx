@@ -15,6 +15,7 @@ import {formatName} from '@utils/formatName';
 
 import List from '@ra/components/List';
 import MultiSelectInput from '@ra/components/Form/MultiSelectInput';
+import projectPlaceholder from '@images/project-placeholder.svg';
 
 import {FiTrash2} from 'react-icons/fi';
 
@@ -265,10 +266,11 @@ const ProjectDetails = () => {
                   <h5 className={classes.infoHeading}>Last Updated</h5>
                   <p className={classes.infoData}>
                     {
-                      new Date(data?.projects[0]?.surveyLastModified)
-                        ?.toLocaleDateString(undefined, {
-                          month: 'short', day: '2-digit', year: 'numeric',
-                        })
+                      data?.projects[0]?.surveyLastModified
+                        ? new Date(data?.projects[0]?.surveyLastModified)
+                          ?.toLocaleDateString(undefined, {
+                            month: 'short', day: '2-digit', year: 'numeric',
+                          }) : 'N/A'
                     }
                   </p>
                 </div>
@@ -280,7 +282,7 @@ const ProjectDetails = () => {
                     Organization
                   </div>
                   <div className={classes.orgContent}>
-                    <img className={classes.orgLogo} alt='organization-logo' src={data?.projects[0]?.organization?.logo} />
+                    <img className={classes.orgLogo} alt='organization-logo' src={data?.projects[0]?.organization?.logo || projectPlaceholder} />
                     <p className={classes.orgName}>{data?.projects[0]?.organization?.title}</p>
                   </div>
                 </div>
