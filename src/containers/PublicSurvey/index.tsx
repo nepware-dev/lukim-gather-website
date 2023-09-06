@@ -34,23 +34,25 @@ const PublicSurvey: React.FC = () => {
 
   return (
     <>
-      <nav className={classes.navBar}>
-        <div className={classes.logoWrapper} onClick={handleLogoClick}>
-          <img src={NavLogo} alt='Lukim Gather Logo' className={classes.logo} />
-        </div>
-        <h1 className={classes.title}>
-          Survey
-        </h1>
-        <div className={classes.buttonWrapper}>
-          <div>
-            {isAuthenticated ? (
-              <Button text='Dashboard' onClick={onDashboardClick} />
-            ) : (
-              <Button text='Log in' onClick={onLoginClick} />
-            )}
+      <div className='bg-color-bg'>
+        <nav className={classes.navBar}>
+          <div className={classes.logoWrapper} onClick={handleLogoClick}>
+            <img src={NavLogo} alt='Lukim Gather Logo' className={classes.logo} />
           </div>
-        </div>
-      </nav>
+          <h1 className={classes.title}>
+            Survey
+          </h1>
+          <div className={classes.buttonWrapper}>
+            <div>
+              {isAuthenticated ? (
+                <Button text='Dashboard' onClick={onDashboardClick} />
+              ) : (
+                <Button text='Log in' onClick={onLoginClick} />
+              )}
+            </div>
+          </div>
+        </nav>
+      </div>
       <div className={classes.container}>
         {Boolean(happeningSurveyData) && (
           <SurveyDetails

@@ -2,9 +2,9 @@ export default {
   headerWrapper: 'sticky top-0 pt-[28px] pb-[12px] bg-color-white z-10 px-[18px]',
   headerWrapperBackground: 'z-0',
 
-  iconWrapper: 'w-[590px] flex items-center justify-between',
+  iconWrapper: 'sm:w-[590px] w-full flex items-center sm:justify-between',
   closeModalIcon: 'bg-[#E7E8EA] flex items-center justify-center h-[40px] w-[40px] rounded-full cursor-pointer',
-  rightContent: 'flex bg-red items-center gap-5 ml-auto mr-[18px]',
+  rightContent: 'flex items-center gap-5 ml-auto mr-[18px]',
   exportDropdown: 'font-inter',
 
   updateMessageContainer: 'bg-[#F0F3F6] flex items-flex-start justify-between gap-[16px] px-[16px] py-[12px] mt-[16px] mb-[8px] rounded-lg',
@@ -26,8 +26,8 @@ export default {
   categoryWrapper: 'flex items-center gap-[10px]',
   categoryImg: 'h-[60px]',
   categoryTitle: 'font-interMedium text-[16px] leading-[19.36px]',
-  photosWrapper: 'flex gap-[12px] overflow-x-auto max-w-[calc(100vw-40px)]',
-  photo: 'h-[143px] w-[187px] rounded-lg object-cover',
+  photosWrapper: 'flex gap-[12px] overflow-x-auto max-w-[calc(100vw-40px)] overflow-x-auto',
+  photo: 'h-[143px] min-w-[187px] rounded-lg object-cover',
   text: 'ml-[8px]',
 
   wrapper: 'flex items-center justify-center h-[56px] w-[67px] bg-color-white border border-[#B3CBDC] rounded-lg',

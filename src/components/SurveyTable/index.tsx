@@ -155,7 +155,7 @@ const SurveyTable: React.FC<Props> = ({
         ) : (
           <tr>
             <td>
-              <p className={classes.notFound}>{loading ? 'Loading' : 'No Survey Found'}</p>
+              <p className={classes.notFound}>{loading ? 'Loading ...' : 'No Survey Found'}</p>
             </td>
           </tr>
         )}

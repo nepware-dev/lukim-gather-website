@@ -1,7 +1,6 @@
 import React, {
   useCallback,
   useState,
-  useEffect,
   useRef,
 } from 'react';
 
@@ -39,12 +38,6 @@ const CommentInput: React.FC<CommentInputProps> = ({
     onSubmit(text);
     (e.target as HTMLFormElement).reset?.();
   }, [onSubmit, text]);
-
-  useEffect(() => {
-    if (onCancel) {
-      inputRef?.current?.focus();
-    }
-  }, [onCancel]);
 
   return (
     <form className={classes.container} onSubmit={handleSubmit}>
