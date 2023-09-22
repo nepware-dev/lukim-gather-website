@@ -63,7 +63,7 @@ const EmailSettings: React.FC<EmailSettingsProps> = ({onPasswordError}) => {
 
   const [emailChangeMutation, {loading: emailChangeLoading}] = useMutation(EMAIL_CHANGE, {
     onCompleted: () => {
-      toast('success', 'Email confimation pin has been sent to your new email!');
+      toast('success', 'Email confirmation pin has been sent to your new email!');
       setShowOtpForm(true);
     },
     onError: (err) => {

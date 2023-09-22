@@ -1,5 +1,5 @@
 export default {
-  navbar: 'w-full max-w-[1440px] mx-auto px-[5vw] py-[22px] lg:flex lg:justify-between z-[9] fixed top-0 left-0 lg:static',
+  navbar: 'w-full max-w-[1440px] mx-auto px-[5vw] py-[22px] lg:flex lg:justify-between z-[9] fixed left-0 lg:static',
   darkBar: 'bg-[#05375A]',
   lightBar: 'lg:bg-color-bg bg-color-white',
   toggle: 'absolute right-[20px] top-[30px] py-2 px-2 cursor-pointers',

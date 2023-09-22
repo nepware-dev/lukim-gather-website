@@ -148,55 +148,53 @@ const SurveyEntry: React.FC<Props> = (
   const handleUpdateButtonClick = useCallback(() => onEditClick?.(true), [onEditClick]);
 
   return (
-    <div>
-      <div className={classes.detailsContainer}>
-        <SurveyDetails
-          className={classes.detailsModal}
-          data={data}
-          isEditable={allowEdit}
-          onEdit={handleEditButtonClick}
-          onUpdate={handleUpdateButtonClick}
-          onAcceptSurvey={handleAccept}
-          onDeclineSurvey={handleShowDeclineModal}
-          onClose={hideDetails}
-          updatingStatus={updating}
-        />
-        <div
-          className={cs(classes.declineModalOverlay, [
-            'hidden',
-            !showDeclineModal,
-          ])}
-        >
-          <div className={classes.declineModal}>
-            <div className={classes.declineHeader}>
-              <p className={classes.declineHeaderText}>
-                Are you sure you want to decline the entry?
-              </p>
-              <div className={classes.closeIcon} onClick={handleHideDeclineModal}>
-                <HiOutlineX size={14} />
-              </div>
+    <div className={classes.detailsContainer}>
+      <SurveyDetails
+        className={classes.detailsModal}
+        data={data}
+        isEditable={allowEdit}
+        onEdit={handleEditButtonClick}
+        onUpdate={handleUpdateButtonClick}
+        onAcceptSurvey={handleAccept}
+        onDeclineSurvey={handleShowDeclineModal}
+        onClose={hideDetails}
+        updatingStatus={updating}
+      />
+      <div
+        className={cs(classes.declineModalOverlay, [
+          'hidden',
+          !showDeclineModal,
+        ])}
+      >
+        <div className={classes.declineModal}>
+          <div className={classes.declineHeader}>
+            <p className={classes.declineHeaderText}>
+              Are you sure you want to decline the entry?
+            </p>
+            <div className={classes.closeIcon} onClick={handleHideDeclineModal}>
+              <HiOutlineX size={14} />
             </div>
-            <div className={classes.declineContent}>
-              <p className={classes.declineText}>
-                Reasons why it is declined (optional)
-              </p>
-              <textarea className={classes.textarea} />
-              <div className={classes.declineButtons}>
-                <Button
-                  text='Cancel'
-                  onClick={handleHideDeclineModal}
-                  className={classes.cancelBtn}
-                  textClassName={classes.cancelBtnText}
-                />
-                <Button
-                  loading={updating}
-                  disabled={updating}
-                  text='Yes, decline'
-                  onClick={handleDecline}
-                  className={classes.yesDeclineBtn}
-                  textClassName={classes.yesDeclineBtnText}
-                />
-              </div>
+          </div>
+          <div className={classes.declineContent}>
+            <p className={classes.declineText}>
+              Reasons why it is declined (optional)
+            </p>
+            <textarea className={classes.textarea} />
+            <div className={classes.declineButtons}>
+              <Button
+                text='Cancel'
+                onClick={handleHideDeclineModal}
+                className={classes.cancelBtn}
+                textClassName={classes.cancelBtnText}
+              />
+              <Button
+                loading={updating}
+                disabled={updating}
+                text='Yes, decline'
+                onClick={handleDecline}
+                className={classes.yesDeclineBtn}
+                textClassName={classes.yesDeclineBtnText}
+              />
             </div>
           </div>
         </div>

@@ -1,5 +1,5 @@
 export default {
-  headerWrapper: 'sticky top-0 pt-[28px] pb-[12px] bg-color-white z-10 px-[18px]',
+  headerWrapper: 'sticky top-0 pt-[40px] pb-[12px] bg-color-white z-10 px-[18px]',
   headerWrapperBackground: 'z-0',
 
   iconWrapper: 'sm:w-[590px] w-full flex items-center sm:justify-between',
