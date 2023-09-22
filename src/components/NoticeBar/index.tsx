@@ -130,7 +130,7 @@ const Notice = (props: any) => {
 
   if (activeNotice) {
     return (
-      <div className='bg-color-blue z-10 sticky top-0 left-0 right-0'>
+      <div className='bg-color-blue z-20 sticky top-0 left-0 right-0'>
         {showBar && (
           <div className='max-w-[1440px] mx-auto px-[5vw] flex justify-between font-inter align-center py-2'>
             <div />

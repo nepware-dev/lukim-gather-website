@@ -34,7 +34,7 @@ export type CategoryType = {
 };
 
 const FAQ = () => {
-  const contentRef = useRef<HTMLElement>();
+  const contentRef = useRef<HTMLInputElement>(null);
   const topicRef = useRef();
   const {data, loading} = useQuery(GET_FAQ);
 
@@ -132,9 +132,8 @@ const FAQ = () => {
             />
           )}
         </div>
-        <div className={classes.bgContentWrapper}>
+        <div className={classes.bgContentWrapper} ref={contentRef}>
           <List
-            ref={contentRef}
             data={faqData}
             className={classes.bgContent}
             renderItem={renderContent}

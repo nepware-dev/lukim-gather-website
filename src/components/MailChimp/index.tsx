@@ -1,5 +1,7 @@
 import React, {useState, useCallback} from 'react';
 
+import useToast from '@hooks/useToast';
+
 import classes from './styles';
 
 interface Props {
@@ -11,6 +13,7 @@ interface Props {
 }
 
 const MailChimpForm: React.FC<Props> = ({status, message, onValidated}) => {
+  const toast = useToast();
   const [email, setEmail] = useState<string>('');
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -18,12 +21,15 @@ const MailChimpForm: React.FC<Props> = ({status, message, onValidated}) => {
   }, []);
 
   const handleSubmit = useCallback(() => {
+    if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(email)) {
+      toast('error', 'Invalid email address !');
+    }
     if (email && email.indexOf('@') > -1) {
       onValidated({
         EMAIL: email,
       });
     }
-  }, [email, onValidated]);
+  }, [email, onValidated, toast]);
 
   return (
     <div className={classes.container}>

@@ -29,7 +29,7 @@ const GET_TUTORIAL = gql`
 `;
 
 const Tutorial = () => {
-  const contentRef = useRef<HTMLElement>();
+  const contentRef = useRef<HTMLInputElement>(null);
   const topicRef = useRef();
   const {data, loading} = useQuery(GET_TUTORIAL);
 
@@ -122,9 +122,8 @@ const Tutorial = () => {
             />
           )}
         </div>
-        <div className={classes.bgContentWrapper}>
+        <div className={classes.bgContentWrapper} ref={contentRef}>
           <List
-            ref={contentRef}
             data={tutorialData}
             className={classes.bgContent}
             renderItem={renderContent}
