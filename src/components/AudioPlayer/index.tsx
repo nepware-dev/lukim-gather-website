@@ -5,11 +5,11 @@ import useToggle from '@ra/hooks/useToggle';
 
 import classes from './styles';
 
-const AudioPlayer = ({file} : {file?: any}) => {
+const AudioPlayer = ({file} : {file?: File | string}) => {
   const [isPlaying, setPlaying] = useToggle();
 
   useEffect(() => {
-    const audio = document.getElementById('audio') as any;
+    const audio = document.getElementById('audio') as HTMLAudioElement;
     if (isPlaying) {
       audio.play();
     } else {
@@ -21,19 +21,19 @@ const AudioPlayer = ({file} : {file?: any}) => {
   useEffect(() => {
     if (typeof file !== 'string') {
       const audioTag = document.getElementById('audio') as any;
-      const dt = URL.createObjectURL(file);
+      const dt = URL.createObjectURL(file as File);
       audioTag.src = dt;
     }
   }, [file]);
 
   return (
     <div>
-      <audio id='audio' src={file}>
+      <audio id='audio' src={file as string}>
         <track kind='captions' />
       </audio>
       <div className={classes.audioPlayer} onClick={setPlaying}>
         {isPlaying ? <HiPause size={40} color='#EC6D25' /> : <HiPlay size={40} color='#0A52A1' />}
-        <p className={classes.audioTitle}>{file?.name || file?.substring(file.lastIndexOf('/') + 1)}</p>
+        <p className={classes.audioTitle}>{(file as string)?.substring((file as string).lastIndexOf('/') + 1)}</p>
       </div>
     </div>
   );

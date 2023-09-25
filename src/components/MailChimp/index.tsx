@@ -23,8 +23,7 @@ const MailChimpForm: React.FC<Props> = ({status, message, onValidated}) => {
   const handleSubmit = useCallback(() => {
     if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(email)) {
       toast('error', 'Invalid email address !');
-    }
-    if (email && email.indexOf('@') > -1) {
+    } else if (email && email.indexOf('@') > -1) {
       onValidated({
         EMAIL: email,
       });

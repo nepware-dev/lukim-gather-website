@@ -33,7 +33,6 @@ import {FormDataType} from '@components/FormTable';
 import {SurveyDataType} from '@components/SurveyTable';
 
 import {rootState} from '@store/rootReducer';
-import cs from '@utils/cs';
 import {formatDate} from '@utils/formatDate';
 import {findPropertyAnywhere} from '@utils/searchTree';
 import sentimentName from '@utils/sentimentName';
@@ -534,17 +533,17 @@ const Dashboard = () => {
               text='All'
               onClick={handleTab}
               isActive={status === 'All'}
-              className='rounded-l-lg'
+              className='rounded-l-lg w-[50%] sm:w-auto'
             />
             <SurveyTab
               text='My Entries'
               onClick={handleTab}
               isActive={status === 'My Entries'}
-              className='rounded-r-lg'
+              className='rounded-r-lg w-[50%] sm:w-auto'
             />
           </div>
           <SelectInput
-            className='h-[44px] min-w-[12em] w-max rounded-lg border-[#CCDCE8]'
+            className={classes.selectInput}
             valueExtractor={titleExtractor}
             keyExtractor={keyExtractor}
             options={regionOptions}
@@ -553,7 +552,7 @@ const Dashboard = () => {
             defaultValue={selectInputRegion}
           />
           <SelectInput
-            className={cs('h-[44px]', 'min-w-[12em] w-max', 'rounded-lg', 'border-[#CCDCE8]')}
+            className={classes.selectInput}
             valueExtractor={titleExtractor}
             keyExtractor={keyExtractor}
             options={category?.protectedAreaCategories}
@@ -562,7 +561,7 @@ const Dashboard = () => {
             defaultValue={selectInputCategory}
           />
           <SelectInput
-            className={cs('h-[44px]', 'min-w-[12em] w-max', 'rounded-lg', 'border-[#CCDCE8]')}
+            className={classes.selectInput}
             valueExtractor={titleExtractor}
             keyExtractor={keyExtractor}
             options={protectedAreasOptions}
@@ -571,7 +570,7 @@ const Dashboard = () => {
             defaultValue={selectInputProtectedArea}
           />
           <SelectInput
-            className={cs('h-[44px]', 'min-w-[12em] w-max', 'rounded-lg', 'border-[#CCDCE8]')}
+            className={classes.selectInput}
             valueExtractor={titleExtractor}
             keyExtractor={keyExtractor}
             options={projectOptions}

@@ -30,7 +30,9 @@ const DashboardLayout = ({
   const MobileHeader = useCallback(
     () => (
       <div className={classes.mobileHeader}>
-        <img src={logo} alt='lukim-logo' className={classes.logo} />
+        <Link to='/'>
+          <img src={logo} alt='lukim-logo' className={classes.logo} />
+        </Link>
         <div className={classes.cursor}>
           {showSideBar ? (
             <HiOutlineX size={25} onClick={handleIconToggle} />
