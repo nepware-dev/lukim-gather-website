@@ -17,7 +17,7 @@ const Pagination: React.FC<Props> = ({page, totalPages, handlePagination}) => {
   }, [handlePagination, page]);
 
   return (
-    <div className='flex gap-[35px] w-full pt-[17px] pb-[14px]'>
+    <div className='flex sm:gap-[35px] gap:none justify-between sm:w-full w-[calc(100vw-40px)] pt-[17px] pb-[14px]'>
       <div>
         <ArrowBtn
           btnType='previous'
@@ -25,7 +25,7 @@ const Pagination: React.FC<Props> = ({page, totalPages, handlePagination}) => {
           onClick={handlePrevious}
         />
       </div>
-      <div className='flex gap-[35px]'>
+      <div className='flex justify-between w-full px-4'>
         <NumBtn
           onClick={handlePagination}
           num={1}

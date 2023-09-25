@@ -2,6 +2,7 @@ import React, {
   forwardRef,
   useCallback,
   useEffect,
+  useMemo,
   useState,
 } from 'react';
 import {useSelector} from 'react-redux';
@@ -555,6 +556,11 @@ const Surveys = () => {
   },
   ];
 
+  const allowEdit = useMemo(
+    () => userId === surveyEntryData?.createdBy?.id || isStaff || surveyEntryData?.project?.isAdmin,
+    [isStaff, surveyEntryData?.createdBy?.id, surveyEntryData?.project?.isAdmin, userId],
+  );
+
   return (
     <>
       <DashboardLayout hideOverflowY={showDetails}>
@@ -567,7 +573,7 @@ const Surveys = () => {
                 text='All'
                 onClick={handleTab}
                 isActive={status === 'All'}
-                className={cs('rounded-l-lg', [
+                className={cs('rounded-l-lg w-[50%] sm:w-auto', [
                   'border-r-0',
                   status === 'Approved',
                 ])}
@@ -576,7 +582,7 @@ const Surveys = () => {
                 text='My Entries'
                 onClick={handleTab}
                 isActive={status === 'My Entries'}
-                className={cs('rounded-r-lg', [
+                className={cs('rounded-r-lg w-[50%] sm:w-auto', [
                   'border-l-0',
                   status === 'Approved',
                 ])}
@@ -609,80 +615,70 @@ const Surveys = () => {
               <Button className={classes.analyticsButton} onClick={handleAnalyticsClick} text='View analytics' />
             </div>
           </div>
-          <div className={cs(
-            classes.filterWrapper,
-            classes.transitionOpacity,
-            [classes.opacityNone, !toggleFilter],
-            [classes.opacityFull, toggleFilter],
-          )}
-          >
-            <div className={classes.selectInputWrapper}>
-              <SelectInput
-                className={classes.selectInput}
-                defaultValue={selectInputData?.status}
-                valueExtractor={titleExtractor}
-                keyExtractor={keyExtractor}
-                options={surveyStatus}
-                placeholder='Status'
-                onChange={handleStatusChange}
-              />
-              <SelectInput
-                className={classes.selectInput}
-                defaultValue={selectInputData?.region}
-                valueExtractor={titleExtractor}
-                keyExtractor={keyExtractor}
-                options={regionOptions}
-                placeholder='Province'
-                onChange={handleRegionChange}
-              />
-              <SelectInput
-                className={classes.selectInput}
-                defaultValue={selectInputData?.category}
-                valueExtractor={titleExtractor}
-                keyExtractor={keyExtractor}
-                options={category?.protectedAreaCategories}
-                placeholder='Category'
-                onChange={handleCategoryChange}
-              />
-              <SelectInput
-                className={classes.selectInput}
-                defaultValue={selectInputData?.protectedArea}
-                valueExtractor={titleExtractor}
-                keyExtractor={keyExtractor}
-                options={protectedAreaOptions}
-                placeholder='Protected Area'
-                onChange={handleProtectedAreaChange}
-              />
-              <SelectInput
-                className={classes.selectInput}
-                defaultValue={selectInputData?.createdBy}
-                valueExtractor={titleExtractor}
-                keyExtractor={keyExtractor}
-                options={createdByOptions}
-                placeholder='User'
-                onChange={handleCreatedByChange}
-              />
-              <SelectInput
-                className={classes.selectInput}
-                defaultValue={selectInputData?.project}
-                valueExtractor={titleExtractor}
-                keyExtractor={keyExtractor}
-                options={projectOptions}
-                placeholder='Project'
-                onChange={handleProjectChange}
-              />
+          {toggleFilter && (
+            <div className={classes.filterWrapper}>
+              <div className={classes.selectInputWrapper}>
+                <SelectInput
+                  className={classes.selectInput}
+                  defaultValue={selectInputData?.status}
+                  valueExtractor={titleExtractor}
+                  keyExtractor={keyExtractor}
+                  options={surveyStatus}
+                  placeholder='Status'
+                  onChange={handleStatusChange}
+                />
+                <SelectInput
+                  className={classes.selectInput}
+                  defaultValue={selectInputData?.region}
+                  valueExtractor={titleExtractor}
+                  keyExtractor={keyExtractor}
+                  options={regionOptions}
+                  placeholder='Province'
+                  onChange={handleRegionChange}
+                />
+                <SelectInput
+                  className={classes.selectInput}
+                  defaultValue={selectInputData?.category}
+                  valueExtractor={titleExtractor}
+                  keyExtractor={keyExtractor}
+                  options={category?.protectedAreaCategories}
+                  placeholder='Category'
+                  onChange={handleCategoryChange}
+                />
+                <SelectInput
+                  className={classes.selectInput}
+                  defaultValue={selectInputData?.protectedArea}
+                  valueExtractor={titleExtractor}
+                  keyExtractor={keyExtractor}
+                  options={protectedAreaOptions}
+                  placeholder='Protected Area'
+                  onChange={handleProtectedAreaChange}
+                />
+                <SelectInput
+                  className={classes.selectInput}
+                  defaultValue={selectInputData?.createdBy}
+                  valueExtractor={titleExtractor}
+                  keyExtractor={keyExtractor}
+                  options={createdByOptions}
+                  placeholder='User'
+                  onChange={handleCreatedByChange}
+                />
+                <SelectInput
+                  className={classes.selectInput}
+                  defaultValue={selectInputData?.project}
+                  valueExtractor={titleExtractor}
+                  keyExtractor={keyExtractor}
+                  options={projectOptions}
+                  placeholder='Project'
+                  onChange={handleProjectChange}
+                />
+              </div>
+              <span className={classes.clear} onClick={handleClearClick}>
+                Clear all filters
+              </span>
             </div>
-            <span className={classes.clear} onClick={handleClearClick}>
-              Clear all filters
-            </span>
-          </div>
-          <div className={cs(
-            classes.surveyTable,
-            classes.transition,
-            [classes.translate, !toggleFilter],
-            [classes.translateNone, toggleFilter],
           )}
-          >
+          <div className={classes.surveyTable}>
             <SurveyTable
               loading={loadingSurvey}
               data={surveyData}
@@ -710,10 +706,7 @@ const Surveys = () => {
       {
         (showDetails && surveyEntryData) && (
           <SurveyEntry
-            allowEdit={
-              userId === surveyEntryData.createdBy?.id || isStaff
-              || surveyEntryData.project?.isAdmin
-            }
+            allowEdit={allowEdit || false}
             data={surveyEntryData}
             setShowDetails={setShowDetails}
             onEditClick={handleOpenEditModal}
