@@ -9,6 +9,6 @@ export default {
   undpImage: 'max-h-[100px]',
   text: 'font-inter text-color-lt-grey text-center text-[14px] leading-[20px]',
   textLink: 'hover:brightness-90',
-  footerCred: 'flex justify-between pb-[50px]',
-  legalLink: 'flex gap-[20px] items-start',
+  footerCred: 'flex justify-between pb-4 ms:pb-[50px] flex-col sm:flex-row',
+  legalLink: 'flex gap-4 justify-center sm:justify-normal mt-4 sm:mt-0',
 };

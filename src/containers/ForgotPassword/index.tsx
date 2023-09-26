@@ -120,7 +120,7 @@ const ForgotPassword = () => {
   return (
     <div className={classes.mainContainer}>
       <div className={classes.container}>
-        <Navbar />
+        <Navbar hideButton />
         <div
           className={cs(classes.contentContainer, ['hidden', showMailSentInfo])}
         >

@@ -3,7 +3,7 @@ export default {
   darkBar: 'bg-[#05375A]',
   lightBar: 'lg:bg-color-bg bg-color-white',
   toggle: 'absolute right-[20px] top-[30px] py-2 px-2 cursor-pointers',
-  logoWrapper: 'cursor-pointer',
+  logoWrapper: 'cursor-pointer w-fit relative sm:z-auto z-20',
   logo: 'h-[66px]',
   menuList: 'overflow-hidden lg:items-center',
   darkMenuList: 'bg-[#05375A]',

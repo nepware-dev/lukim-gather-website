@@ -52,7 +52,7 @@ const Navbar: React.FC<Props> = ({hideButton = false, isDark = false}) => {
 
   const screenWidth = useMemo(() => (width || 0), [width]);
 
-  const mobileMenuStyle = 'fixed w-full pt-[10vh] px-[5vw] pb-[20px] left-0 top-[100px] shadow z-10 transition-transform bg-color-white';
+  const mobileMenuStyle = 'fixed w-full pt-20 px-[5vw] pb-[20px] left-0 top-[110px] shadow z-10 transition-transform bg-color-white';
 
   const isMobile = useMemo(() => {
     if (screenWidth < 1024) {

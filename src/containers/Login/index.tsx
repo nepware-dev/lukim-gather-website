@@ -59,6 +59,7 @@ const Login = () => {
     },
     [],
   );
+
   const handleEmailSelect = useCallback(() => {
     setSelectedTab('email');
     setPhoneNumber('');
