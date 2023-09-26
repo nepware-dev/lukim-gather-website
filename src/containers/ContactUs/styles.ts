@@ -12,7 +12,7 @@ export default {
   mail: 'text-[18px] leading-[32px] text-color-white sm:max-w-[225px] max-w-full',
   socialMedia: 'flex gap-[32px]',
   formWrapper: 'w-full flex flex-col gap-[20px] py-[30px] bg-[#fff] px-[30px] mb-[60px] rounded-lg sm:rounded-none sm:px-0 sm:mb-0 sm:bg-transparent',
-  row: 'grid grid-cols-2 gap-4',
+  row: 'grid sm:grid-cols-2 grid-cols gap-4',
   col: 'w-full',
   label: 'text-[16px] leading-none text-[#888c94] mb-[8px] interMedium',
   input: 'w-full border border-[#CEDCEC] bg-color-bg !rounded-lg text-[16px] text-[#585D69] !p-[12px] hover:border-color-blue-alt',
