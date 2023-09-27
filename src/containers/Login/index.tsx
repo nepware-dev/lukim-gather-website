@@ -1,7 +1,7 @@
 import React, {useState, useCallback} from 'react';
 import {gql, useMutation} from '@apollo/client';
 import {Link, useNavigate} from 'react-router-dom';
-import {parsePhoneNumber} from 'libphonenumber-js';
+import {isValidPhoneNumber, parsePhoneNumber} from 'libphonenumber-js';
 
 import {dispatchLogin} from '@services/dispatch';
 import useToast from '@hooks/useToast';
@@ -122,18 +122,18 @@ const Login = () => {
 
   const handlePhoneLogin = useCallback(async () => {
     setError('');
-    const ph = parsePhoneNumber(phoneNumber, 'PG');
-    const phone = ph?.formatInternational().replace(/\s/g, '');
-    if (!ph?.isValid()) {
+    if (isValidPhoneNumber(phoneNumber)) {
+      const ph = parsePhoneNumber(phoneNumber, 'PG');
+      const phone = ph?.formatInternational().replace(/\s/g, '');
+      await phoneConfirm({
+        variables: {
+          data: {username: phone},
+        },
+      });
+    } else {
       toast('error', 'Invalid Phone number.');
-      return;
     }
-    await phoneConfirm({
-      variables: {
-        data: {username: phone},
-      },
-    });
-  }, [phoneNumber, phoneConfirm, toast]);
+  }, [phoneConfirm, phoneNumber, toast]);
 
   const handleFormSubmit = useCallback(
     (e: React.FormEvent) => {
