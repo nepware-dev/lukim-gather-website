@@ -40,7 +40,8 @@ interface Props {
   data: SurveyDataType | null;
   onClose: () => void;
   updateMode?: boolean;
-  onCompleteUpdate: () => void;}
+  onCompleteUpdate: () => void;
+}
 
 const ImageItem = ({item, index, onRemove} : {item: string; index?: number; onRemove?: any}) => {
   const handleRemove = useCallback(() => onRemove?.(index), [index, onRemove]);

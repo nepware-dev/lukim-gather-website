@@ -77,17 +77,17 @@ export type SelectInputType = {
 
 export const flattenObject = (obj: FlattenObjectType) => {
   const flattened: FlattenObjectType = {};
+  if (obj) {
+    Object?.keys(obj)?.forEach((key) => {
+      const value = obj[key];
 
-  Object.keys(obj).forEach((key) => {
-    const value = obj[key];
-
-    if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
-      Object.assign(flattened, flattenObject(value));
-    } else {
-      flattened[key] = value;
-    }
-  });
-
+      if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+        Object.assign(flattened, flattenObject(value));
+      } else {
+        flattened[key] = value;
+      }
+    });
+  }
   return flattened;
 };
 
