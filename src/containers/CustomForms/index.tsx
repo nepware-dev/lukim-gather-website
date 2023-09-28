@@ -15,10 +15,6 @@ import {RiArrowDownSLine} from 'react-icons/ri';
 import {CSVLink} from 'react-csv';
 import {XMLParser} from 'fast-xml-parser';
 
-import cs from '@utils/cs';
-import {formatDate} from '@utils/formatDate';
-import {rootState} from '@store/rootReducer';
-
 import Button from '@components/Button';
 import DashboardHeader from '@components/DashboardHeader';
 import DashboardLayout from '@components/DashboardLayout';
@@ -31,6 +27,10 @@ import SelectInput from '@ra/components/Form/SelectInput'; // eslint-disable-lin
 
 import {flattenObject} from '@containers/Dashboard';
 
+import cs from '@utils/cs';
+import {formatDate} from '@utils/formatDate';
+import {rootState} from '@store/rootReducer';
+import {useBodyOverflow} from '@hooks/useBodyOverflow';
 import useToast from '@hooks/useToast';
 import {UPDATE_SURVEY, CREATE_SURVEY, GET_PROJECTS} from '@services/queries';
 
@@ -86,6 +86,8 @@ const identity = (item: any) => item;
 
 const CustomForms = () => {
   const {id} = useParams();
+  const navigate = useNavigate();
+  const toast = useToast();
   const {
     auth: {
       user: {id: userId, isStaff},
@@ -102,6 +104,7 @@ const CustomForms = () => {
   const {data: formData} = useQuery(GET_FORMS);
   const [surveyFormData, setSurveyFormData] = useState<FormDataType[]>([]);
   const [activeSurveyFormData, setActiveSurveyFormData] = useState<FormDataType>();
+  const [projectFilter, setProjectFilter] = useState<string>('');
   const [activePage, setActivePage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(0);
   const [rows, setRows] = useState<number>(10);
@@ -117,11 +120,7 @@ const CustomForms = () => {
   const [showAddSurvey, setShowAddSurvey] = useState<boolean>(false);
   const toggleShowAddSurvey = useCallback(() => setShowAddSurvey((sas) => !sas), []);
 
-  const [projectFilter, setProjectFilter] = useState<string>('');
-
-  const navigate = useNavigate();
-
-  const toast = useToast();
+  useBodyOverflow(showDetails || showAddSurvey || showEditSurvey);
 
   const {data: myProjects} = useQuery(GET_PROJECTS, {
     variables: {tab: 'my_project'},

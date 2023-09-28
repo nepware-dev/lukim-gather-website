@@ -3,7 +3,6 @@ export default {
   titleText: 'font-inter text-[14px] text-[#585D69] uppercase',
   feelWrapper: 'flex items-center justify-center h-[56px] w-[67px] bg-[#F0F3F6] border border-[#B3CBDC] rounded-lg',
   feel: 'text-[24px]',
-  wrapper: 'flex items-center justify-center h-[56px] w-[67px] bg-color-white border border-[#B3CBDC] rounded-lg',
   detailsContainer: 'flex justify-end fixed top-0 bottom-0 left-0 right-0 bg-[#10182880] overflow-y-scroll z-10',
   detailsModal: 'min-h-screen h-fit w-[625px] bg-color-white',
   headerWrapper: 'sticky top-0 pt-[28px] pb-[12px] bg-color-white px-[18px] z-10',

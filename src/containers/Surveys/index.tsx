@@ -15,12 +15,6 @@ import {RiArrowDownSLine} from 'react-icons/ri';
 import {formatISO} from 'date-fns';
 import {Parser} from 'json2csv';
 
-import {rootState} from '@store/rootReducer';
-import cs from '@utils/cs';
-import {formatDate} from '@utils/formatDate';
-import {formatName} from '@utils/formatName';
-import sentimentName from '@utils/sentimentName';
-
 import Button from '@components/Button';
 import DashboardHeader from '@components/DashboardHeader';
 import DashboardLayout from '@components/DashboardLayout';
@@ -31,7 +25,15 @@ import Dropdown from '@components/Dropdown';
 import SurveyEntry from '@components/SurveyEntry';
 import EditSurveyModal from '@components/EditSurveyModal';
 import SurveyFilter from '@components/SurveyFilter';
+
 import SelectInput from '@ra/components/Form/SelectInput'; // eslint-disable-line no-eval
+
+import {rootState} from '@store/rootReducer';
+import cs from '@utils/cs';
+import {formatDate} from '@utils/formatDate';
+import {formatName} from '@utils/formatName';
+import sentimentName from '@utils/sentimentName';
+import {useBodyOverflow} from '@hooks/useBodyOverflow';
 
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -278,6 +280,8 @@ const Surveys = () => {
     project: state?.project?.id ? state.project : null,
   });
   const [toggleFilter, setToggleFilter] = useState<boolean>(Boolean(state?.project));
+
+  useBodyOverflow(visibleEditModal || showDetails);
 
   const {refetch} = useQuery(GET_SURVEY, {
     variables: {id: uuid},
