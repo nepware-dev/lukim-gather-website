@@ -333,7 +333,7 @@ const Comments: React.FC<CommentsProps> = ({
   return (
     <div className={classes.container}>
       {hasNoComments && <NoComments />}
-      {!readOnly && <CommentInput onSubmit={handleAddComment} />}
+      <CommentInput onSubmit={handleAddComment} />
       {!hasNoComments && (
         <List
           className={classes.commentList}
