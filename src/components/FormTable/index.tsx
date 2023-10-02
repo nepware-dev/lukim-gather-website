@@ -50,11 +50,11 @@ const FormItem: React.FC<ItemProps> = ({
 
   return (
     <tr className={classes.tableItemRow}>
-      <td className='w-1/4'>
-        <p className={classes.itemTitle}>{title || item.title}</p>
+      <td className='w-1/3'>
+        <p className={classes.itemTitle}>{(title || item.title).substring(0, 50)}</p>
       </td>
       <td className='w-1/3'>
-        <p className={classes.tableText}>{(interviewerName ?? '').substring(0, 70)}</p>
+        <p className={classes.tableText}>{(interviewerName ?? '').substring(0, 50)}</p>
       </td>
       <td>
         <p className={classes.tableText}>{formatDate(item.createdAt)}</p>
