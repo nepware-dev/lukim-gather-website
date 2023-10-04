@@ -15,7 +15,7 @@ export default {
   loader: 'border-[#EC6D25] mt-[24px]',
   entryWrapper: 'bg-color-white px-[18px] pb-[20px]',
   header: 'flex items-center justify-between mt-[24px]',
-  headerTitle: 'font-interSemibold text-[24px]',
+  headerTitle: 'font-interSemibold text-[24px] break-words max-w-[80%]',
 
   status: 'max-w-fit px-[12px] py-[4px] rounded-full uppercase font-interSemibold text-[14px]',
   pending: 'bg-[#FFF3E2] text-[#F79009]',

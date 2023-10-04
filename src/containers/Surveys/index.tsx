@@ -397,14 +397,18 @@ const Surveys = () => {
   }, []);
 
   const handle5rows = useCallback(() => {
-    setRows(5);
-    setActivePage(1);
-  }, [setRows]);
+    if (rows !== 5) {
+      setRows(5);
+      setActivePage(1);
+    }
+  }, [rows]);
 
   const handle10rows = useCallback(() => {
-    setRows(10);
-    setActivePage(1);
-  }, [setRows]);
+    if (rows !== 10) {
+      setRows(10);
+      setActivePage(1);
+    }
+  }, [rows]);
 
   const renderLabel = useCallback(
     () => (
