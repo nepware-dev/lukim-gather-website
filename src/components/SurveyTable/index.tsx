@@ -78,7 +78,7 @@ const SurveyItem: React.FC<ItemProps> = ({
         </div>
       </td>
       <td>
-        <div className='ml-9'>
+        <div className='ml-1'>
           <Improvement improvement={item?.improvement} />
         </div>
       </td>

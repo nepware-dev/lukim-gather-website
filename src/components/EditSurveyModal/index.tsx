@@ -9,7 +9,6 @@ import {FiTrash2, FiUpload} from 'react-icons/fi';
 
 import {SurveyDataType} from '@components/SurveyTable';
 import AudioPlayer from '@components/AudioPlayer';
-import Modal from '@ra/components/Modal';
 import Loader from '@components/Loader';
 
 import useCategoryIcon from '@hooks/useCategoryIcon';
@@ -23,6 +22,7 @@ import {GET_SURVEY_DATA} from '@containers/Surveys';
 import usePrevious from '@hooks/usePrevious';
 import cs from '@utils/cs';
 
+import Modal from '@ra/components/Modal';
 import FileInput from '@ra/components/Form/FileInput';
 import useToggle from '@ra/hooks/useToggle';
 
@@ -233,7 +233,7 @@ const EditSurveyModal: React.FC<Props> = ({
           </button>
         </div>
         <div>
-          <div className='flex items-center gap-1 w-fit'>
+          <div className={classes.entriesWrapper}>
             <input
               className={cs(classes.surveyTitle, !isDisableTitleInput ? 'border border-[#CEDCEC]' : 'bg-transparent')}
               value={title}

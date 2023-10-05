@@ -7,9 +7,12 @@ interface Props {
   renderLabel(): React.ReactNode;
   children: React.ReactChild;
   alignRight?: boolean;
+  alignTop?: boolean;
 }
 
-const Dropdown: React.FC<Props> = ({renderLabel, children, alignRight}) => {
+const Dropdown: React.FC<Props> = ({
+  renderLabel, children, alignRight, alignTop,
+}) => {
   const [open, setOpen] = useState<boolean>(false);
 
   const hideDropDown = useCallback(() => {
@@ -49,6 +52,8 @@ const Dropdown: React.FC<Props> = ({renderLabel, children, alignRight}) => {
             classes.itemContainer,
             [classes.alignRight, !!alignRight],
             [classes.alignLeft, !alignRight],
+            [classes.alignTop, !!alignTop],
+            [classes.alignBottom, !alignTop],
           )}
         >
           {children}

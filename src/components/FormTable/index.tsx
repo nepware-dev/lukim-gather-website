@@ -98,7 +98,7 @@ const FormTable: React.FC<Props> = ({
         ) : (
           <tr>
             <td>
-              <p className={classes.notFound}>{loading ? 'Loading' : 'No Form Found'}</p>
+              <p className={classes.notFound}>{loading ? 'Loading ...' : 'No Form Found'}</p>
             </td>
           </tr>
         )}
