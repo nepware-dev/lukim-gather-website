@@ -399,7 +399,7 @@ const CustomForms = () => {
           <div className={classes.footer}>
             <div className={classes.dropdownWrapper}>
               <p className={classes.show}>Show</p>
-              <Dropdown renderLabel={renderLabel}>
+              <Dropdown alignRight alignTop renderLabel={renderLabel}>
                 <DropdownItem />
               </Dropdown>
             </div>

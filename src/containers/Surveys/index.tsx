@@ -281,7 +281,7 @@ const Surveys = () => {
   });
   const [toggleFilter, setToggleFilter] = useState<boolean>(Boolean(state?.project));
 
-  useBodyOverflow(visibleEditModal || showDetails);
+  useBodyOverflow(showDetails || visibleEditModal);
 
   const {refetch} = useQuery(GET_SURVEY, {
     variables: {id: uuid},
@@ -697,7 +697,7 @@ const Surveys = () => {
           <div className={classes.footer}>
             <div className={classes.dropdownWrapper}>
               <p className={classes.show}>Show</p>
-              <Dropdown renderLabel={renderLabel}>
+              <Dropdown alignRight alignTop renderLabel={renderLabel}>
                 <DropdownItem />
               </Dropdown>
             </div>
