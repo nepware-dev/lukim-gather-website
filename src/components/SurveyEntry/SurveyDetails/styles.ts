@@ -31,7 +31,7 @@ export default {
   text: 'ml-[8px]',
 
   wrapper: 'flex items-center justify-center h-[56px] w-[67px] bg-color-white border border-[#B3CBDC] rounded-lg',
-  info: 'font-inter text-[16px] text-color-text leading-[24px] ml-[8px]',
+  info: 'font-inter text-[16px] text-color-text leading-[24px] ml-[8px] break-words',
   mapWrapper: 'h-[229px] mt-[8px] mb-[32px] rounded-lg z-0',
 
   buttons: 'flex justify-center gap-[16px] mb-[52px] px-[18px] mt-auto',
