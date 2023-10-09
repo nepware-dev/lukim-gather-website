@@ -10,6 +10,7 @@ import {formatDate} from '@utils/formatDate';
 import Gallery from '@components/Gallery';
 import {FormDataType} from '@components/FormTable';
 import SurveyExportDropdown from '@components/SurveyExportDropdown';
+import {formatFormAnswers} from '@utils/formatAnswers';
 
 import useToast from '@hooks/useToast';
 
@@ -17,11 +18,11 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import cs from '@ra/cs';
 import classes from './styles';
 
-type Entries<T> = {
+export type Entries<T> = {
     [K in keyof T]: [K, T[K]];
 }[keyof T][];
 
-type AnswerItemType = {
+export type AnswerItemType = {
     [key: string]: string | number | object;
 };
 
@@ -233,7 +234,7 @@ export const FormDetails: React.FC<FormDetailsProps> = (props) => {
   } = props;
 
   const answers: Entries<AnswerItemType> = useMemo(() => {
-    const dataObject: object = JSON.parse(data.answer)?.data ?? {};
+    const dataObject = formatFormAnswers(data);
     return Object.entries(dataObject).filter(([key]) => key.startsWith('section'));
   }, [data]);
 

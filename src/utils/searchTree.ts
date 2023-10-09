@@ -4,7 +4,7 @@ type TreeObject = {
   [key: string]: any;
 };
 
-type ObjectType = {
+export type ObjectType = {
   [key: string]: ObjectType;
 };
 

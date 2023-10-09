@@ -139,8 +139,8 @@ export const CREATE_SURVEY = gql`
 `;
 
 export const UPDATE_SURVEY = gql`
-    mutation UpdateSurvey($id: ID!, $answer: JSONString!) {
-        updateSurvey(id: $id, answer: $answer) {
+    mutation UpdateSurvey($id: ID!, $answer: JSONString!, $answerSorted: JSONString) {
+        updateSurvey(id: $id, answer: $answer, answerSorted: $answerSorted) {
             result {
               answer
             }

@@ -10,6 +10,7 @@ import useToast from '@hooks/useToast';
 
 import cs from '@ra/cs';
 import {b64toBlob} from '@utils/blob';
+import {formatFormAnswers} from '@utils/formatAnswers';
 
 import classes from './styles';
 
@@ -17,7 +18,7 @@ interface Props {
   onClose: () => void;
   formData: any;
   formObj: any;
-  handleSubmit: (formData: any) => void;
+  handleSubmit: (formData: any, sortedFormData: any) => void;
   title: string;
   loading: boolean;
   projects: Array<any>;
@@ -52,7 +53,7 @@ const EditCustomSurvey: React.FC<Props> = ({
       const builder = new XMLBuilder({
         attributeNamePrefix: '_',
       });
-      const xmlContent = builder.build(JSON.parse(formData.answer));
+      const xmlContent = builder.build({data: formatFormAnswers(formData)});
       model = model.replace(/<data(.*?)<\/data>/, xmlContent);
     }
     const projectsXML = projects.reduce((a, c) => `${a}<option value="${c.title}">${c.title}</option>`, '');
@@ -65,7 +66,7 @@ const EditCustomSurvey: React.FC<Props> = ({
       iframeRef.current.contentWindow._formStr = form;
       // iframeRef.current.src = '/xforms';
     }
-  }, [formData.answer, formObj.xform, projects]);
+  }, [formData, formObj.xform, projects]);
 
   const [processing, setProcessing] = useState<boolean>(false);
 
@@ -109,8 +110,14 @@ const EditCustomSurvey: React.FC<Props> = ({
             });
             const parser = new XMLParser({
               attributeNamePrefix: '_',
+              preserveOrder: true,
             });
-            await handleSubmit(JSON.stringify(parser.parse(STORE.data)));
+            const formAnswersArrayJSON = JSON.stringify(parser.parse(STORE.data));
+            const formAnswersObject = formatFormAnswers({answer: formAnswersArrayJSON});
+            await handleSubmit(
+              JSON.stringify({data: formAnswersObject}),
+              formAnswersArrayJSON,
+            );
             setProcessing(false);
             // reset store
             STORE.data = '';

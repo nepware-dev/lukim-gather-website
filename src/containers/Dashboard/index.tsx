@@ -19,7 +19,7 @@ import {
   GET_REGION_DATA,
   GET_PROTECTED_AREA_DATA,
 } from '@containers/Surveys';
-import {GET_SURVEY_DATA} from '@containers/CustomForms';
+import {getProjectNameFromFormData, GET_SURVEY_DATA} from '@containers/CustomForms';
 
 import {formatISO} from 'date-fns';
 import {Parser} from 'json2csv';
@@ -33,8 +33,9 @@ import {SurveyDataType} from '@components/SurveyTable';
 
 import {rootState} from '@store/rootReducer';
 import {formatDate} from '@utils/formatDate';
-import {findPropertyAnywhere} from '@utils/searchTree';
+import {findPropertyAnywhere, type ObjectType} from '@utils/searchTree';
 import sentimentName from '@utils/sentimentName';
+import {formatFormAnswers} from '@utils/formatAnswers';
 
 import pdfIcon from '@images/icons/pdf.svg';
 import csvIcon from '@images/icons/csv.svg';
@@ -241,10 +242,16 @@ const Dashboard = () => {
     let shape = [];
     if (customSurveyData?.survey?.length > 0) {
       shape = customSurveyData?.survey.reduce((features: any, survey: FormDataType) => {
-        if (status === 'My Entries' && survey?.createdBy?.id !== userId) {
+        if (status === 'My Entries' && survey?.createdBy && survey?.createdBy?.id !== userId) {
           return features;
         }
-        const formAnswers = JSON.parse(survey.answer);
+        if (selectInputProject) {
+          const projectName = getProjectNameFromFormData(survey);
+          if (projectName !== selectInputProject.title) {
+            return features;
+          }
+        }
+        const formAnswers = formatFormAnswers(survey) as ObjectType;
         if (selectInputCategory || selectInputProtectedArea) {
           return features;
         }
@@ -287,10 +294,11 @@ const Dashboard = () => {
     selectInputProtectedArea,
     userId,
     status,
+    selectInputProject,
   ]);
 
   const flatCustomForms = useMemo(() => customFormGeoJSON.features.map(
-    ({properties: {customForm: {formAnswers: {data: formData}}}}: any) => flattenObject(formData),
+    ({properties: {customForm: {formAnswers: formData}}}: any) => flattenObject(formData),
   ), [customFormGeoJSON]);
 
   const surveyPolyGeoJSON : any = useMemo(() => {
@@ -360,10 +368,10 @@ const Dashboard = () => {
       if (featureItems.length > 0) {
         setPopUpLngLat(event.lngLat);
         const newPopupData = (
-          <div className={`max-h-[20rem] overflow-y-auto ${featureItems.length === 1 ? 'py-2px' : 'pt-[12px]'}`}>
+          <div className={`max-h-[22rem] overflow-y-auto ${featureItems.length === 1 ? 'py-2px' : 'pt-[12px]'}`}>
             {featureItems.map((item: any) => {
-              if (item?.formAnswers?.data?.section_1) {
-                const popUpData = Object.entries(item.formAnswers.data.section_1)
+              if (item?.formAnswers?.section_1) {
+                const popUpData = Object.entries(item.formAnswers.section_1)
                   ?.map(([key, val]) => {
                     if (val === '') {
                       return null;
@@ -372,7 +380,7 @@ const Dashboard = () => {
                       <span key={key} className='capitalize'>
                         {key.replace(/_/g, ' ')}
                         {': '}
-                        {val}
+                        {String(val).length > 30 ? `${String(val).substring(0, 30)}...` : val}
                         <br />
                       </span>
                     );
@@ -392,7 +400,7 @@ const Dashboard = () => {
                 <div key={item.id} className='border border-b-0 last:border-b only:border-0 border-color-border p-[6px] only:p-[2px]'>
                   <b>
                     {'Category: '}
-                    {item.category.title}
+                    {item.category?.title}
                   </b>
                   <br />
                   {'Title: '}
