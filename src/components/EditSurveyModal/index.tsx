@@ -91,7 +91,7 @@ const EditSurveyModal: React.FC<Props> = ({
   const [isDisableTitleInput, toggleDisableTitleInput] = useToggle(true);
   const [isPublic, toggleIsPublic] = useToggle(data?.isPublic || false);
   const [isTest, toggleIsTest] = useToggle(data?.isTest || false);
-  const [showCategoryModal, toggleCategoryModal] = useToggle(false);
+  const [showCategoryModal, setShowCategoryModal] = useState(false);
 
   const [submitHappeningSurvey, {loading}] = useMutation(
     updateMode ? UPDATE_HAPPENING_SURVEY : EDIT_HAPPENING_SURVEY,
@@ -150,9 +150,15 @@ const EditSurveyModal: React.FC<Props> = ({
     data?.id,
   ]);
 
-  useEffect(() => prevCategory?.id !== category?.id && toggleCategoryModal(false), [
-    category, category?.id, prevCategory, prevCategory?.id, toggleCategoryModal,
-  ]);
+  const toggleCategoryModal = useCallback(() => {
+    setShowCategoryModal(!showCategoryModal);
+  }, [showCategoryModal]);
+
+  useEffect(() => {
+    if (prevCategory?.id !== category?.id) {
+      setShowCategoryModal(false);
+    }
+  }, [category?.id, prevCategory?.id]);
 
   const handleAddImages = useCallback(({files = []}: {files: any}) => {
     setPhotos([...files, ...photos]);
@@ -265,7 +271,7 @@ const EditSurveyModal: React.FC<Props> = ({
           <div
             className={cs(classes.categoryModalOverlay, [
               'hidden',
-              showCategoryModal,
+              !showCategoryModal,
             ])}
           >
             <CategorySelect onClose={toggleCategoryModal} handleSelect={setCategory} />
