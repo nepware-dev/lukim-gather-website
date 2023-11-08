@@ -6,7 +6,7 @@ export default {
   filterWrapper: 'flex flex-wrap align-center gap-4',
   csvLink: 'h-[44px] w-max max-w-[200px] px-[12px] flex items-center rounded-lg border-[#CCDCE8] bg-[#E7E8EA] font-interMedium text-[14px]',
   csvLinkText: '!text-[#70747E] !font-interMedium text-[14px]',
-  mapWrapper: 'h-[90%] w-screen md:w-[100%] px-[1em] py-[1em] rounded-lg',
+  mapWrapper: 'h-[85%] w-screen md:w-[100%] px-[1em] py-[1em] rounded-lg',
   map: 'flex-1',
   exportDropdown: 'font-inter text-[#0A52A1]',
   exportButton: 'cursor-pointer bg-[#E7EEF6] flex justify-between items-center px-[10px] py-[8px] border border-[#0A52A1] rounded-lg hover:brightness-[0.97] transition duration-300',

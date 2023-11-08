@@ -4,7 +4,6 @@ import {gql, useQuery} from '@apollo/client';
 import {useSelector} from 'react-redux';
 
 import DashboardHeader from '@components/DashboardHeader';
-import DashboardLayout from '@components/DashboardLayout';
 
 import List from '@ra/components/List';
 
@@ -65,7 +64,7 @@ const Organization = () => {
   const MyOrganizationProps = {...Props, data: myOrganizations?.organizations || []};
   const AllOrganizationProps = {...Props, data: data?.organizations || []};
   return (
-    <DashboardLayout>
+    <>
       <DashboardHeader title='Organization' />
       <div className={classes.section}>
         <div className={classes.header}>
@@ -89,7 +88,7 @@ const Organization = () => {
           />
         </section>
       </div>
-    </DashboardLayout>
+    </>
   );
 };
 

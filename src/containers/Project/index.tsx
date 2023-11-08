@@ -3,7 +3,6 @@ import {Link} from 'react-router-dom';
 import {useQuery} from '@apollo/client';
 
 import DashboardHeader from '@components/DashboardHeader';
-import DashboardLayout from '@components/DashboardLayout';
 
 import List from '@ra/components/List';
 
@@ -11,6 +10,7 @@ import cs from '@utils/cs';
 import organizationPlaceholder from '@images/organization-placeholder.svg';
 
 import {GET_PROJECTS} from '@services/queries';
+
 import classes from './styles';
 
 const keyExtractor = (item: {id: string}) => item.id;
@@ -48,7 +48,7 @@ const Project = () => {
   const MyOrganizationProps = {...Props, data: myProjects?.projects || []};
   const AllOrganizationProps = {...Props, data: data?.projects || []};
   return (
-    <DashboardLayout>
+    <>
       <DashboardHeader title='Projects' />
       <div className={classes.section}>
         <div className={classes.header}>
@@ -74,7 +74,7 @@ const Project = () => {
           />
         </section>
       </div>
-    </DashboardLayout>
+    </>
   );
 };
 

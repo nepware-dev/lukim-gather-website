@@ -8,7 +8,6 @@ import {Link} from 'react-router-dom';
 import {useQuery} from '@apollo/client';
 
 import DashboardHeader from '@components/DashboardHeader';
-import DashboardLayout from '@components/DashboardLayout';
 import Dropdown from '@components/Dropdown';
 import SurveyTab from '@components/SurveyTab';
 
@@ -523,7 +522,7 @@ const Dashboard = () => {
   );
 
   return (
-    <DashboardLayout>
+    <>
       <DashboardHeader title='Map' />
       <h2 className={classes.title}>Map</h2>
       <div className={classes.header}>
@@ -659,7 +658,7 @@ const Dashboard = () => {
           )}
         </Map>
       </div>
-    </DashboardLayout>
+    </>
   );
 };
 

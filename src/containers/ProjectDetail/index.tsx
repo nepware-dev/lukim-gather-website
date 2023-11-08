@@ -7,7 +7,6 @@ import parse from 'html-react-parser';
 import useToast from '@hooks/useToast';
 
 import DashboardHeader from '@components/DashboardHeader';
-import DashboardLayout from '@components/DashboardLayout';
 import Button from '@components/Button';
 import Modal, {ActionType} from '@components/Modal';
 
@@ -219,7 +218,7 @@ const ProjectDetails = () => {
   const renderUserLabel = useCallback(({item}) => `${item?.firstName} ${item?.lastName}`, []);
 
   return (
-    <DashboardLayout>
+    <>
       <DashboardHeader title='Project detail' />
       <section className={classes.section}>
         <Link to='/projects' className={classes.backWrapper}>
@@ -329,7 +328,7 @@ const ProjectDetails = () => {
           />
         </div>
       </Modal>
-    </DashboardLayout>
+    </>
   );
 };
 

@@ -3,7 +3,6 @@ import {gql, useQuery} from '@apollo/client';
 import parse from 'html-react-parser';
 
 import List from '@ra/components/List';
-import Layout from '@components/Layout';
 import VideoModal from '@components/VideoModal';
 
 import classes from './styles';
@@ -82,22 +81,20 @@ const Resource = () => {
   };
   return (
     <>
-      <Layout>
-        <section className={classes.content}>
-          <div>
-            <h2 className={classes.backgroundTitle}>
-              Resources
-            </h2>
-            <input className={classes.input} onChange={handleSearchChange} placeholder='Search ...' />
-          </div>
-          <div className={classes.bgContentWrapper}>
-            <List
-              {...Props}
-              ref={ref}
-            />
-          </div>
-        </section>
-      </Layout>
+      <section className={classes.content}>
+        <div>
+          <h2 className={classes.backgroundTitle}>
+            Resources
+          </h2>
+          <input className={classes.input} onChange={handleSearchChange} placeholder='Search ...' />
+        </div>
+        <div className={classes.bgContentWrapper}>
+          <List
+            {...Props}
+            ref={ref}
+          />
+        </div>
+      </section>
       <VideoModal
         isVisible={openVideoModal}
         title={videoData?.title}

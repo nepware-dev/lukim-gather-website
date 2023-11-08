@@ -2,7 +2,6 @@ import React, {useCallback, useState, useMemo} from 'react';
 import {useSelector} from 'react-redux';
 
 import DashboardHeader from '@components/DashboardHeader';
-import DashboardLayout from '@components/DashboardLayout';
 import AccountTab from '@components/AccountTab';
 
 import {rootState} from '@store/rootReducer';
@@ -50,7 +49,7 @@ const AccountSettings = () => {
   }, []);
 
   return (
-    <DashboardLayout>
+    <>
       <DashboardHeader />
       <div className={classes.container}>
         <h2 className={classes.title}>Account Settings</h2>
@@ -71,7 +70,7 @@ const AccountSettings = () => {
           </div>
         </div>
       </div>
-    </DashboardLayout>
+    </>
   );
 };
 

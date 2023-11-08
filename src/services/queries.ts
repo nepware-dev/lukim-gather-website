@@ -348,3 +348,14 @@ export const GET_PROJECTS = gql`
     }
   }
 `;
+
+export const GET_NOTICES = gql`
+query{
+  notice {
+    id
+    noticeType
+    title
+    description
+  }
+}
+`;
