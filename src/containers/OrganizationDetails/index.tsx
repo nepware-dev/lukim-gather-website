@@ -4,7 +4,6 @@ import {gql, useQuery} from '@apollo/client';
 import parse from 'html-react-parser';
 
 import DashboardHeader from '@components/DashboardHeader';
-import DashboardLayout from '@components/DashboardLayout';
 
 import organizationPlaceholder from '@images/organization-placeholder.svg';
 import {RiShareBoxLine} from 'react-icons/ri';
@@ -36,7 +35,7 @@ const OrganizationDetails = () => {
     variables: {id: Number(id)},
   });
   return (
-    <DashboardLayout>
+    <>
       <DashboardHeader title='Organization detail' />
       <section className={classes.section}>
         <Link to='/organization' className={classes.backWrapper}>
@@ -105,7 +104,7 @@ const OrganizationDetails = () => {
           </div>
         </div>
       </section>
-    </DashboardLayout>
+    </>
   );
 };
 

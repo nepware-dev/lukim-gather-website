@@ -1,51 +1,12 @@
 import React, {
-  useState, useCallback, useEffect, Fragment,
+  useState, useCallback, Fragment, useMemo, useEffect,
 } from 'react';
 import {Dialog, Transition} from '@headlessui/react';
-
-import {RootStateOrAny, useSelector} from 'react-redux';
-import {
-  useLocation,
-  useNavigate,
-  useParams,
-} from 'react-router-dom';
 import parse from 'html-react-parser';
 import {FaTimes} from 'react-icons/fa';
-import {gql, useQuery} from '@apollo/client';
+import {useQuery} from '@apollo/client';
 
-const GET_NOTICES = gql`
-  query{
-    notice {
-      id
-      noticeType
-      title
-      description
-    }
-  }
-`;
-
-export interface WithRouterProps {
-  location: ReturnType<typeof useLocation>;
-  params: Record<string, string>;
-  navigate: ReturnType<typeof useNavigate>;
-}
-
-const withRouter = <T extends WithRouterProps>(
-  Component: React.ComponentType<T>,
-) => (props: Omit<T, keyof WithRouterProps>) => {
-    const location = useLocation();
-    const params = useParams();
-    const navigate = useNavigate();
-
-    return (
-      <Component
-        {...(props as T)}
-        location={location}
-        params={params}
-        navigate={navigate}
-      />
-    );
-  };
+import {GET_NOTICES} from '@services/queries';
 
 const NoticeModal = ({
   isVisible, item, toggleModal,
@@ -63,7 +24,6 @@ const NoticeModal = ({
       >
         <div className='fixed inset-0' />
       </Transition.Child>
-
       <div className='fixed inset-0 overflow-y-auto bg-[#000] bg-opacity-60'>
         <div className='flex min-h-full items-center justify-center p-1 text-center'>
           <Transition.Child
@@ -96,37 +56,32 @@ const NoticeModal = ({
   </Transition>
 );
 
-const Notice = (props: any) => {
+const Notice = ({noticeType = 'PUBLIC', setVisible} : {noticeType?: string, setVisible?: any}) => {
   const {data} = useQuery(GET_NOTICES);
-  const isAuthenticated = useSelector((state: RootStateOrAny) => state.auth.isAuthenticated);
-  const [noticeType, setNoticeType] = useState('PUBLIC');
+
   const [showBar, setShowBar] = useState(true);
   const [showNoticeModal, setShowNoticeModal] = useState(false);
-  const [hasClosed, setHasClosed] = useState(false);
 
-  useEffect(() => {
-    // eslint-disable-next-line react/destructuring-assignment
-    if (props?.location?.pathname.startsWith('/dashboard') && !hasClosed) {
-      setNoticeType('USER');
-      return setShowBar(true);
-    }
-    return setNoticeType('PUBLIC');
-  }, [hasClosed, isAuthenticated, props]);
-
-  const activeNotice = data?.notice?.find(
+  const activeNotice = useMemo(() => data?.notice?.find(
     (el: {noticeType: string}) => el.noticeType === noticeType,
-  );
+  ), [data?.notice, noticeType]);
 
   const handleCloseClick = useCallback(() => {
-    if (noticeType === 'USER') {
-      setHasClosed(true);
-    }
     setShowBar(false);
-  }, [noticeType]);
+    if (noticeType === 'USER') {
+      setVisible(false);
+    }
+  }, [noticeType, setVisible]);
 
   const handleNoticeModal = useCallback(() => {
     setShowNoticeModal(!showNoticeModal);
   }, [showNoticeModal]);
+
+  useEffect(() => {
+    if (activeNotice && noticeType === 'USER') {
+      setVisible(true);
+    }
+  }, [activeNotice, noticeType, setVisible]);
 
   if (activeNotice) {
     return (
@@ -157,4 +112,4 @@ const Notice = (props: any) => {
   return null;
 };
 
-export default withRouter(Notice);
+export default Notice;

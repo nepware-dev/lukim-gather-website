@@ -17,7 +17,6 @@ import {XMLParser} from 'fast-xml-parser';
 
 import Button from '@components/Button';
 import DashboardHeader from '@components/DashboardHeader';
-import DashboardLayout from '@components/DashboardLayout';
 import FormTable, {FormDataType} from '@components/FormTable';
 import Pagination from '@components/Pagination';
 import Dropdown from '@components/Dropdown';
@@ -30,7 +29,6 @@ import {flattenObject} from '@containers/Dashboard';
 import cs from '@utils/cs';
 import {formatDate} from '@utils/formatDate';
 import {rootState} from '@store/rootReducer';
-import {useBodyOverflow} from '@hooks/useBodyOverflow';
 import useToast from '@hooks/useToast';
 import {UPDATE_SURVEY, CREATE_SURVEY, GET_PROJECTS} from '@services/queries';
 
@@ -119,8 +117,6 @@ const CustomForms = () => {
 
   const [showAddSurvey, setShowAddSurvey] = useState<boolean>(false);
   const toggleShowAddSurvey = useCallback(() => setShowAddSurvey((sas) => !sas), []);
-
-  useBodyOverflow(showDetails || showAddSurvey || showEditSurvey);
 
   const {data: myProjects} = useQuery(GET_PROJECTS, {
     variables: {tab: 'my_project'},
@@ -341,78 +337,76 @@ const CustomForms = () => {
 
   return (
     <>
-      <DashboardLayout hideOverflowY={showDetails}>
-        <DashboardHeader title='METT List' />
-        <div className={classes.container}>
-          <h2 className={classes.title}>METT List</h2>
-          <div className={classes.header}>
-            <Button
-              className={classes.addNewButton}
-              textClassName={classes.addNewButtonText}
-              onClick={toggleShowAddSurvey}
-              text='Add New Entry'
-            />
-            <div className='cursor-pointer'>
-              <DatePicker
-                selectsRange
-                showYearDropdown
-                startDate={startDate}
-                endDate={endDate}
-                minDate={minDate}
-                maxDate={maxDate}
-                onChange={handleDateChange}
-                customInput={<CustomInput />}
-              />
-            </div>
-            <SelectInput
-              className={classes.selectInput}
-              defaultValue={projectFilter || undefined}
-              valueExtractor={identity}
-              keyExtractor={identity}
-              options={projectNames}
-              placeholder='Project'
-              onChange={handleProjectChange}
-            />
-            {(projectFilter || (minDate && +startDate !== +minDate) || (maxDate && +endDate !== +maxDate)) && (
-              <span className={classes.clear} onClick={handleClearClick}>
-                Clear filters
-              </span>
-            )}
-            {surveyFormData?.length > 0 && (
-              <CSVLink
-                className='h-[44px] px-[12px] flex items-center rounded-lg border-[#CCDCE8] bg-[#E7E8EA] font-interMedium text-[14px] text-[#70747E] hover:brightness-[1.02] transition duration-300'
-                filename={`Custom-Survey-Report-${new Date().toISOString()}.csv`}
-                data={flatCustomSurveys}
-              >
-                <span>Export to CSV</span>
-              </CSVLink>
-            )}
-            <Button className={classes.analyticsButton} onClick={handleAnalyticsClick} text='View analytics' />
-          </div>
-          <div className={classes.surveyTable}>
-            <FormTable
-              data={surveyFormData}
-              loading={surveyLoading || (!surveyFormData?.length && !error)}
-              setShowDetails={setShowDetails}
+      <DashboardHeader title='METT List' />
+      <div className={classes.container}>
+        <h2 className={classes.title}>METT List</h2>
+        <div className={classes.header}>
+          <Button
+            className={classes.addNewButton}
+            textClassName={classes.addNewButtonText}
+            onClick={toggleShowAddSurvey}
+            text='Add New Entry'
+          />
+          <div className='cursor-pointer'>
+            <DatePicker
+              selectsRange
+              showYearDropdown
+              startDate={startDate}
+              endDate={endDate}
+              minDate={minDate}
+              maxDate={maxDate}
+              onChange={handleDateChange}
+              customInput={<CustomInput />}
             />
           </div>
-          <div className={classes.footer}>
-            <div className={classes.dropdownWrapper}>
-              <p className={classes.show}>Show</p>
-              <Dropdown alignRight alignTop renderLabel={renderLabel}>
-                <DropdownItem />
-              </Dropdown>
-            </div>
-            <div>
-              <Pagination
-                page={activePage}
-                totalPages={totalPages}
-                handlePagination={handlePage}
-              />
-            </div>
+          <SelectInput
+            className={classes.selectInput}
+            defaultValue={projectFilter || undefined}
+            valueExtractor={identity}
+            keyExtractor={identity}
+            options={projectNames}
+            placeholder='Project'
+            onChange={handleProjectChange}
+          />
+          {(projectFilter || (minDate && +startDate !== +minDate) || (maxDate && +endDate !== +maxDate)) && (
+            <span className={classes.clear} onClick={handleClearClick}>
+              Clear filters
+            </span>
+          )}
+          {surveyFormData?.length > 0 && (
+            <CSVLink
+              className='h-[44px] px-[12px] flex items-center rounded-lg border-[#CCDCE8] bg-[#E7E8EA] font-interMedium text-[14px] text-[#70747E] hover:brightness-[1.02] transition duration-300'
+              filename={`Custom-Survey-Report-${new Date().toISOString()}.csv`}
+              data={flatCustomSurveys}
+            >
+              <span>Export to CSV</span>
+            </CSVLink>
+          )}
+          <Button className={classes.analyticsButton} onClick={handleAnalyticsClick} text='View analytics' />
+        </div>
+        <div className={classes.surveyTable}>
+          <FormTable
+            data={surveyFormData}
+            loading={surveyLoading || (!surveyFormData?.length && !error)}
+            setShowDetails={setShowDetails}
+          />
+        </div>
+        <div className={classes.footer}>
+          <div className={classes.dropdownWrapper}>
+            <p className={classes.show}>Show</p>
+            <Dropdown alignRight alignTop renderLabel={renderLabel}>
+              <DropdownItem />
+            </Dropdown>
+          </div>
+          <div>
+            <Pagination
+              page={activePage}
+              totalPages={totalPages}
+              handlePagination={handlePage}
+            />
           </div>
         </div>
-      </DashboardLayout>
+      </div>
       {(showDetails && activeSurveyFormData) && (
         <FormEntry
           allowEdit={activeSurveyFormData.createdBy?.id === userId || isStaff}

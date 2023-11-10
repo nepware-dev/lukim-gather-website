@@ -17,7 +17,6 @@ import {Parser} from 'json2csv';
 
 import Button from '@components/Button';
 import DashboardHeader from '@components/DashboardHeader';
-import DashboardLayout from '@components/DashboardLayout';
 import SurveyTable, {SurveyDataType} from '@components/SurveyTable';
 import SurveyTab from '@components/SurveyTab';
 import Pagination from '@components/Pagination';
@@ -33,7 +32,6 @@ import cs from '@utils/cs';
 import {formatDate} from '@utils/formatDate';
 import {formatName} from '@utils/formatName';
 import sentimentName from '@utils/sentimentName';
-import {useBodyOverflow} from '@hooks/useBodyOverflow';
 
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -280,8 +278,6 @@ const Surveys = () => {
     project: state?.project?.id ? state.project : null,
   });
   const [toggleFilter, setToggleFilter] = useState<boolean>(Boolean(state?.project));
-
-  useBodyOverflow(showDetails || visibleEditModal);
 
   const {refetch} = useQuery(GET_SURVEY, {
     variables: {id: uuid},
@@ -571,146 +567,144 @@ const Surveys = () => {
 
   return (
     <>
-      <DashboardLayout hideOverflowY={showDetails}>
-        <DashboardHeader title='Surveys List' />
-        <div className={classes.container}>
-          <h2 className={classes.title}>Surveys List</h2>
-          <div className={classes.header}>
-            <div className={classes.tabs}>
-              <SurveyTab
-                text='All'
-                onClick={handleTab}
-                isActive={status === 'All'}
-                className={cs('rounded-l-lg w-[50%] sm:w-auto', [
-                  'border-r-0',
-                  status === 'Approved',
-                ])}
-              />
-              <SurveyTab
-                text='My Entries'
-                onClick={handleTab}
-                isActive={status === 'My Entries'}
-                className={cs('rounded-r-lg w-[50%] sm:w-auto', [
-                  'border-l-0',
-                  status === 'Approved',
-                ])}
-              />
-            </div>
-            <div className={classes.wrapper}>
-              <SurveyFilter active={toggleFilter} onClick={handleToggle} />
-              <div>
-                <DatePicker
-                  selectsRange
-                  showYearDropdown
-                  startDate={startDate}
-                  endDate={endDate}
-                  minDate={minDate}
-                  maxDate={maxDate}
-                  onChange={handleDateChange}
-                  customInput={<CustomInput />}
-                />
-              </div>
-              {surveyData && (
-                <button
-                  className={classes.csv}
-                  onClick={handleCSVClick}
-                  type='button'
-                >
-                  <BsArrowUpRight />
-                  <span className='ml-2'>Export to CSV</span>
-                </button>
-              )}
-              <Button className={classes.analyticsButton} onClick={handleAnalyticsClick} text='View analytics' />
-            </div>
-          </div>
-          {toggleFilter && (
-            <div className={classes.filterWrapper}>
-              <div className={classes.selectInputWrapper}>
-                <SelectInput
-                  className={classes.selectInput}
-                  defaultValue={selectInputData?.status}
-                  valueExtractor={titleExtractor}
-                  keyExtractor={keyExtractor}
-                  options={surveyStatus}
-                  placeholder='Status'
-                  onChange={handleStatusChange}
-                />
-                <SelectInput
-                  className={classes.selectInput}
-                  defaultValue={selectInputData?.region}
-                  valueExtractor={titleExtractor}
-                  keyExtractor={keyExtractor}
-                  options={regionOptions}
-                  placeholder='Province'
-                  onChange={handleRegionChange}
-                />
-                <SelectInput
-                  className={classes.selectInput}
-                  defaultValue={selectInputData?.category}
-                  valueExtractor={titleExtractor}
-                  keyExtractor={keyExtractor}
-                  options={category?.protectedAreaCategories}
-                  placeholder='Category'
-                  onChange={handleCategoryChange}
-                />
-                <SelectInput
-                  className={classes.selectInput}
-                  defaultValue={selectInputData?.protectedArea}
-                  valueExtractor={titleExtractor}
-                  keyExtractor={keyExtractor}
-                  options={protectedAreaOptions}
-                  placeholder='Protected Area'
-                  onChange={handleProtectedAreaChange}
-                />
-                <SelectInput
-                  className={classes.selectInput}
-                  defaultValue={selectInputData?.createdBy}
-                  valueExtractor={titleExtractor}
-                  keyExtractor={keyExtractor}
-                  options={createdByOptions}
-                  placeholder='User'
-                  onChange={handleCreatedByChange}
-                />
-                <SelectInput
-                  className={classes.selectInput}
-                  defaultValue={selectInputData?.project}
-                  valueExtractor={titleExtractor}
-                  keyExtractor={keyExtractor}
-                  options={projectOptions}
-                  placeholder='Project'
-                  onChange={handleProjectChange}
-                />
-              </div>
-              <span className={classes.clear} onClick={handleClearClick}>
-                Clear all filters
-              </span>
-            </div>
-          )}
-          <div className={classes.surveyTable}>
-            <SurveyTable
-              loading={loadingSurvey}
-              data={surveyData}
-              setActiveIndex={setActiveIndex}
-              setShowDetails={setShowDetails}
+      <DashboardHeader title='Surveys List' />
+      <div className={classes.container}>
+        <h2 className={classes.title}>Surveys List</h2>
+        <div className={classes.header}>
+          <div className={classes.tabs}>
+            <SurveyTab
+              text='All'
+              onClick={handleTab}
+              isActive={status === 'All'}
+              className={cs('rounded-l-lg w-[50%] sm:w-auto', [
+                'border-r-0',
+                status === 'Approved',
+              ])}
+            />
+            <SurveyTab
+              text='My Entries'
+              onClick={handleTab}
+              isActive={status === 'My Entries'}
+              className={cs('rounded-r-lg w-[50%] sm:w-auto', [
+                'border-l-0',
+                status === 'Approved',
+              ])}
             />
           </div>
-          <div className={classes.footer}>
-            <div className={classes.dropdownWrapper}>
-              <p className={classes.show}>Show</p>
-              <Dropdown alignRight alignTop renderLabel={renderLabel}>
-                <DropdownItem />
-              </Dropdown>
-            </div>
+          <div className={classes.wrapper}>
+            <SurveyFilter active={toggleFilter} onClick={handleToggle} />
             <div>
-              <Pagination
-                page={activePage}
-                totalPages={totalPages}
-                handlePagination={handlePage}
+              <DatePicker
+                selectsRange
+                showYearDropdown
+                startDate={startDate}
+                endDate={endDate}
+                minDate={minDate}
+                maxDate={maxDate}
+                onChange={handleDateChange}
+                customInput={<CustomInput />}
               />
             </div>
+            {surveyData && (
+              <button
+                className={classes.csv}
+                onClick={handleCSVClick}
+                type='button'
+              >
+                <BsArrowUpRight />
+                <span className='ml-2'>Export to CSV</span>
+              </button>
+            )}
+            <Button className={classes.analyticsButton} onClick={handleAnalyticsClick} text='View analytics' />
           </div>
         </div>
-      </DashboardLayout>
+        {toggleFilter && (
+          <div className={classes.filterWrapper}>
+            <div className={classes.selectInputWrapper}>
+              <SelectInput
+                className={classes.selectInput}
+                defaultValue={selectInputData?.status}
+                valueExtractor={titleExtractor}
+                keyExtractor={keyExtractor}
+                options={surveyStatus}
+                placeholder='Status'
+                onChange={handleStatusChange}
+              />
+              <SelectInput
+                className={classes.selectInput}
+                defaultValue={selectInputData?.region}
+                valueExtractor={titleExtractor}
+                keyExtractor={keyExtractor}
+                options={regionOptions}
+                placeholder='Province'
+                onChange={handleRegionChange}
+              />
+              <SelectInput
+                className={classes.selectInput}
+                defaultValue={selectInputData?.category}
+                valueExtractor={titleExtractor}
+                keyExtractor={keyExtractor}
+                options={category?.protectedAreaCategories}
+                placeholder='Category'
+                onChange={handleCategoryChange}
+              />
+              <SelectInput
+                className={classes.selectInput}
+                defaultValue={selectInputData?.protectedArea}
+                valueExtractor={titleExtractor}
+                keyExtractor={keyExtractor}
+                options={protectedAreaOptions}
+                placeholder='Protected Area'
+                onChange={handleProtectedAreaChange}
+              />
+              <SelectInput
+                className={classes.selectInput}
+                defaultValue={selectInputData?.createdBy}
+                valueExtractor={titleExtractor}
+                keyExtractor={keyExtractor}
+                options={createdByOptions}
+                placeholder='User'
+                onChange={handleCreatedByChange}
+              />
+              <SelectInput
+                className={classes.selectInput}
+                defaultValue={selectInputData?.project}
+                valueExtractor={titleExtractor}
+                keyExtractor={keyExtractor}
+                options={projectOptions}
+                placeholder='Project'
+                onChange={handleProjectChange}
+              />
+            </div>
+            <span className={classes.clear} onClick={handleClearClick}>
+              Clear all filters
+            </span>
+          </div>
+        )}
+        <div className={classes.surveyTable}>
+          <SurveyTable
+            loading={loadingSurvey}
+            data={surveyData}
+            setActiveIndex={setActiveIndex}
+            setShowDetails={setShowDetails}
+          />
+        </div>
+        <div className={classes.footer}>
+          <div className={classes.dropdownWrapper}>
+            <p className={classes.show}>Show</p>
+            <Dropdown alignRight alignTop renderLabel={renderLabel}>
+              <DropdownItem />
+            </Dropdown>
+          </div>
+          <div>
+            <Pagination
+              page={activePage}
+              totalPages={totalPages}
+              handlePagination={handlePage}
+            />
+          </div>
+        </div>
+      </div>
       {
         (showDetails && surveyEntryData) && (
           <SurveyEntry

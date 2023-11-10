@@ -1,27 +1,24 @@
-import React, {ReactNode, useCallback, useState} from 'react';
-import {Link, useLocation} from 'react-router-dom';
+import React, {useCallback, useState} from 'react';
+import {Link, Outlet, useLocation} from 'react-router-dom';
 import {BsFillGridFill} from 'react-icons/bs';
 import {FiFileText} from 'react-icons/fi';
 import {HiMenuAlt1, HiOutlineX} from 'react-icons/hi';
 import {TbTrees} from 'react-icons/tb';
 import {MdWorkspacesOutline} from 'react-icons/md';
 
-import cs from '@utils/cs';
 import UserDropdown from '@components/UserDropdown';
+import NoticeBar from '@components/NoticeBar';
+
+import cs from '@utils/cs';
 
 import logo from '@images/lukim-nav-logo.png';
 
 import classes from './styles';
 
-const DashboardLayout = ({
-  children,
-  hideOverflowY = false,
-}: {
-  children: ReactNode;
-  hideOverflowY?: boolean;
-}) => {
+const DashboardLayout = () => {
   const {pathname} = useLocation();
   const [showSideBar, setShowSideBar] = useState<boolean>(false);
+  const [visibleNotice, setVisibleNotice] = useState(false);
 
   const handleIconToggle = useCallback(() => {
     setShowSideBar(!showSideBar);
@@ -46,12 +43,8 @@ const DashboardLayout = ({
   );
 
   return (
-    <div
-      className={cs(classes.mainContainer, [
-        classes.hideOverflowY,
-        hideOverflowY,
-      ])}
-    >
+    <div>
+      <NoticeBar noticeType='USER' setVisible={setVisibleNotice} />
       <MobileHeader />
       <div
         className={cs(
@@ -60,7 +53,7 @@ const DashboardLayout = ({
           [classes.hideSideBar, !showSideBar],
         )}
       >
-        <div className={classes.sideBar}>
+        <div className={cs(classes.sideBar, visibleNotice ? 'h-[calc(100vh-40px)]' : 'h-[100vh]')}>
           <Link to='/' className={classes.logoWrapper}>
             <div>
               <img src={logo} alt='lukim-logo' className={classes.logo} />
@@ -116,7 +109,9 @@ const DashboardLayout = ({
             </div>
           </div>
         </div>
-        <div className={classes.child}>{children}</div>
+        <div className={cs(classes.child, visibleNotice ? 'h-[calc(100vh-40px)]' : 'h-[100vh]')}>
+          <Outlet />
+        </div>
       </div>
     </div>
   );

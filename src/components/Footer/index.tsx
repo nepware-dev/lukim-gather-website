@@ -41,12 +41,12 @@ const Footer = ({hideContent = false}: {hideContent?: boolean}) => (
         © Lukim Gather 2022. All rights reserved.
       </p>
       <div className={classes.legalLink}>
-        <Link to='/terms'>
+        <Link to='/terms-and-conditions'>
           <p className={cs(classes.text, classes.textLink)}>
             Terms And Conditions
           </p>
         </Link>
-        <Link to='/privacy'>
+        <Link to='/privacy-policy'>
           <p className={cs(classes.text, classes.textLink)}>
             Privacy Policy
           </p>

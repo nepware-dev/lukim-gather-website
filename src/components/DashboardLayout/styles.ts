@@ -1,9 +1,9 @@
 export default {
-  mainContainer: 'overflow-x-hidden',
+  mainContainer: 'overflow-hidden',
   container: 'flex md:-translate-x-0 ease-in-out duration-300',
   showSideBar: '-translate-x-0',
   hideSideBar: '-translate-x-[235px]',
-  sideBar: 'min-w-[236px] min-h-[100vh] px-[20px] bg-[#F2F5F9] border-r border-[#CCDCE8]',
+  sideBar: 'w-[236px] px-[20px] bg-[#F2F5F9] border-r border-[#CCDCE8] fixed',
   logoWrapper: 'hidden md:inline-block pt-[24px]',
   logo: 'h-[60px]',
   linksWrapper: 'flex flex-col mt-[85px]',
@@ -14,8 +14,7 @@ export default {
   count: 'w-[24px] h-[19px] flex items-center justify-center ml-auto text-[12px] font-inter bg-[#E6EEF3] rounded-full',
   mobileHeader: 'md:hidden w-full p-4 flex items-center justify-between border-b border-[#CEDCEC]',
   userDropdown: 'md:hidden mt-[20px]',
-  child: 'w-screen',
+  child: 'w-screen ml-[236px] overflow-y-auto p-2',
   hidden: 'hidden',
   cursor: 'cursor-pointer',
-  hideOverflowY: 'max-h-screen overflow-y-scroll',
 };

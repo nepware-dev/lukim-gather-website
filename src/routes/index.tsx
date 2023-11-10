@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
 import {
-  Navigate, Outlet, Route, Routes, useLocation,
+  Navigate, Route, Routes, useLocation,
 } from 'react-router-dom';
 import {RootStateOrAny, useSelector, useDispatch} from 'react-redux';
 import {useLazyQuery} from '@apollo/client';
@@ -17,7 +17,6 @@ import Organization from '@containers/Organization';
 import Project from '@containers/Project';
 import OrganizationDetails from '@containers/OrganizationDetails';
 import ProjectDetail from '@containers/ProjectDetail';
-import Notice from '@components/NoticeBar';
 import Page404 from '@containers/Page404';
 import PrivacyPolicy from '@containers/PrivacyPolicy';
 import PublicSurvey from '@containers/PublicSurvey';
@@ -31,15 +30,22 @@ import Tutorial from '@containers/Tutorial';
 import VerifyPhone from '@containers/VerifyPhone';
 import ContactUs from '@containers/ContactUs';
 
+import DashboardLayout from '@components/DashboardLayout';
+
 import {GET_ME} from '@services/queries';
 import {setUser} from '@store/slices/auth';
 import {dispatchLogout} from '@services/dispatch';
+import Layout from '@components/Layout';
 
-interface Props {
+const PrivateRoute: React.FC<{
   isAuthenticated: boolean;
-}
-
-const PrivateRoute: React.FC<Props> = ({isAuthenticated}) => (isAuthenticated ? <Outlet /> : <Navigate to='/login' />);
+  children: React.ReactNode;
+}> = ({isAuthenticated, children}) => {
+  if (!isAuthenticated) {
+    return <Navigate to='/login' />;
+  }
+  return <main>{children}</main>;
+};
 
 const AppRoutes = () => {
   const {pathname} = useLocation();
@@ -68,42 +74,45 @@ const AppRoutes = () => {
   }, [isAuthenticated, getUserData]);
 
   return (
-    <>
-      <Notice />
-      <Routes>
+    <Routes>
+      <Route path='/' element={<Layout />}>
         <Route path='/' element={<Home />} />
         <Route path='/faq' element={<FAQ />} />
-        <Route path='/forgot-password' element={<ForgotPassword />} />
-        <Route path='/login' element={<Login />} />
-        <Route path='/verify-phone' element={<VerifyPhone />} />
-        <Route path='/privacy' element={<PrivacyPolicy />} />
-        <Route path='/reset-password' element={<ResetPassword />} />
+        <Route path='/privacy-policy' element={<PrivacyPolicy />} />
         <Route path='/resource' element={<Resource />} />
-        <Route path='/terms' element={<TermsAndConditions />} />
+        <Route path='/terms-and-conditions' element={<TermsAndConditions />} />
         <Route path='/tutorial' element={<Tutorial />} />
         <Route path='/contact-us' element={<ContactUs />} />
-        <Route
-          path='/'
-          element={<PrivateRoute isAuthenticated={isAuthenticated} />}
-        >
-          <Route path='/account-settings' element={<AccountSettings />} />
-          <Route path='/custom-forms' element={<CustomForms />} />
-          <Route path='/custom-forms/analytics' element={<CustomFormAnalytics />} />
-          <Route path='/custom-forms/:id' element={<CustomForms />} />
-          <Route path='/dashboard' element={<Dashboard />} />
-          <Route path='/organization' element={<Organization />} />
-          <Route path='/projects' element={<Project />} />
-          <Route path='/project/:id' element={<ProjectDetail />} />
-          <Route path='/organization/:id' element={<OrganizationDetails />} />
-          <Route path='/surveys' element={<Surveys />} />
-          <Route path='/surveys/:uuid' element={<Surveys />} />
-          <Route path='/surveys/analytics' element={<SurveyAnalytics />} />
-        </Route>
-        <Route path='/public/survey/:id' element={<PublicSurvey />} />
-        <Route path='/public/mett-survey/:id' element={<PublicCustomForm />} />
-        <Route path='*' element={<Page404 />} />
-      </Routes>
-    </>
+      </Route>
+      <Route path='/reset-password' element={<ResetPassword />} />
+      <Route path='/forgot-password' element={<ForgotPassword />} />
+      <Route path='/login' element={<Login />} />
+      <Route path='/verify-phone' element={<VerifyPhone />} />
+      <Route
+        path='/'
+        element={(
+          <PrivateRoute isAuthenticated={isAuthenticated}>
+            <DashboardLayout />
+          </PrivateRoute>
+        )}
+      >
+        <Route path='/account-settings' element={<AccountSettings />} />
+        <Route path='/custom-forms' element={<CustomForms />} />
+        <Route path='/custom-forms/analytics' element={<CustomFormAnalytics />} />
+        <Route path='/custom-forms/:id' element={<CustomForms />} />
+        <Route path='/dashboard' element={<Dashboard />} />
+        <Route path='/organization' element={<Organization />} />
+        <Route path='/projects' element={<Project />} />
+        <Route path='/project/:id' element={<ProjectDetail />} />
+        <Route path='/organization/:id' element={<OrganizationDetails />} />
+        <Route path='/surveys' element={<Surveys />} />
+        <Route path='/surveys/:uuid' element={<Surveys />} />
+        <Route path='/surveys/analytics' element={<SurveyAnalytics />} />
+      </Route>
+      <Route path='/public/survey/:id' element={<PublicSurvey />} />
+      <Route path='/public/mett-survey/:id' element={<PublicCustomForm />} />
+      <Route path='*' element={<Page404 />} />
+    </Routes>
   );
 };
 

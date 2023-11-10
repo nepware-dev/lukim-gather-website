@@ -1,15 +1,14 @@
 import {AddToast, DeleteToast} from '@store/slices/toasts';
 import {UserType} from '@store/types/auth';
-import {store} from '../store';
-import client from './client';
-
 import {
   setLogin,
   setUser,
   setToken,
   setRefreshToken,
   setLogout,
-} from '../store/slices/auth';
+} from '@store/slices/auth';
+import {store} from '../store';
+import client from './client';
 
 const {dispatch} = store;
 

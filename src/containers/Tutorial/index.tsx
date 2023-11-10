@@ -3,7 +3,6 @@ import React, {
 } from 'react';
 import {gql, useQuery} from '@apollo/client';
 
-import Layout from '@components/Layout';
 import {ChildTopicCard} from '@components/SupportCategoryCard';
 import FaqAccordion from '@components/FaqAccordion';
 
@@ -90,50 +89,48 @@ const Tutorial = () => {
   );
 
   return (
-    <Layout isContainer={false} isDarkNavbar>
-      <section className={classes.content}>
-        <div className={classes.tutorialHeader}>
-          <h2 className={classes.heading}>
-            Tutorials
-          </h2>
-          <div className={classes.inputWrapper}>
-            <input
-              placeholder='Search any tutorials'
-              onChange={handleSearchChange}
-              className={classes.input}
-            />
-            <button
-              type='button'
-              className={classes.button}
-              onClick={handleClickSearch}
-              disabled={!searchedData}
-            >
-              Search
-            </button>
-          </div>
-          {topicList?.length > 0 && (
-            <List
-              ref={topicRef}
-              data={topicList}
-              className={classes.topicList}
-              renderItem={renderChild}
-              keyExtractor={keyExtractor}
-              EmptyComponent={<div />}
-            />
-          )}
-        </div>
-        <div className={classes.bgContentWrapper} ref={contentRef}>
-          <List
-            data={tutorialData}
-            className={classes.bgContent}
-            renderItem={renderContent}
-            keyExtractor={keyExtractor}
-            loading={loading}
-            EmptyComponent={<p>No data found!</p>}
+    <section className={classes.content}>
+      <div className={classes.tutorialHeader}>
+        <h2 className={classes.heading}>
+          Tutorials
+        </h2>
+        <div className={classes.inputWrapper}>
+          <input
+            placeholder='Search any tutorials'
+            onChange={handleSearchChange}
+            className={classes.input}
           />
+          <button
+            type='button'
+            className={classes.button}
+            onClick={handleClickSearch}
+            disabled={!searchedData}
+          >
+            Search
+          </button>
         </div>
-      </section>
-    </Layout>
+        {topicList?.length > 0 && (
+          <List
+            ref={topicRef}
+            data={topicList}
+            className={classes.topicList}
+            renderItem={renderChild}
+            keyExtractor={keyExtractor}
+            EmptyComponent={<div />}
+          />
+        )}
+      </div>
+      <div className={classes.bgContentWrapper} ref={contentRef}>
+        <List
+          data={tutorialData}
+          className={classes.bgContent}
+          renderItem={renderContent}
+          keyExtractor={keyExtractor}
+          loading={loading}
+          EmptyComponent={<p>No data found!</p>}
+        />
+      </div>
+    </section>
   );
 };
 

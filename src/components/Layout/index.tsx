@@ -1,9 +1,11 @@
-import React from 'react';
+import React, {useMemo} from 'react';
+import {Outlet, useLocation} from 'react-router-dom';
 import MailchimpSubscribe from 'react-mailchimp-subscribe';
 
 import Navbar from '@components/Navbar';
 import Footer from '@components/Footer';
 import MailChimpForm from '@components/MailChimp';
+import Notice from '@components/NoticeBar';
 
 import useGaTracker from '@hooks/useGaTracker';
 
@@ -13,23 +15,27 @@ import mobile from '@images/mobile.png';
 
 import classes from './styles';
 
-const Layout = (
-  {
-    children, showAppInfo, isContainer = true, isDarkNavbar = false,
-  }:
-  {children: JSX.Element, showAppInfo?: boolean, isContainer?: boolean, isDarkNavbar?: boolean},
-) => {
+const Layout = () => {
   useGaTracker();
+  const location = useLocation();
+
+  const isDarkNavbar = useMemo(() => {
+    if (location.pathname === '/faq' || location.pathname === '/tutorial') {
+      return true;
+    } return false;
+  }, [location.pathname]);
+
   return (
     <main>
+      <Notice />
       <div className={classes.mainContainer}>
         <Navbar isDark={isDarkNavbar} />
-        <div className={cs(isContainer ? classes.container : '')}>
-          {children}
+        <div className={cs(!isDarkNavbar ? classes.container : '')}>
+          <Outlet />
         </div>
       </div>
       <div className={classes.contentWrapper}>
-        {showAppInfo && (
+        {location.pathname === '/' && (
           <p className={classes.appInfo}>
             It enables local communities to report both threats and perceived
             benefits and values that occur within and around protected areas. It
