@@ -2,8 +2,9 @@ import React, {useCallback, useMemo} from 'react';
 import {useNavigate} from 'react-router-dom';
 
 import cs from '@utils/cs';
-import {findPropertyAnywhere} from '@utils/searchTree';
+import {findPropertyAnywhere, type ObjectType} from '@utils/searchTree';
 import {formatDate} from '@utils/formatDate';
+import {formatFormAnswers} from '@utils/formatAnswers';
 
 import classes from './styles';
 
@@ -12,6 +13,7 @@ export type FormDataType = {
   title: string;
   createdAt: string;
   answer: string;
+  answerSorted?: string;
   createdBy: {id: string};
 };
 
@@ -31,7 +33,7 @@ const FormItem: React.FC<ItemProps> = ({
   setShowDetails,
 }) => {
   const navigate = useNavigate();
-  const formAnswers = useMemo(() => JSON.parse(item.answer), [item]);
+  const formAnswers = useMemo(() => formatFormAnswers(item), [item]);
 
   const handleClick = useCallback((id: string|number) => {
     navigate(`/custom-forms/${id}`);
@@ -39,12 +41,12 @@ const FormItem: React.FC<ItemProps> = ({
   }, [navigate, setShowDetails]);
 
   const interviewerName = useMemo(
-    () => findPropertyAnywhere(formAnswers, 'interviewer_name'),
+    () => findPropertyAnywhere(formAnswers as ObjectType, 'interviewer_name'),
     [formAnswers],
   );
 
   const title = useMemo(
-    () => findPropertyAnywhere(formAnswers, 'village_name'),
+    () => findPropertyAnywhere(formAnswers as ObjectType, 'village_name'),
     [formAnswers],
   );
 

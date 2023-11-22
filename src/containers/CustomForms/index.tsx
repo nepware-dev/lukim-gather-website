@@ -24,13 +24,16 @@ import FormEntry from '@components/FormEntry';
 import EditCustomSurveyModal from '@components/EditCustomSurveyModal';
 import SelectInput from '@ra/components/Form/SelectInput'; // eslint-disable-line no-eval
 
-import {flattenObject} from '@containers/Dashboard';
+import {flattenObject, FlattenObjectType} from '@containers/Dashboard';
 
 import cs from '@utils/cs';
 import {formatDate} from '@utils/formatDate';
+import {formatFormAnswers} from '@utils/formatAnswers';
 import {rootState} from '@store/rootReducer';
 import useToast from '@hooks/useToast';
 import {UPDATE_SURVEY, CREATE_SURVEY, GET_PROJECTS} from '@services/queries';
+
+import type {ObjectType} from '@utils/searchTree';
 
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -43,6 +46,7 @@ export const GET_SURVEY_DATA = gql`
       title
       createdAt
       answer
+      answerSorted
       createdBy {
         id
       }
@@ -57,6 +61,7 @@ export const GET_SURVEY = gql`
       title
       createdAt
       answer
+      answerSorted
       createdBy {
         id
       }
@@ -75,8 +80,8 @@ export const GET_FORMS = gql`
   }
 `;
 
-function getProjectNameFromFormData(formData: FormDataType) {
-  const dataObject: any = JSON.parse(formData.answer)?.data ?? {};
+export function getProjectNameFromFormData(formData: FormDataType) {
+  const dataObject: any = formatFormAnswers(formData) ?? {};
   return dataObject?.section_1?.project_name;
 }
 
@@ -229,23 +234,25 @@ const CustomForms = () => {
     setProjectFilter('');
   }, [minDate, maxDate]);
 
-  const handleEditSurvey = useCallback(async (_formData) => {
+  const handleEditSurvey = useCallback(async (_formData, _sortedFormData) => {
     if (id) {
       await updateSurvey({
         variables: {
           id,
           answer: _formData,
+          answerSorted: _sortedFormData,
         },
       });
     }
   }, [id, updateSurvey]);
 
-  const handleAddSurvey = useCallback(async (_formData) => {
+  const handleAddSurvey = useCallback(async (_formData, _sortedFormData) => {
     await addSurvey({
       variables: {
         input: {
           title: formData?.surveyForm?.[0].title,
           answer: _formData,
+          answerSorted: _sortedFormData,
         },
       },
     });
@@ -327,8 +334,8 @@ const CustomForms = () => {
   }, []);
 
   const flatCustomSurveys = useMemo(() => surveyFormData?.map((srvForm: FormDataType) => {
-    const formAnswers = JSON.parse(srvForm.answer);
-    return flattenObject(formAnswers?.data);
+    const formAnswers = formatFormAnswers(srvForm) as ObjectType;
+    return flattenObject(formAnswers as unknown as FlattenObjectType);
   }) || [], [surveyFormData]);
 
   const handleAnalyticsClick = useCallback(() => {
