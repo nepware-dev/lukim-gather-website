@@ -20,5 +20,5 @@ export default {
   formKey: 'inline-block w-3/5 font-inter font-semibold capitalize',
   formValue: 'inline-block font-normal ml-8 break-words w-2/5',
   formNested: 'pl-12',
-  formItemTopic: 'mb-[12px] capitalize pl-2 font-bold text-[18px]',
+  formItemTopic: 'mb-[12px] capitalize pl-2 font-bold text-[18px] only:hidden',
 };

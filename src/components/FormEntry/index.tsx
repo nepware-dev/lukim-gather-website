@@ -196,6 +196,9 @@ const FormValueRenderer = ({
   if (name?.toLowerCase()?.startsWith('note_')) {
     return null;
   }
+  if (!formattedValue) {
+    return null;
+  }
 
   return (
     <div
