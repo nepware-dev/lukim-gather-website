@@ -53,7 +53,7 @@ const FormItem: React.FC<ItemProps> = ({
   return (
     <tr className={classes.tableItemRow}>
       <td className='w-1/3'>
-        <p className={classes.itemTitle}>{(title || item.title).substring(0, 50)}</p>
+        <p className={classes.itemTitle}>{String(title || item.title).substring(0, 50)}</p>
       </td>
       <td className='w-1/3'>
         <p className={classes.tableText}>{(interviewerName ?? '').substring(0, 50)}</p>
