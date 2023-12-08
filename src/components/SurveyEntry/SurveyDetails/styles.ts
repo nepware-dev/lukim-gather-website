@@ -41,7 +41,7 @@ export default {
 
   emptyMessage: 'mt-[24px] px-[18px]',
 
-  titleWrapper: 'h-[32px] mt-[32px] mb-[12px] flex items-center bg-[#E6EEF3] px-[10px] rounded',
+  titleWrapper: 'mt-[32px] mb-[12px] flex items-center bg-[#E6EEF3] px-[10px] py-[6px] rounded',
   titleText: 'font-inter text-[14px] text-[#585D69] uppercase',
   feelWrapper: 'flex items-center justify-center h-[56px] w-[67px] bg-[#F0F3F6] border border-[#B3CBDC] rounded-lg',
   feel: 'text-[24px]',

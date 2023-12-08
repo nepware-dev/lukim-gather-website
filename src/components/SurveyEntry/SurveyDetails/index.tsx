@@ -66,7 +66,7 @@ type SurveyHistoryType = {
 
 const Title = ({text}: {text: string}) => (
   <div className={classes.titleWrapper}>
-    <h3 className={classes.titleText}>{text}</h3>
+    <p className={classes.titleText}>{text}</p>
   </div>
 );
 
@@ -100,6 +100,8 @@ const SurveyDetails: React.FC<SurveyDetailsProps> = (props) => {
     onDeclineSurvey,
     updatingStatus,
   } = props;
+
+  const toast = useToast();
 
   const currentDate = new Date().toISOString();
 
@@ -273,34 +275,41 @@ const SurveyDetails: React.FC<SurveyDetailsProps> = (props) => {
   }, [surveyData?.boundary?.coordinates, surveyPolyGeoJSON]);
 
   const onExportPDF = useCallback(async () => {
-    const element = entryRef.current;
-    await toCanvas(element).then((canvas) => {
-      const imgData = canvas.toDataURL('img/png', {height: element.scrollHeight, width: element.scrollWidth});
-      // eslint-disable-next-line new-cap
-      const pdf = new jsPDF('p', 'mm', 'a4');
-      const width = pdf.internal.pageSize.getWidth();
-      const height = pdf.internal.pageSize.getHeight();
-      pdf.setFillColor(204, 204, 204, 0);
-      pdf.rect(0, 0, width, height, 'F');
-      const iWidth = (element.scrollWidth * height) / element.scrollHeight;
-      pdf.addImage(imgData, 'PNG', (width - iWidth) / 2, 0, iWidth, height);
-      pdf.save(`${data?.title}-${currentDate}.pdf`);
-    });
-  }, [data, currentDate]);
+    try {
+      const element = entryRef.current;
+      await toCanvas(element).then((canvas) => {
+        const imgData = canvas.toDataURL('img/png', {height: element.scrollHeight, width: element.scrollWidth});
+        // eslint-disable-next-line new-cap
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const width = pdf.internal.pageSize.getWidth();
+        const height = pdf.internal.pageSize.getHeight();
+        pdf.setFillColor(204, 204, 204, 0);
+        pdf.rect(0, 0, width, height, 'F');
+        const iWidth = (element.scrollWidth * height) / element.scrollHeight;
+        pdf.addImage(imgData, 'PNG', (width - iWidth) / 2, 0, iWidth, height);
+        pdf.save(`${data?.title}-${currentDate}.pdf`);
+      });
+    } catch (err) {
+      toast('error', 'Something went wrong!');
+    }
+  }, [data?.title, currentDate, toast]);
 
   const onExportImage = useCallback(async () => {
-    const element = entryRef.current;
-    await toCanvas(element).then((canvas) => {
-      const a = document.createElement('a');
-      a.href = canvas.toDataURL('img/png', {height: element.scrollHeight, width: element.scrollWidth});
-      a.download = `${data?.title}-${currentDate}.png`;
-      a.click();
-    });
-  }, [data, currentDate]);
+    try {
+      const element = entryRef.current;
+      await toCanvas(element).then((canvas) => {
+        const a = document.createElement('a');
+        a.href = canvas.toDataURL('img/png', {height: element.scrollHeight, width: element.scrollWidth});
+        a.download = `${data?.title}-${currentDate}.png`;
+        a.click();
+      });
+    } catch (err) {
+      toast('error', 'Something went wrong!');
+    }
+  }, [data?.title, currentDate, toast]);
 
   const [getEntireHappeningSurveyHistoryData] = useLazyQuery(GET_HAPPENING_SURVEY_HISTORY_ITEM);
 
-  const toast = useToast();
   const onExportCSV = useCallback(async () => {
     const csvData = {
       ID: data?.id,
