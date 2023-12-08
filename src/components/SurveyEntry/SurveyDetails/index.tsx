@@ -17,7 +17,7 @@ import Map, {
 } from 'react-map-gl';
 import bbox from '@turf/bbox';
 import {parse} from 'json2csv';
-import {toCanvas} from 'html-to-image';
+import {domToCanvas} from 'modern-screenshot';
 import jsPDF from 'jspdf';
 
 import AudioPlayer from '@components/AudioPlayer';
@@ -32,7 +32,7 @@ import cs from '@ra/cs';
 import {UPDATE_NUM_DAYS} from '@utils/config';
 import {formatDate} from '@utils/formatDate';
 import {formatName} from '@utils/formatName';
-import sentimentName from '@utils/sentimentName';
+import sentimentName, {sentimentIcon} from '@utils/sentimentName';
 
 import {rootState} from '@store/rootReducer';
 
@@ -66,13 +66,16 @@ type SurveyHistoryType = {
 
 const Title = ({text}: {text: string}) => (
   <div className={classes.titleWrapper}>
-    <h3 className={classes.titleText}>{text}</h3>
+    <p className={classes.titleText}>{text}</p>
   </div>
 );
 
 const Feel = ({sentiment}: {sentiment: string}) => (
   <div className={classes.feelWrapper}>
-    <p className={classes.feel}>{sentiment}</p>
+    {sentiment ? (
+      <img src={sentimentIcon[sentiment]} alt={sentimentName[sentiment]} />
+    ) : (<p className={classes.feel}>-</p>
+    )}
   </div>
 );
 
@@ -100,6 +103,8 @@ const SurveyDetails: React.FC<SurveyDetailsProps> = (props) => {
     onDeclineSurvey,
     updatingStatus,
   } = props;
+
+  const toast = useToast();
 
   const currentDate = new Date().toISOString();
 
@@ -278,7 +283,7 @@ const SurveyDetails: React.FC<SurveyDetailsProps> = (props) => {
 
   const onExportPDF = useCallback(async () => {
     const element = entryRef.current;
-    await toCanvas(element).then((canvas) => {
+    await domToCanvas(element).then((canvas) => {
       const imgData = canvas.toDataURL('img/png', {height: element.scrollHeight, width: element.scrollWidth});
       // eslint-disable-next-line new-cap
       const pdf = new jsPDF('p', 'mm', 'a4');
@@ -290,21 +295,20 @@ const SurveyDetails: React.FC<SurveyDetailsProps> = (props) => {
       pdf.addImage(imgData, 'PNG', (width - iWidth) / 2, 0, iWidth, height);
       pdf.save(`${data?.title}-${currentDate}.pdf`);
     });
-  }, [data, currentDate]);
+  }, [currentDate, data?.title]);
 
   const onExportImage = useCallback(async () => {
     const element = entryRef.current;
-    await toCanvas(element).then((canvas) => {
+    await domToCanvas(element).then((canvas) => {
       const a = document.createElement('a');
       a.href = canvas.toDataURL('img/png', {height: element.scrollHeight, width: element.scrollWidth});
       a.download = `${data?.title}-${currentDate}.png`;
       a.click();
     });
-  }, [data, currentDate]);
+  }, [currentDate, data?.title]);
 
   const [getEntireHappeningSurveyHistoryData] = useLazyQuery(GET_HAPPENING_SURVEY_HISTORY_ITEM);
 
-  const toast = useToast();
   const onExportCSV = useCallback(async () => {
     const csvData = {
       ID: data?.id,
@@ -520,7 +524,7 @@ const SurveyDetails: React.FC<SurveyDetailsProps> = (props) => {
             </div>
             <Title text='feels' />
             <div>
-              <Feel sentiment={surveyData.sentiment || '-'} />
+              <Feel sentiment={surveyData.sentiment} />
             </div>
             <Title text='Condition' />
             <div className={classes.wrapper}>
