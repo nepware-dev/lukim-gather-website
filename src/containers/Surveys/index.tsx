@@ -46,6 +46,11 @@ export const GET_SURVEY_DATA = gql`
       attachment {
         id
         media
+        mediaAsset {
+          og
+          lg
+          sm
+        }
       }
       audioFile
       category {
@@ -96,6 +101,11 @@ export const GET_SURVEY = gql`
       attachment {
         id
         media
+        mediaAsset {
+          og
+          lg
+          sm
+        }
       }
       audioFile
       category {
