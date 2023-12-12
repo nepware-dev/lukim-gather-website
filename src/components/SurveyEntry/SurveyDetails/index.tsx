@@ -223,7 +223,11 @@ const SurveyDetails: React.FC<SurveyDetailsProps> = (props) => {
 
   const handleShowGallery = useCallback((media: any) => {
     setShowGallery(!showGallery);
-    setGalleryIndex(surveyData?.attachment.findIndex((item: any) => item.media === media));
+    setGalleryIndex(
+      surveyData?.attachment.findIndex(
+        (item: any) => item.mediaAsset?.og === media?.og,
+      ),
+    );
   }, [showGallery, setShowGallery, setGalleryIndex, surveyData?.attachment]);
 
   const escapeListener = useCallback(
@@ -494,11 +498,11 @@ const SurveyDetails: React.FC<SurveyDetailsProps> = (props) => {
             <Title text='photos' />
             <div className={classes.photosWrapper}>
               {surveyData?.attachment?.length
-                ? surveyData.attachment.map((item: {media: string}) => (
-                  <div className='cursor-pointer' onClick={() => handleShowGallery(item.media)}>
+                ? surveyData.attachment.map((item: {id: string; mediaAsset: {sm: string}}) => (
+                  <div className='cursor-pointer' onClick={() => handleShowGallery(item.mediaAsset)}>
                     <img
-                      key={item.media}
-                      src={item.media}
+                      key={item?.id}
+                      src={item.mediaAsset?.sm}
                       alt=''
                       className={classes.photo}
                     />
