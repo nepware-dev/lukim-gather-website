@@ -25,7 +25,7 @@ import {formatISO} from 'date-fns';
 import {Parser} from 'json2csv';
 import JSZip from 'jszip';
 import {saveAs} from 'file-saver';
-import {toCanvas} from 'html-to-image';
+import {domToCanvas} from 'modern-screenshot';
 import jsPDF from 'jspdf';
 
 import {FormDataType} from '@components/FormTable';
@@ -467,7 +467,7 @@ const Dashboard = () => {
 
   const onExportPDF = useCallback(async () => {
     const element: any = contentRef.current;
-    await toCanvas(element).then((canvas) => {
+    await domToCanvas(element).then((canvas) => {
       const height = element.scrollHeight;
       const width = element.scrollWidth;
       const imgData = canvas.toDataURL('img/png', {height, width});
@@ -480,7 +480,7 @@ const Dashboard = () => {
 
   const onExportImage = useCallback(async () => {
     const element: any = contentRef.current;
-    await toCanvas(element).then((canvas) => {
+    await domToCanvas(element).then((canvas) => {
       const a = document.createElement('a');
       a.href = canvas.toDataURL('img/png', {height: element.scrollHeight, width: element.scrollWidth});
       a.download = `Survey_report_${currentDate}.png`;
