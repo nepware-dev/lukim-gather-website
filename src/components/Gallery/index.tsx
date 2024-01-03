@@ -17,10 +17,12 @@ interface Props {
 const Gallery: React.FC<Props> = ({
   images, galleryIndex, showGallery, toggleGalleryVisibility,
 }) => {
-  const galleryImages = images.map((item: {mediaAsset: {og: string, sm: string}}) => ({
-    original: item?.mediaAsset?.og,
-    thumbnail: item?.mediaAsset?.sm,
-  }));
+  const galleryImages = images.map(
+    (item: {mediaAsset: {og: string, sm: string}, media?: string}) => ({
+      original: item?.mediaAsset?.og || item?.media,
+      thumbnail: item?.mediaAsset?.sm || item?.media,
+    }),
+  );
   return (
     <div className={cs(classes.sliderContainer, [classes.hidden, !showGallery])}>
       <div className={classes.galleryIconWrapper}>
