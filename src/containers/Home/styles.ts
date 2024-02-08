@@ -11,7 +11,7 @@ export default {
   bgContentWrapper: 'flex flex-col items-center gap-[40px] lg:flex-row lg:justify-between lg:items-start lg:gap-[20px]',
   bgImage: 'max-h-[250px] max-w-[250px] sm:max-h-[375px] sm:max-w-[375px]',
   bgContent: 'max-w-[604px] mb-[50px] lg:mb-[200px]',
-  bgInfo: 'font-inter text-[16px] text-color-text sm:text-[18px] sm:leading-[32px]',
+  bgInfo: 'font-inter text-[16px] text-color-text sm:text-[18px] sm:leading-[32px] mb-4',
   highlightText: 'text-[#EC6D25]',
   bgCards: 'flex flex-col gap-[10px]',
   appInfoWrapper: 'px-[5vw] py-[50px] lg:py-[0] lg:absolute lg:-bottom-[136px] lg:left-0 lg:right-0',
