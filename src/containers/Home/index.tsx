@@ -27,10 +27,10 @@ const Home = () => (
         </p>
         <div className={classes.heroButtons}>
           <a href='https://apps.apple.com/np/app/lukim-gather/id6443612199' target='_blank' rel='noreferrer'>
-            <AppButton boxShadow available beta />
+            <AppButton boxShadow available />
           </a>
           <a href='https://play.google.com/store/apps/details?id=org.lukimgather' target='_blank' rel='noreferrer'>
-            <AppButton android boxShadow available beta />
+            <AppButton android boxShadow available />
           </a>
         </div>
       </div>
