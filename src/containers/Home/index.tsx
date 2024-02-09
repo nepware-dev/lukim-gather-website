@@ -1,6 +1,5 @@
 import React from 'react';
 
-import cs from '@utils/cs';
 import AppButton from '@components/AppButton';
 import InfoCard from '@components/InfoCard';
 import Card from '@components/Card';
@@ -61,7 +60,9 @@ const Home = () => (
         </div>
         <div className={classes.bgContent}>
           <p className={classes.bgInfo}>
-            As part of the UNDP
+            Lukim Gather is now available for download on all iOS and Android devices,
+            offering practical benefits for users in remote communities. As a crucial
+            part of the UNDP
             <a
               href='http://www.png-nrmhub.org/'
               target='_blank'
@@ -72,32 +73,24 @@ const Home = () => (
                 Papua New Guinea’s Natural Resource Hub
               </span>
             </a>
-            , the second phase of Lukim Gather is under development.
-            Supporting the collection of conservation and biodiversity
-            data, the Lukim Gather App improves biodiversity and management
-            effectiveness monitoring in PNG protected areas. This
-            innovative mobile technology is helping to overcome many of
-            the geographical, infrastructural, and technological challenges
-            that prevent the effective tracking and management of natural
-            resources within the region.
-          </p>
-          <p className={cs(classes.bgInfo, 'mt-[30px] mb-[25px]')}>
-            Because it is able to function offline and out of range of
-            phone signal, the Lukim Gather app enables communities in
-            remote protected areas to:
+            , Lukim Gather simplifies the process of collecting and sharing environment
+            and biodiversity data. This mobile app is particularly helpful in monitoring
+            and evaluating grants, reporting changes in the environment, and tracking
+            management effectiveness in protected areas of PNG. Key advantages of
+            Lukim Gather include:
           </p>
           <div className={classes.bgCards}>
             <InfoCard
               img={circle}
-              text='Collect and share social and environmental information, even without internet connections'
+              text='Collect and share social and environmental information even without an internet connection, making it accessible in remote areas.'
             />
             <InfoCard
               img={upload}
-              text='Make automatic data uploads via a centralized server which can save time and reduce errors in data collection'
+              text='The app allows automatic data uploads via a centralized server, saving time and reducing errors in data collection.'
             />
             <InfoCard
               img={flag}
-              text='Quickly and anonymously report on local environmental incidents, including illicit activities such as illegal logging'
+              text='Users can quickly and anonymously report local environmental incidents, such as illegal logging or other illicit activities.'
             />
           </div>
         </div>
