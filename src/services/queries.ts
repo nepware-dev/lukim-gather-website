@@ -356,7 +356,7 @@ export const GET_PROJECTS = gql`
 
 export const GET_NOTICES = gql`
 query{
-  notice {
+  notice(isActive: true) {
     id
     noticeType
     title
