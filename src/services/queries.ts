@@ -332,7 +332,7 @@ export const SET_PASSWORD = gql`
 `;
 
 export const UPLOAD_MEDIA = gql`
-    mutation UploadMedia($media: Upload, $title: String!, $type: String!  ) {
+    mutation UploadMedia($media: Upload!, $title: String!, $type: String!  ) {
         uploadMedia(media: $media, title: $title, type: $type) {
             result {
                 title
