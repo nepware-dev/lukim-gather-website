@@ -59,7 +59,15 @@ import {
 import surveyCategory from '../../data/surveyCategory';
 import classes from './styles';
 
-const ExportOption = ({onClick, icon, title} : {onClick(): void, icon: string, title: string}) => (
+const getFullName = (createdBy: any) => (createdBy?.firstName && createdBy?.lastName
+  ? `${createdBy?.firstName} ${createdBy?.lastName}`
+  : 'Anonymous');
+
+const ExportOption = ({
+  onClick,
+  icon,
+  title,
+}: { onClick(): void; icon: string; title: string }) => (
   <div className={classes.exportOption} onClick={onClick}>
     <img src={icon} alt={title} />
     <p className={classes.exportOptionTitle}>{title}</p>
@@ -103,11 +111,17 @@ const headers = [
   {label: 'Sentiment', value: 'sentiment'},
   {label: 'Condition', value: 'improvement'},
   {label: 'Location', value: 'location.coordinates'},
+  {label: 'Latitude', value: (item: any) => item?.location?.coordinates?.[0]},
+  {
+    label: 'Longitude',
+    value: (item: any) => item?.location?.coordinates?.[1],
+  },
   {label: 'Boundary', value: 'boundary.coordinates'},
   {label: 'Created At', value: 'createdAt'},
   {label: 'Status', value: 'status'},
   {label: 'Audio', value: 'audioFile'},
   {label: 'Photos', value: 'attachment'},
+  {label: 'Submitted By', value: (item: any) => getFullName(item?.createdBy)},
 ];
 
 const happeningSurveyParser = new Parser({
@@ -395,7 +409,7 @@ const Dashboard = () => {
                   </div>
                 );
               }
-              const submittedBy = (item?.createdBy?.firstName && item?.createdBy?.lastName) ? `${item?.createdBy?.firstName} ${item?.createdBy?.lastName}` : 'Anonymous';
+              const submittedBy = getFullName(item?.createdBy);
               return (
                 <div key={item.id} className='border border-b-0 last:border-b only:border-0 border-color-border p-[6px] only:p-[2px]'>
                   <b>
