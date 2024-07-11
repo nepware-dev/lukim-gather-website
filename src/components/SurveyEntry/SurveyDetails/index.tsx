@@ -317,6 +317,8 @@ const SurveyDetails: React.FC<SurveyDetailsProps> = (props) => {
       Category: data?.category?.title,
       Project: data?.project?.title,
       Location: data?.location?.coordinates,
+      Latitude: data?.location?.coordinates?.[0],
+      Longitute: data?.location?.coordinates?.[1],
       Boundary: data?.boundary?.coordinates,
       Region: data?.region?.id,
       Condition: data?.improvement,
