@@ -467,11 +467,11 @@ const SurveyDetails: React.FC<SurveyDetailsProps> = (props) => {
       </div>
       {(loadingHistory || loading) ? (
         <Loader className={classes.loader} />
-      ) : surveyData?.title ? (
+      ) : surveyData?.id ? (
         <>
           <div ref={entryRef} className={classes.entryWrapper}>
             <div className={classes.header}>
-              <h2 className={classes.headerTitle}>{surveyData?.title}</h2>
+              <h2 className={classes.headerTitle}>{surveyData?.title || 'No Title Found'}</h2>
               <p
                 className={cs(
                   classes.status,
