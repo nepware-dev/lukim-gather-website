@@ -245,6 +245,7 @@ const EditSurveyModal: React.FC<Props> = ({
               value={title}
               onChange={handleTitleChange}
               disabled={isDisableTitleInput}
+              placeholder='Add title'
             />
             {!updateMode && (
               <div onClick={toggleDisableTitleInput} className='grid place-item-center'>
@@ -277,7 +278,22 @@ const EditSurveyModal: React.FC<Props> = ({
             <CategorySelect onClose={toggleCategoryModal} handleSelect={setCategory} />
           </div>
           <Title title='PHOTOS' />
-          <div className={classes.photosWrapper}>
+          <div className={classes.photoContainer}>
+            <div className={classes.photosWrapper}>
+              {attachmentLink?.length === 0 && allImages?.length === 0 && (
+                <div className={cs(classes.photo, classes.emptyComponent)}>No photos found</div>
+              )}
+              {allImages?.map((item, index) => (
+                <ImageItem index={index} item={item} onRemove={handleRemoveImage} />
+              ))}
+              {attachmentLink?.length > 0 ? attachmentLink.map((item, index) => (
+                <ImageItem
+                  index={index}
+                  item={item.media}
+                  onRemove={updateMode ? undefined : handleDeleteImage}
+                />
+              )) : ''}
+            </div>
             <div className={classes.uploadButton}>
               <FileInput
                 id='surveyPhoto'
@@ -291,19 +307,6 @@ const EditSurveyModal: React.FC<Props> = ({
                 <AiOutlinePlus size={25} color='#FFF' />
               </label>
             </div>
-            {attachmentLink?.length === 0 && allImages?.length === 0 && (
-              <div className={cs(classes.photo, classes.emptyComponent)}>No photos found</div>
-            )}
-            {allImages?.map((item, index) => (
-              <ImageItem index={index} item={item} onRemove={handleRemoveImage} />
-            ))}
-            {attachmentLink?.length > 0 ? attachmentLink.map((item, index) => (
-              <ImageItem
-                index={index}
-                item={item.media}
-                onRemove={updateMode ? undefined : handleDeleteImage}
-              />
-            )) : ''}
           </div>
           <Title title='LOCATION' />
           <p className={classes.fieldValue}>{locationName || ''}</p>
