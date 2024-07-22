@@ -14,7 +14,7 @@ export default {
   count: 'w-[24px] h-[19px] flex items-center justify-center ml-auto text-[12px] font-inter bg-[#E6EEF3] rounded-full',
   mobileHeader: 'md:hidden w-full p-4 flex items-center justify-between border-b border-[#CEDCEC]',
   userDropdown: 'md:hidden mt-[20px]',
-  child: 'w-screen ml-[236px] overflow-y-auto p-2',
+  child: 'w-screen ml-[236px] p-2',
   hidden: 'hidden',
   cursor: 'cursor-pointer',
 };
