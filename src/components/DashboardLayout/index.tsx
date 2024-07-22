@@ -109,7 +109,13 @@ const DashboardLayout = () => {
             </div>
           </div>
         </div>
-        <div className={cs(classes.child, visibleNotice ? 'h-[calc(100vh-40px)]' : 'h-[100vh]')}>
+        <div
+          className={cs(
+            classes.child,
+            visibleNotice ? 'h-[calc(100vh-40px)]' : 'h-[100vh]',
+            ['overflow-y-auto', showSideBar],
+          )}
+        >
           <Outlet />
         </div>
       </div>
