@@ -71,7 +71,7 @@ const SurveyItem: React.FC<ItemProps> = ({
   return (
     <tr className={classes.tableItemRow}>
       <td>
-        <p className={classes.itemTitle}>{(item.title).substring(0, 35)}</p>
+        <p className={classes.itemTitle}>{(item.title).substring(0, 35) || 'No Title Found.'}</p>
       </td>
       <td>
         <div className={classes.categoryWrapper}>

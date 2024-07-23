@@ -115,6 +115,10 @@ const EditSurveyModal: React.FC<Props> = ({
   );
 
   const handleSubmitSurvey = useCallback(async () => {
+    if (!title || (typeof title === 'string' && !title.trim())) {
+      toast('error', 'Title field is required.');
+      return;
+    }
     const surveyInput: Partial<SurveyDataType> & {[key: string]: any} = {
       title: title as string,
       categoryId: parseInt(category?.id, 10),
@@ -148,6 +152,7 @@ const EditSurveyModal: React.FC<Props> = ({
     isTest,
     submitHappeningSurvey,
     data?.id,
+    toast,
   ]);
 
   const toggleCategoryModal = useCallback(() => {
