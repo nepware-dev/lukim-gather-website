@@ -14,9 +14,11 @@
     "@turf/bbox": "^6.5.0",
     "apollo-upload-client": "^17.0.0",
     "date-fns": "^2.28.0",
+    "events": "^3.3.0",
     "fast-xml-parser": "^4.0.15",
     "file-saver": "^2.0.5",
     "graphql": "^16.3.0",
+    "hoist-non-react-statics": "^3.3.2",
     "html-react-parser": "^3.0.1",
     "json2csv": "^5.0.7",
     "jspdf": "^2.5.1",
@@ -24,6 +26,7 @@
     "libphonenumber-js": "^1.10.14",
     "mapbox-gl": "^2.8.0",
     "modern-screenshot": "^4.4.36",
+    "prop-types": "^15.8.1",
     "react": "^17.0.2",
     "react-csv": "^2.2.2",
     "react-datepicker": "^4.7.0",
@@ -52,7 +55,8 @@
     "lint": "eslint './src/**/*.{jsx,js,tsx,ts}'",
     "lint:fix": "eslint ./src/* --fix",
     "prepare": "husky install",
-    "pre-commit": "yarn lint --fix"
+    "pre-commit": "yarn lint --fix",
+    "cm": "gitmoji -c"
   },
   "eslintConfig": {
     "extends": [
@@ -107,11 +111,11 @@
     "tailwindscss": "^0.3.0"
   },
   "resolutions": {
-    "@types/react": "17.0.39",
+    "@types/react": "^18.0.27",
     "@types/react-dom": "17.0.13"
   },
   "optionalDependencies": {
-    "@types/react": "17.0.39",
+    "@types/react": "^18.0.27",
     "@types/react-dom": "17.0.13"
   }
 }

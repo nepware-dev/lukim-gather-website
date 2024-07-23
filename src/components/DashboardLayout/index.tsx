@@ -53,7 +53,7 @@ const DashboardLayout = () => {
           [classes.hideSideBar, !showSideBar],
         )}
       >
-        <div className={cs(classes.sideBar, visibleNotice ? 'h-[calc(100vh-40px)]' : 'h-[100vh]')}>
+        <div className={cs(classes.sideBar, visibleNotice ? 'min-h-[calc(100vh-40px)]' : 'min-h-[100vh]')}>
           <Link to='/' className={classes.logoWrapper}>
             <div>
               <img src={logo} alt='lukim-logo' className={classes.logo} />
@@ -112,7 +112,7 @@ const DashboardLayout = () => {
         <div
           className={cs(
             classes.child,
-            visibleNotice ? 'h-[calc(100vh-40px)]' : 'h-[100vh]',
+            visibleNotice ? 'min-h-[calc(100vh-40px)]' : 'min-h-[100vh]',
             ['overflow-y-auto', showSideBar],
           )}
         >
