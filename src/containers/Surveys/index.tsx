@@ -174,8 +174,8 @@ export const GET_PROTECTED_AREA_DATA = gql`
 `;
 
 export type OptionDataType = {
-    id: number,
-    title: string
+  id: number,
+  title: string
 }
 
 export type SelectInputDataType = {
@@ -279,7 +279,7 @@ const Surveys = () => {
   const [maxDate, setMaxDate] = useState<Date>();
   const [minDate, setMinDate] = useState<Date>();
   const [startDate, endDate] = dateRange;
-  const [selectInputData, setSelectInputData] = useState<SelectInputDataType| null>({
+  const [selectInputData, setSelectInputData] = useState<SelectInputDataType | null>({
     category: null,
     region: null,
     status: null,
@@ -319,14 +319,14 @@ const Surveys = () => {
     const MaxDate = new Date(
       Math.max(
         ...data.happeningSurveys.map(
-          (el: {createdAt: string}) => new Date(el.createdAt),
+          (el: { createdAt: string }) => new Date(el.createdAt),
         ),
       ),
     );
     const MinDate = new Date(
       Math.min(
         ...data.happeningSurveys.map(
-          (el: {createdAt: string}) => new Date(el.createdAt),
+          (el: { createdAt: string }) => new Date(el.createdAt),
         ),
       ),
     );
@@ -337,14 +337,15 @@ const Surveys = () => {
 
   useEffect(() => {
     if (!data) return;
-    const filterData = data.happeningSurveys.filter((item: {createdAt: string,
-              category: OptionDataType,
-              region: OptionDataType,
-              protectedArea: OptionDataType,
-              status: string,
-              createdBy: {id: string},
-              project: OptionDataType,
-              }) => {
+    const filterData = data.happeningSurveys.filter((item: {
+      createdAt: string,
+      category: OptionDataType,
+      region: OptionDataType,
+      protectedArea: OptionDataType,
+      status: string,
+      createdBy: { id: string },
+      project: OptionDataType,
+    }) => {
       if (selectInputData?.category && (item.category.id !== selectInputData.category.id)) {
         return false;
       }
@@ -355,24 +356,24 @@ const Surveys = () => {
         return false;
       }
       if (selectInputData?.protectedArea
-          && (item.protectedArea?.id !== selectInputData.protectedArea.id)) {
+        && (item.protectedArea?.id !== selectInputData.protectedArea.id)) {
         return false;
       }
       if (selectInputData?.createdBy
-          && (item.createdBy?.id !== selectInputData.createdBy.id)) {
+        && (item.createdBy?.id !== selectInputData.createdBy.id)) {
         return false;
       }
       if (selectInputData?.project
-          && (item.project?.id !== selectInputData.project.id)) {
+        && (item.project?.id !== selectInputData.project.id)) {
         return false;
       }
       if (status === 'My Entries' && (item?.createdBy?.id !== userId)) {
         return false;
       }
       if (!(new Date(new Date(item.createdAt).toDateString())
-            >= new Date(startDate.toDateString())
-            && new Date(new Date(item.createdAt).toDateString())
-            <= new Date(endDate?.toDateString()))) {
+        >= new Date(startDate.toDateString())
+        && new Date(new Date(item.createdAt).toDateString())
+        <= new Date(endDate?.toDateString()))) {
         return false;
       }
       return true;
@@ -402,21 +403,12 @@ const Surveys = () => {
     setActivePage(num);
   }, []);
 
-  const handle5rows = useCallback(() => {
-    if (rows !== 5) {
-      setRows(5);
-      setActivePage(1);
-    }
-  }, [rows]);
+  const handleTablePageSize = useCallback((param) => {
+    setRows(param);
+    setActivePage(1);
+  }, []);
 
-  const handle10rows = useCallback(() => {
-    if (rows !== 10) {
-      setRows(10);
-      setActivePage(1);
-    }
-  }, [rows]);
-
-  const renderLabel = useCallback(
+  const renderTablePageSizeLabel = useCallback(
     () => (
       <div className={classes.dropdownLabel}>
         <p>{`${rows} rows`}</p>
@@ -426,30 +418,26 @@ const Surveys = () => {
     [rows],
   );
 
-  const DropdownItem = useCallback(
+  const TablePageSize = useCallback(
     () => (
       <div className={classes.dropdownItems}>
-        <div
-          onClick={handle5rows}
-          className={cs(classes.dropdownItem, 'mb-[5px]', [
-            'bg-color-blue-alt text-[white]',
-            rows === 5,
-          ])}
-        >
-          5 rows
-        </div>
-        <div
-          onClick={handle10rows}
-          className={cs(classes.dropdownItem, ['bg-color-blue-alt text-[white]', rows === 10])}
-        >
-          10 rows
-        </div>
+        {[5, 10, 20, 30, 40, 50, 100].map((pageSize) => (
+          <div
+            onClick={() => handleTablePageSize(pageSize)}
+            className={cs(classes.dropdownItem, ['mb-[5px]', rows === 5], [
+              'bg-[#F2F5F9]',
+              rows === pageSize,
+            ])}
+          >
+            {`${pageSize} rows`}
+          </div>
+        ))}
       </div>
     ),
-    [handle10rows, handle5rows, rows],
+    [handleTablePageSize, rows],
   );
 
-  const CustomInput = forwardRef<
+  const CustomDateInput = forwardRef<
     HTMLButtonElement,
     React.HTMLProps<HTMLButtonElement>
   >(({onClick}, ref) => (
@@ -461,8 +449,7 @@ const Surveys = () => {
     >
       <BsCalendar4Event size={18} color='#585D69' />
       <p>
-        {`${startDate ? `${formatDate(startDate)} -` : ''} ${
-          endDate ? formatDate(endDate) : ''
+        {`${startDate ? `${formatDate(startDate)} -` : ''} ${endDate ? formatDate(endDate) : ''
         }`}
       </p>
     </button>
@@ -510,7 +497,7 @@ const Surveys = () => {
   const regionOptions = regions?.regions.map(({
     name: title,
     ...item
-  }: {name: string}) => ({
+  }: { name: string }) => ({
     title,
     ...item,
   }));
@@ -518,7 +505,7 @@ const Surveys = () => {
   const protectedAreaOptions = protectedAreas?.protectedAreas.map(({
     name: title,
     ...item
-  }: {name: string}) => ({
+  }: { name: string }) => ({
     title,
     ...item,
   }));
@@ -612,7 +599,7 @@ const Surveys = () => {
                 minDate={minDate}
                 maxDate={maxDate}
                 onChange={handleDateChange}
-                customInput={<CustomInput />}
+                customInput={<CustomDateInput />}
               />
             </div>
             {surveyData && (
@@ -702,8 +689,8 @@ const Surveys = () => {
         <div className={classes.footer}>
           <div className={classes.dropdownWrapper}>
             <p className={classes.show}>Show</p>
-            <Dropdown alignRight alignTop renderLabel={renderLabel}>
-              <DropdownItem />
+            <Dropdown alignRight alignTop renderLabel={renderTablePageSizeLabel}>
+              <TablePageSize />
             </Dropdown>
           </div>
           <div>

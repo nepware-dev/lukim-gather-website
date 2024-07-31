@@ -3,7 +3,7 @@ export default {
   container: 'flex md:-translate-x-0 ease-in-out duration-300',
   showSideBar: '-translate-x-0',
   hideSideBar: '-translate-x-[235px]',
-  sideBar: 'w-[236px] px-[20px] bg-[#F2F5F9] border-r border-[#CCDCE8] fixed',
+  sideBar: 'fixed w-[236px] h-[100%] px-[20px] bg-[#F2F5F9] border-r border-[#CCDCE8]',
   logoWrapper: 'hidden md:inline-block pt-[24px]',
   logo: 'h-[60px]',
   linksWrapper: 'flex flex-col mt-[85px]',

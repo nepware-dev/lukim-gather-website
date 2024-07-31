@@ -14,6 +14,7 @@ import {BsCalendar4Event} from 'react-icons/bs';
 import {RiArrowDownSLine} from 'react-icons/ri';
 import {CSVLink} from 'react-csv';
 import {XMLParser} from 'fast-xml-parser';
+import {isSameDay} from 'date-fns';
 
 import Button from '@components/Button';
 import DashboardHeader from '@components/DashboardHeader';
@@ -97,13 +98,14 @@ const CustomForms = () => {
     },
   } = useSelector((state: rootState) => state);
   const {
-    data, loading: surveyLoading, refetch: refetchSurveys, error,
+    data, loading: surveyLoading, refetch: refetchSurveys,
   } = useQuery(GET_SURVEY_DATA);
 
   const {refetch} = useQuery(GET_SURVEY, {
     variables: {id: Number(id)},
     fetchPolicy: !id ? 'cache-only' : 'cache-first',
   });
+
   const {data: formData} = useQuery(GET_FORMS);
   const [surveyFormData, setSurveyFormData] = useState<FormDataType[]>([]);
   const [activeSurveyFormData, setActiveSurveyFormData] = useState<FormDataType>();
@@ -112,10 +114,11 @@ const CustomForms = () => {
   const [totalPages, setTotalPages] = useState<number>(0);
   const [rows, setRows] = useState<number>(10);
   const [showDetails, setShowDetails] = useState<boolean>(false);
-  const [dateRange, setDateRange] = useState([new Date(), new Date()]);
   const [maxDate, setMaxDate] = useState<Date>();
   const [minDate, setMinDate] = useState<Date>();
-  const [startDate, endDate] = dateRange;
+
+  const [startDate, setStartDate] = useState(new Date());
+  const [endDate, setEndDate] = useState(new Date());
 
   const [showEditSurvey, setShowEditSurvey] = useState<boolean>(false);
   const toggleShowEditSurvey = useCallback(() => setShowEditSurvey((ses) => !ses), []);
@@ -164,15 +167,16 @@ const CustomForms = () => {
     if (!data?.survey.length) return;
     const MaxDate = new Date(
       Math.max(
-        ...data.survey.map((el: {createdAt: string}) => new Date(el.createdAt)),
+        ...data.survey.map((el: { createdAt: string }) => new Date(el.createdAt)),
       ),
     );
     const MinDate = new Date(
       Math.min(
-        ...data.survey.map((el: {createdAt: string}) => new Date(el.createdAt)),
+        ...data.survey.map((el: { createdAt: string }) => new Date(el.createdAt)),
       ),
     );
-    setDateRange([MinDate, MaxDate]);
+    setStartDate(MinDate);
+    setEndDate(MaxDate);
     setMaxDate(MaxDate);
     setMinDate(MinDate);
   }, [data]);
@@ -188,10 +192,15 @@ const CustomForms = () => {
     });
     let filterData = projectFilteredSurveys;
     filterData = filterData.filter(
-      (item: {createdAt: string}) => new Date(new Date(item.createdAt).toDateString())
-           >= new Date((startDate as Date).toDateString?.())
-         && new Date(new Date(item.createdAt).toDateString())
-           <= new Date((endDate as Date)?.toDateString?.()),
+      (survey: FormDataType) => {
+        const surveyCreatedDate = new Date(new Date(survey.createdAt).toDateString());
+        const parsedStartDate = new Date((startDate as Date).toDateString());
+        const parsedEndDate = new Date((endDate as Date)?.toDateString());
+        if (!endDate) {
+          return isSameDay(surveyCreatedDate, parsedStartDate);
+        }
+        return surveyCreatedDate >= parsedStartDate && surveyCreatedDate <= parsedEndDate;
+      },
     );
     const slicedData = filterData.slice(
       rows * activePage - rows,
@@ -225,12 +234,13 @@ const CustomForms = () => {
   }, [navigate]);
 
   const projectNames = useMemo(() => [...new Set((data?.survey || []).map(getProjectNameFromFormData).filter((pr: string) => Boolean(pr) && pr !== 'none'))], [data]);
-  const handleProjectChange = useCallback(({option}: {option?: string}) => {
+  const handleProjectChange = useCallback(({option}: { option?: string }) => {
     setProjectFilter(option ?? '');
   }, []);
 
-  const handleClearClick = useCallback(() => {
-    setDateRange([minDate as Date, maxDate as Date]);
+  const handleResetFilters = useCallback(() => {
+    setStartDate(minDate as Date);
+    setEndDate(maxDate as Date);
     setProjectFilter('');
   }, [minDate, maxDate]);
 
@@ -262,21 +272,12 @@ const CustomForms = () => {
     setActivePage(num);
   }, []);
 
-  const handle5rows = useCallback(() => {
-    if (rows !== 5) {
-      setRows(5);
-      setActivePage(1);
-    }
-  }, [rows]);
+  const handleTablePageSize = useCallback((param) => {
+    setRows(param);
+    setActivePage(1);
+  }, []);
 
-  const handle10rows = useCallback(() => {
-    if (rows !== 10) {
-      setRows(10);
-      setActivePage(1);
-    }
-  }, [rows]);
-
-  const renderLabel = useCallback(
+  const renderTablePageSizeLabel = useCallback(
     () => (
       <div className={classes.dropdownLabel}>
         <p>{`${rows} rows`}</p>
@@ -286,50 +287,55 @@ const CustomForms = () => {
     [rows],
   );
 
-  const DropdownItem = useCallback(
+  const TablePageSize = useCallback(
     () => (
       <div className={classes.dropdownItems}>
-        <div
-          onClick={handle5rows}
-          className={cs(classes.dropdownItem, 'mb-[5px]', [
-            'bg-[#F2F5F9]',
-            rows === 5,
-          ])}
-        >
-          5 rows
-        </div>
-        <div
-          onClick={handle10rows}
-          className={cs(classes.dropdownItem, ['bg-[#F2F5F9]', rows === 10])}
-        >
-          10 rows
-        </div>
+        {[5, 10, 20, 30, 40, 50, 100].map((pageSize) => (
+          <div
+            onClick={() => handleTablePageSize(pageSize)}
+            className={cs(classes.dropdownItem, ['mb-[5px]', rows === 5], [
+              'bg-[#F2F5F9]',
+              rows === pageSize,
+            ])}
+          >
+            {`${pageSize} rows`}
+          </div>
+        ))}
       </div>
     ),
-    [handle10rows, handle5rows, rows],
+    [handleTablePageSize, rows],
   );
 
-  const CustomInput = forwardRef<
+  const CustomDateInput = forwardRef<
     HTMLButtonElement,
     React.HTMLProps<HTMLButtonElement>
-  >(({onClick}, ref) => (
-    <button
-      className={classes.datePicker}
-      onClick={onClick}
-      ref={ref}
-      type='button'
-    >
-      <BsCalendar4Event size={18} color='#585D69' />
-      <p>
-        {`${startDate ? `${formatDate(startDate)} -` : ''} ${
-          endDate ? formatDate(endDate) : ''
-        }`}
-      </p>
-    </button>
-  ));
+  >(({onClick}, ref) => {
+    const formattedDateRange = (startDate?: Date, endDate?: Date) => {
+      const formattedStartDate = startDate ? formatDate(startDate) : '';
+      const formattedEndDate = endDate ? `- ${formatDate(endDate)}` : '';
 
-  const handleDateChange = useCallback((update) => {
-    setDateRange(update);
+      return `${formattedStartDate} ${formattedEndDate}`.trim();
+    };
+
+    return (
+      <button
+        className={classes.datePicker}
+        onClick={onClick}
+        ref={ref}
+        type='button'
+      >
+        <BsCalendar4Event size={18} color='#585D69' />
+        <span>
+          {formattedDateRange(startDate, endDate)}
+        </span>
+      </button>
+    );
+  });
+
+  const handleDateChange = useCallback((dates) => {
+    const [start, end] = dates;
+    setStartDate(start);
+    setEndDate(end);
     setActivePage(1);
   }, []);
 
@@ -356,14 +362,14 @@ const CustomForms = () => {
           />
           <div className='cursor-pointer'>
             <DatePicker
-              selectsRange
               showYearDropdown
-              startDate={startDate}
-              endDate={endDate}
+              onChange={handleDateChange}
               minDate={minDate}
               maxDate={maxDate}
-              onChange={handleDateChange}
-              customInput={<CustomInput />}
+              startDate={startDate}
+              endDate={endDate}
+              selectsRange
+              customInput={<CustomDateInput />}
             />
           </div>
           <SelectInput
@@ -376,7 +382,7 @@ const CustomForms = () => {
             onChange={handleProjectChange}
           />
           {(projectFilter || (minDate && +startDate !== +minDate) || (maxDate && +endDate !== +maxDate)) && (
-            <span className={classes.clear} onClick={handleClearClick}>
+            <span className={classes.clear} onClick={handleResetFilters}>
               Clear filters
             </span>
           )}
@@ -394,15 +400,15 @@ const CustomForms = () => {
         <div className={classes.surveyTable}>
           <FormTable
             data={surveyFormData}
-            loading={surveyLoading || (!surveyFormData?.length && !error)}
+            loading={surveyLoading}
             setShowDetails={setShowDetails}
           />
         </div>
         <div className={classes.footer}>
           <div className={classes.dropdownWrapper}>
-            <p className={classes.show}>Show</p>
-            <Dropdown alignRight alignTop renderLabel={renderLabel}>
-              <DropdownItem />
+            <span className={classes.show}>Show</span>
+            <Dropdown alignRight alignTop renderLabel={renderTablePageSizeLabel}>
+              <TablePageSize />
             </Dropdown>
           </div>
           <div>
