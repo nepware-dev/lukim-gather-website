@@ -230,6 +230,24 @@ const happeningSurveyParser = new Parser({
   defaultValue: '',
 });
 
+const CustomDateInput = forwardRef<
+  HTMLButtonElement,
+  {onClick?:() => void, startDate?: Date, endDate?: Date}
+    >(({onClick, startDate, endDate}, ref) => (
+      <button
+        className={classes.datePicker}
+        onClick={onClick}
+        ref={ref}
+        type='button'
+      >
+        <BsCalendar4Event size={18} color='#585D69' />
+        <p>
+          {`${startDate ? `${formatDate(startDate)} -` : ''} ${endDate ? formatDate(endDate) : ''
+          }`}
+        </p>
+      </button>
+    ));
+
 type State = {
   project: {
     id: number;
@@ -437,24 +455,6 @@ const Surveys = () => {
     [handleTablePageSize, rows],
   );
 
-  const CustomDateInput = forwardRef<
-    HTMLButtonElement,
-    React.HTMLProps<HTMLButtonElement>
-  >(({onClick}, ref) => (
-    <button
-      className={classes.datePicker}
-      onClick={onClick}
-      ref={ref}
-      type='button'
-    >
-      <BsCalendar4Event size={18} color='#585D69' />
-      <p>
-        {`${startDate ? `${formatDate(startDate)} -` : ''} ${endDate ? formatDate(endDate) : ''
-        }`}
-      </p>
-    </button>
-  ));
-
   const handleDateChange = useCallback((update) => {
     setDateRange(update);
     setActivePage(1);
@@ -599,7 +599,7 @@ const Surveys = () => {
                 minDate={minDate}
                 maxDate={maxDate}
                 onChange={handleDateChange}
-                customInput={<CustomDateInput />}
+                customInput={<CustomDateInput startDate={startDate} endDate={endDate} />}
               />
             </div>
             {surveyData && (

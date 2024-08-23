@@ -12,7 +12,6 @@ import useInterval from '@ra/hooks/useInterval';
 import List from '@ra/components/List';
 
 import NoNotification from './NoNotification';
-
 import styles from './styles';
 
 export type NotificationType = {
@@ -100,27 +99,17 @@ const NotificationCard = React.forwardRef<RefType, PropsType>(({openNotification
 
   const EmptyComponent = useMemo(() => <NoNotification placeholder='No Notifications' />, []);
 
-  const Notification = React.memo(({notifications}: NotificationType) => {
-    const Props = {
-      data: notifications,
-      renderItem: renderNotification,
-      keyExtractor,
-      className: styles.itemWrapper,
-      EmptyComponent,
-    };
-    return (
-      <List
-        {...Props}
-        ref={ref}
-      />
-    );
-  });
-
   return (
     <div className={styles.container}>
       {openNotification && (
         <div ref={ref}>
-          <Notification notifications={data?.notifications} />
+          <List
+            data={data?.notifications}
+            keyExtractor={keyExtractor}
+            renderItem={renderNotification}
+            EmptyComponent={EmptyComponent}
+            className={styles.itemWrapper}
+          />
         </div>
       )}
     </div>
