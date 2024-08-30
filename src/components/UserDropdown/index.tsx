@@ -1,21 +1,25 @@
 import React, {
-  useCallback, useEffect, useRef, useState, useMemo,
-} from 'react';
-import {useSelector} from 'react-redux';
-import {useNavigate} from 'react-router-dom';
-import {AiOutlineSetting} from 'react-icons/ai';
-import {FiLogOut} from 'react-icons/fi';
-import {IoNotificationsOutline} from 'react-icons/io5';
-import {gql, useQuery} from '@apollo/client';
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  useMemo,
+} from "react";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { AiOutlineSetting } from "react-icons/ai";
+import { FiLogOut } from "react-icons/fi";
+import { IoNotificationsOutline } from "react-icons/io5";
+import { gql, useQuery } from "@apollo/client";
 
-import {rootState} from '@store/rootReducer';
-import {dispatchLogout} from '@services/dispatch';
+import { rootState } from "@store/rootReducer";
+import { dispatchLogout } from "@services/dispatch";
 
-import Dropdown from '@components/Dropdown';
-import useInterval from '@ra/hooks/useInterval';
-import Notification from './Notification';
+import Dropdown from "@components/Dropdown";
+import useInterval from "@ra/hooks/useInterval";
+import Notification from "./Notification";
 
-import classes from './styles';
+import classes from "./styles";
 
 const GET_NOTIFICATIONS_UNREAD_COUNT = gql`
   query {
@@ -23,28 +27,29 @@ const GET_NOTIFICATIONS_UNREAD_COUNT = gql`
   }
 `;
 
-const UserDropdown = ({alignRight}: {alignRight?: boolean}) => {
+const UserDropdown = ({
+  alignRight,
+  setShowSideBar,
+}: {
+  alignRight?: boolean;
+  setShowSideBar?: (value: boolean) => void;
+}) => {
   const navigate = useNavigate();
-  const {data: notificationUnreadCount, refetch} = useQuery(GET_NOTIFICATIONS_UNREAD_COUNT);
+  const { data: notificationUnreadCount, refetch } = useQuery(
+    GET_NOTIFICATIONS_UNREAD_COUNT
+  );
   const [openNotification, setOpenNotification] = useState<boolean>(false);
   const notificationsRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    refetch();
-  }, [refetch, openNotification]);
-
-  useInterval(() => {
-    refetch();
-  }, 20000);
-
   const {
-    auth: {user},
+    auth: { user },
   } = useSelector((state: rootState) => state);
-  const firstName = useMemo(() => user?.firstName || '', [user]);
+  const firstName = useMemo(() => user?.firstName || "", [user]);
 
   const handleAccountSettings = useCallback(() => {
-    navigate('/account-settings');
-  }, [navigate]);
+    if (setShowSideBar) setShowSideBar(false);
+    navigate("/account-settings");
+  }, [navigate, setShowSideBar]);
 
   const handleLogout = useCallback(() => {
     dispatchLogout();
@@ -56,55 +61,52 @@ const UserDropdown = ({alignRight}: {alignRight?: boolean}) => {
         <div className={classes.letterWrapper}>
           <p className={classes.letter}>{firstName[0]}</p>
         </div>
-        <p className={classes.name}>
-          {firstName}
-        </p>
+        <p className={classes.name}>{firstName}</p>
       </div>
     ),
-    [firstName],
+    [firstName]
   );
 
   const hideNotification = useCallback((event) => {
-    if (notificationsRef.current && !notificationsRef.current.contains(event?.target)) {
+    if (
+      notificationsRef.current &&
+      !notificationsRef.current.contains(event?.target)
+    ) {
       setOpenNotification(false);
-      document.removeEventListener('click', hideNotification);
+      document.removeEventListener("click", hideNotification);
     }
   }, []);
 
   const showNotification = useCallback(() => {
     setOpenNotification(true);
     setTimeout(() => {
-      document.addEventListener('click', hideNotification);
+      document.addEventListener("click", hideNotification);
     }, 50);
   }, [hideNotification]);
 
   const handleNotificationClick = useCallback(
-    () => (
-      openNotification ? hideNotification : showNotification()),
-    [openNotification, showNotification, hideNotification],
+    () => (openNotification ? hideNotification : showNotification()),
+    [openNotification, showNotification, hideNotification]
   );
 
   const NotificationIcon = useCallback(
     () => (
-      <div className='w-6/12 cursor-pointer' onClick={handleNotificationClick}>
+      <div className="w-6/12 cursor-pointer" onClick={handleNotificationClick}>
         {notificationUnreadCount?.notificationUnreadCount > 0 && (
           <span className={classes.notificationCount}>
             {notificationUnreadCount?.notificationUnreadCount}
           </span>
         )}
-        <IoNotificationsOutline
-          className='mr-[2em]'
-          size={24}
-        />
+        <IoNotificationsOutline className="mr-[2em]" size={24} />
       </div>
-    )
-    , [handleNotificationClick, notificationUnreadCount?.notificationUnreadCount],
+    ),
+    [handleNotificationClick, notificationUnreadCount?.notificationUnreadCount]
   );
 
   return (
-    <div className='flex items-center'>
-      <div className='relative'>
-        <div className='flex flex-col select-none hover:opacity-80'>
+    <div className="flex items-center relative ">
+      <div className="relative">
+        <div className="flex flex-col select-none hover:opacity-80">
           <NotificationIcon />
         </div>
         <Notification
@@ -114,24 +116,14 @@ const UserDropdown = ({alignRight}: {alignRight?: boolean}) => {
       </div>
       <Dropdown renderLabel={renderLabel} alignRight={alignRight}>
         <div className={classes.container}>
-          <div
-            className={classes.itemWrapper}
-            onClick={handleAccountSettings}
-          >
-            <AiOutlineSetting size={22} color='#888C94' />
-            <p className={classes.itemText}>
-              Account Settings
-            </p>
+          <div className={classes.itemWrapper} onClick={handleAccountSettings}>
+            <AiOutlineSetting size={22} color="#888C94" />
+            <p className={classes.itemText}>Account Settings</p>
           </div>
           <div className={classes.separator} />
-          <div
-            className={classes.itemWrapper}
-            onClick={handleLogout}
-          >
-            <FiLogOut size={20} color='#888C94' />
-            <p className={classes.itemText}>
-              Logout
-            </p>
+          <div className={classes.itemWrapper} onClick={handleLogout}>
+            <FiLogOut size={20} color="#888C94" />
+            <p className={classes.itemText}>Logout</p>
           </div>
         </div>
       </Dropdown>

@@ -1,18 +1,26 @@
 export default {
   title: 'md:hidden m-[20px] font-interSemibold text-[24px] text-[#101828]',
-  header: 'flex flex-row flex-wrap gap-4 justify-between content-end px-[1em] pt-[1em]',
-  tabs: 'sm:w-auto w-full',
-  selectInput: 'h-[44px] min-w-[calc(50%-8px)] sm:min-w-[12em] w-max rounded-lg border-[#CCDCE8]',
-  filterWrapper: 'flex flex-wrap align-center gap-4',
-  csvLink: 'h-[44px] w-max max-w-[200px] px-[12px] flex items-center rounded-lg border-[#CCDCE8] bg-[#E7E8EA] font-interMedium text-[14px]',
-  csvLinkText: '!text-[#70747E] !font-interMedium text-[14px]',
-  mapWrapper: 'h-[85%] w-screen md:w-[100%] px-[1em] py-[1em] rounded-lg',
-  map: 'flex-1',
+  header:
+    'flex flex-row flex-wrap gap-4 justify-between content-end px-[1em] pt-[1em]',
+  tabs: 'sm:w-auto w-full ',
+  selectInput:
+    'h-[44px] min-w-[calc(50%-8px)] sm:min-w-[12em] w-max rounded-lg border-[#CCDCE8]     ',
+  filterWrapper: 'flex flex-wrap align-center gap-4 relative ',
+  csvLink:
+    'h-[44px] w-max max-w-[200px] px-[12px] flex items-center rounded-lg border-[#CCDCE8] bg-[#E7E8EA] font-interMedium text-[14px]',
+  csvLinkText: '!text-[#70747E] !font-interMedium text-[14px] ',
+  mapWrapper:
+    'h-[85%] w-screen md:w-[100%] px-[1em] py-[1em] rounded-lg relative z-1',
+  map: 'flex-1 ',
   exportDropdown: 'font-inter text-[#0A52A1]',
-  exportButton: 'cursor-pointer bg-[#E7EEF6] flex justify-between items-center px-[10px] py-[8px] border border-[#0A52A1] rounded-lg hover:brightness-[0.97] transition duration-300',
+  exportButton:
+    'cursor-pointer bg-[#E7EEF6] flex justify-between items-center px-[10px] py-[8px] border border-[#0A52A1] rounded-lg hover:brightness-[0.97] transition duration-300 overflow-hidden relative -z-10',
   exportButtonTitle: 'color-[#0a52a1] ml-[8px]',
-  exportOptions: 'cursor-pointer ml-[-90px] w-[190px] shadow-[0_5px_40px_0_rgba(0,0,0,0.16)] z-10 px-[11px] py-[13px] rounded-lg bg-color-white',
-  exportOption: 'px-[13px] py-[11px] hover:bg-[#F0F3F6] flex items-center rounded-lg',
+  exportOptions:
+    'cursor-pointer  w-[190px] shadow-[0_5px_40px_0_rgba(0,0,0,0.16)]  px-[11px] py-[13px] rounded-lg bg-color-white ',
+  exportOption:
+    'px-[13px] py-[11px] hover:bg-[#F0F3F6] flex items-center rounded-lg',
   exportOptionTitle: 'text-[16px] ml-[12px] font-inter text-color-text ',
-  clearButton: 'flex items-center cursor-pointer hover:text-[#585D69] h-[42px] hover:bg-[#E7ECF2] px-3 rounded-lg w-fit mb-4',
+  clearButton:
+    'flex items-center cursor-pointer hover:text-[#585D69] h-[42px] hover:bg-[#E7ECF2] px-3 rounded-lg w-fit mb-4',
 };

@@ -25,7 +25,7 @@ const DashboardHeader: React.FC<Props> = ({title}) => {
         onClick={handleGoBack}
         className={cs(classes.wrapper, [classes.hidden, !!title])}
       >
-        <BsArrowLeftShort size={25} color='#101828' />
+        <BsArrowLeftShort size={25} color="#101828" />
         <p className={classes.text}>Back</p>
       </div>
       <UserDropdown alignRight />
