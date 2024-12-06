@@ -21,8 +21,12 @@ const DashboardLayout = () => {
   const [visibleNotice, setVisibleNotice] = useState(false);
 
   const handleIconToggle = useCallback(() => {
-    setShowSideBar(!showSideBar);
-  }, [showSideBar]);
+    setShowSideBar((prev) => !prev);
+  }, []);
+
+  const handleLinkClick = useCallback(() => {
+    setShowSideBar(false);
+  }, [setShowSideBar]);
 
   const MobileHeader = useCallback(
     () => (
@@ -54,7 +58,7 @@ const DashboardLayout = () => {
         )}
       >
         <div className={cs(classes.sideBar, visibleNotice ? 'min-h-[calc(100vh-40px)]' : 'min-h-[100vh]')}>
-          <Link to='/' className={classes.logoWrapper}>
+          <Link to='/' className={classes.logoWrapper} onClick={handleLinkClick}>
             <div>
               <img src={logo} alt='lukim-logo' className={classes.logo} />
             </div>
@@ -67,6 +71,7 @@ const DashboardLayout = () => {
                 [classes.activeLink, pathname === '/dashboard'],
                 [classes.inactiveLink, pathname !== '/dashboard'],
               )}
+              onClick={handleLinkClick}
             >
               <BsFillGridFill size={20} />
               <p className={classes.linkText}>Map</p>
@@ -78,6 +83,7 @@ const DashboardLayout = () => {
                 [classes.activeLink, pathname === '/surveys'],
                 [classes.inactiveLink, pathname !== '/surveys'],
               )}
+              onClick={handleLinkClick}
             >
               <FiFileText size={20} />
               <p className={classes.linkText}>Surveys List</p>
@@ -89,6 +95,7 @@ const DashboardLayout = () => {
                 [classes.activeLink, pathname === '/custom-forms'],
                 [classes.inactiveLink, pathname !== '/custom-forms'],
               )}
+              onClick={handleLinkClick}
             >
               <TbTrees size={20} />
               <p className={classes.linkText}>METT List</p>
@@ -100,12 +107,13 @@ const DashboardLayout = () => {
                 [classes.activeLink, pathname === '/projects'],
                 [classes.inactiveLink, pathname !== '/projects'],
               )}
+              onClick={handleLinkClick}
             >
               <MdWorkspacesOutline size={20} />
               <p className={classes.linkText}>Projects</p>
             </Link>
             <div className={classes.userDropdown}>
-              <UserDropdown />
+              <UserDropdown setShowSideBar={setShowSideBar} />
             </div>
           </div>
         </div>
