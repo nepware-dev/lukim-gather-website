@@ -86,6 +86,24 @@ export function getProjectNameFromFormData(formData: FormDataType) {
   return dataObject?.section_1?.project_name;
 }
 
+const CustomDateInput = forwardRef<
+  HTMLButtonElement,
+  {onClick?:() => void, startDate?: Date, endDate?: Date}
+    >(({onClick, startDate, endDate}, ref) => (
+      <button
+        className={classes.datePicker}
+        onClick={onClick}
+        ref={ref}
+        type='button'
+      >
+        <BsCalendar4Event size={18} color='#585D69' />
+        <p>
+          {`${startDate ? `${formatDate(startDate)} -` : ''} ${endDate ? formatDate(endDate) : ''
+          }`}
+        </p>
+      </button>
+    ));
+
 const identity = (item: any) => item;
 
 const CustomForms = () => {
@@ -306,32 +324,6 @@ const CustomForms = () => {
     [handleTablePageSize, rows],
   );
 
-  const CustomDateInput = forwardRef<
-    HTMLButtonElement,
-    React.HTMLProps<HTMLButtonElement>
-  >(({onClick}, ref) => {
-    const formattedDateRange = (startDate?: Date, endDate?: Date) => {
-      const formattedStartDate = startDate ? formatDate(startDate) : '';
-      const formattedEndDate = endDate ? `- ${formatDate(endDate)}` : '';
-
-      return `${formattedStartDate} ${formattedEndDate}`.trim();
-    };
-
-    return (
-      <button
-        className={classes.datePicker}
-        onClick={onClick}
-        ref={ref}
-        type='button'
-      >
-        <BsCalendar4Event size={18} color='#585D69' />
-        <span>
-          {formattedDateRange(startDate, endDate)}
-        </span>
-      </button>
-    );
-  });
-
   const handleDateChange = useCallback((dates) => {
     const [start, end] = dates;
     setStartDate(start);
@@ -369,7 +361,7 @@ const CustomForms = () => {
               startDate={startDate}
               endDate={endDate}
               selectsRange
-              customInput={<CustomDateInput />}
+              customInput={<CustomDateInput startDate={startDate} endDate={endDate} />}
             />
           </div>
           <SelectInput

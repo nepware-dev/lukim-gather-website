@@ -629,11 +629,11 @@ const Dashboard = () => {
           ref={mapRef}
           onClick={onClick}
           interactiveLayerIds={[
-            clusterCustomFormLayer.id,
-            unclusteredCustomFormPointLayer.id,
-            clusterLayer.id,
-            unclusteredPointLayer.id,
-            polygon.id,
+            clusterCustomFormLayer.id as string,
+            unclusteredCustomFormPointLayer.id as string,
+            clusterLayer.id as string,
+            unclusteredPointLayer.id as string,
+            polygon.id as string,
           ]}
           onLoad={onLoad}
           preserveDrawingBuffer
