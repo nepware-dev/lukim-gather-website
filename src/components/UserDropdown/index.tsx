@@ -13,8 +13,8 @@ import {dispatchLogout} from '@services/dispatch';
 
 import Dropdown from '@components/Dropdown';
 import useInterval from '@ra/hooks/useInterval';
-import Notification from './Notification';
 
+import Notification from './Notification';
 import classes from './styles';
 
 const GET_NOTIFICATIONS_UNREAD_COUNT = gql`
@@ -23,7 +23,13 @@ const GET_NOTIFICATIONS_UNREAD_COUNT = gql`
   }
 `;
 
-const UserDropdown = ({alignRight}: {alignRight?: boolean}) => {
+const UserDropdown = ({
+  alignRight,
+  setShowSideBar,
+}: {
+  alignRight?: boolean;
+  setShowSideBar?: (value: boolean) => void;
+}) => {
   const navigate = useNavigate();
   const {data: notificationUnreadCount, refetch} = useQuery(GET_NOTIFICATIONS_UNREAD_COUNT);
   const [openNotification, setOpenNotification] = useState<boolean>(false);
@@ -43,8 +49,11 @@ const UserDropdown = ({alignRight}: {alignRight?: boolean}) => {
   const firstName = useMemo(() => user?.firstName || '', [user]);
 
   const handleAccountSettings = useCallback(() => {
+    if (setShowSideBar) {
+      setShowSideBar(false);
+    }
     navigate('/account-settings');
-  }, [navigate]);
+  }, [navigate, setShowSideBar]);
 
   const handleLogout = useCallback(() => {
     dispatchLogout();
