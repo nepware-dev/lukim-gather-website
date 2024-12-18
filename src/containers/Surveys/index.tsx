@@ -218,6 +218,8 @@ const headers = [
   {label: 'Sentiment', value: 'sentiment'},
   {label: 'Condition', value: 'improvement'},
   {label: 'Location', value: 'location.coordinates'},
+  {label: 'Longitute', value: 'location.coordinates[0]'},
+  {label: 'Latitude', value: 'location.coordinates[1]'},
   {label: 'Boundary', value: 'boundary.coordinates'},
   {label: 'Created At', value: 'createdAt'},
   {label: 'Status', value: 'status'},
