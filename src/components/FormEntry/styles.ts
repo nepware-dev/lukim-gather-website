@@ -5,8 +5,8 @@ export default {
     'h-[32px] mt-[32px] mb-[12px] flex items-center bg-[#E6EEF3] px-[10px] rounded',
   titleText: 'font-inter text-[14px] text-[#585D69] uppercase',
   detailsContainer:
-    'flex justify-end fixed top-0 bottom-0 left-0 right-0 bg-[#10182880] overflow-y-scroll z-20',
-  detailsModal: 'h-fit min-h-screen sm:w-[725px] w-[100%] bg-color-white pt-[28px] px-[18px]',
+    'flex justify-end fixed top-0 bottom-0 md:left-0 md:right-0 bg-[#10182880] overflow-y-scroll z-20',
+  detailsModal: 'h-fit min-h-screen md:w-[725px] bg-color-white pt-[28px] px-[18px] w-[350px]',
   iconWrapper:
     'flex items-center justify-center h-[24px] w-[24px] bg-[#E7E8EA] rounded-full cursor-pointer',
   header: 'flex items-center justify-between mt-8 mb-[12px]',
