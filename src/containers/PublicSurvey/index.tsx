@@ -1,5 +1,5 @@
 import React, {useEffect, useMemo, useCallback} from 'react';
-import {RootStateOrAny, useSelector} from 'react-redux';
+import {useSelector} from 'react-redux';
 import {useParams, useNavigate} from 'react-router-dom';
 import {useLazyQuery} from '@apollo/client';
 
@@ -10,13 +10,14 @@ import SurveyDetails from '@components/SurveyEntry/SurveyDetails';
 
 import NavLogo from '@images/lukim-nav-logo.png';
 
+import {RootState} from '@store/index';
 import classes from './styles';
 
 const PublicSurvey: React.FC = () => {
   const {id: surveyId} = useParams();
   const navigate = useNavigate();
 
-  const isAuthenticated = useSelector((state: RootStateOrAny) => state.auth.isAuthenticated);
+  const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
 
   const [getSurveyData, {data, loading, error}] = useLazyQuery(GET_SURVEY);
 

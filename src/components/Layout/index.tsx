@@ -1,4 +1,4 @@
-import React, {useMemo} from 'react';
+import {useMemo} from 'react';
 import {Outlet, useLocation} from 'react-router-dom';
 import MailchimpSubscribe from 'react-mailchimp-subscribe';
 
@@ -55,7 +55,7 @@ const Layout = () => {
                 Sign up for updates on Lukim Gather
               </p>
               <MailchimpSubscribe
-                url={`${process.env.REACT_APP_MAILCHIMP_URL}`}
+                url={`${import.meta.env.VITE_MAILCHIMP_URL}`}
                 render={({subscribe, status, message}) => (
                   <MailChimpForm
                     status={status}

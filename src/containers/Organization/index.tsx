@@ -1,4 +1,4 @@
-import React, {useCallback, useRef} from 'react';
+import {useCallback, useRef} from 'react';
 import {Link} from 'react-router-dom';
 import {gql, useQuery} from '@apollo/client';
 import {useSelector} from 'react-redux';

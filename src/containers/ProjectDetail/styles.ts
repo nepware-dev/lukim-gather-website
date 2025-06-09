@@ -26,7 +26,7 @@ export default {
   userItem: 'flex flex-row items-center',
   nameInitial: 'flex justify-center items-center bg-[#5486BD] text-color-white inline rounded-3xl mr-4 w-8 h-8',
   secondaryButton: 'bg-[#F0F3F7] px-4 w-auto',
-  secondaryButtonText: 'text-[#0A52A1] w-max',
+  secondaryButtonText: '!text-[#0A52A1] w-max',
   userList: 'flex flex-col gap-8',
   deleteIcon: 'ml-auto cursor-pointer',
   modal: 'bg-[transparent] rounded-md',

@@ -1,4 +1,3 @@
-import React from 'react';
 import {Link, useParams} from 'react-router-dom';
 import {gql, useQuery} from '@apollo/client';
 import parse from 'html-react-parser';

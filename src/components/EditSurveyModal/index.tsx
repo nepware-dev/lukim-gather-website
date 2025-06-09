@@ -210,7 +210,7 @@ const EditSurveyModal: React.FC<Props> = ({
     try {
       const response = await fetch(
         `https://api.mapbox.com/geocoding/v5/mapbox.places/${data?.location?.coordinates[0] || 0
-        },${data?.location?.coordinates[1] || 0}.json?types=place&access_token=${process.env.REACT_APP_MAPBOX_TOKEN
+        },${data?.location?.coordinates[1] || 0}.json?types=place&access_token=${import.meta.env.VITE_MAPBOX_TOKEN
         }`,
       );
       const resData: {
@@ -307,7 +307,6 @@ const EditSurveyModal: React.FC<Props> = ({
                 onChange={handleAddImages}
                 multiple
               />
-              {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
               <label htmlFor='surveyPhoto' className='cursor-pointer'>
                 <AiOutlinePlus size={25} color='#FFF' />
               </label>
@@ -353,7 +352,6 @@ const EditSurveyModal: React.FC<Props> = ({
                 accept='audio/mpeg, audio/mp4, audio/ogg'
                 onChange={handleAddAudio}
               />
-              {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
               <label htmlFor='surveyAudio' className={classes.audioInput}>
                 <FiUpload color='#fff' size={18} />
                 <p className='text-color-white'>Upload audio file</p>

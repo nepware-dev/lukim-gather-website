@@ -5,6 +5,7 @@ export type UserType = {
   email: string;
   isStaff: boolean;
   phoneNumber: string;
+  hasPassword: boolean;
 };
 
 export interface AuthState {

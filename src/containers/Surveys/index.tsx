@@ -1,4 +1,4 @@
-import React, {
+import {
   forwardRef,
   useCallback,
   useEffect,
@@ -11,9 +11,8 @@ import DatePicker from 'react-datepicker';
 import {gql, useQuery} from '@apollo/client';
 import {BsCalendar4Event, BsArrowUpRight} from 'react-icons/bs';
 import {RiArrowDownSLine} from 'react-icons/ri';
-
+import Papa from 'papaparse';
 import {formatISO} from 'date-fns';
-import {Parser} from 'json2csv';
 
 import Button from '@components/Button';
 import DashboardHeader from '@components/DashboardHeader';
@@ -25,13 +24,13 @@ import SurveyEntry from '@components/SurveyEntry';
 import EditSurveyModal from '@components/EditSurveyModal';
 import SurveyFilter from '@components/SurveyFilter';
 
-import SelectInput from '@ra/components/Form/SelectInput'; // eslint-disable-line no-eval
+import SelectInput from '@ra/components/Form/SelectInput';
 
 import {rootState} from '@store/rootReducer';
 import cs from '@utils/cs';
 import {formatDate} from '@utils/formatDate';
 import {formatName} from '@utils/formatName';
-import sentimentName from '@utils/sentimentName';
+import sentimentName, {SentimentEmoji} from '@utils/sentimentName';
 
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -208,29 +207,6 @@ export type SelectInputDataType = {
 
 const titleExtractor = (item: OptionDataType) => item?.title;
 const keyExtractor = (item: OptionDataType) => item?.id;
-
-const headers = [
-  {label: 'UUID', value: 'id'},
-  {label: 'Category', value: 'category.title'},
-  {label: 'Title', value: 'title'},
-  {label: 'Description', value: 'description'},
-  {label: 'Project', value: 'project.title'},
-  {label: 'Sentiment', value: 'sentiment'},
-  {label: 'Condition', value: 'improvement'},
-  {label: 'Location', value: 'location.coordinates'},
-  {label: 'Longitute', value: 'location.coordinates[0]'},
-  {label: 'Latitude', value: 'location.coordinates[1]'},
-  {label: 'Boundary', value: 'boundary.coordinates'},
-  {label: 'Created At', value: 'createdAt'},
-  {label: 'Status', value: 'status'},
-  {label: 'Audio', value: 'audioFile'},
-  {label: 'Photos', value: 'attachment'},
-];
-
-const happeningSurveyParser = new Parser({
-  fields: headers,
-  defaultValue: '',
-});
 
 const CustomDateInput = forwardRef<
   HTMLButtonElement,
@@ -527,13 +503,13 @@ const Surveys = () => {
   );
 
   const handleCSVClick = useCallback(() => {
-    const data = surveyData.map((item) => ({
+    const mappedSurveyData = surveyData.map((item) => ({
       ...item,
-      sentiment: sentimentName[item.sentiment],
+      sentiment: sentimentName[item.sentiment as SentimentEmoji],
       attachment: item?.attachment.map((_attachment: any) => _attachment.media),
     }));
     const dateVal = formatISO(new Date(), {format: 'basic'}).replace(/\+|:/g, '');
-    const happeningSurveyCSV = happeningSurveyParser.parse(data);
+    const happeningSurveyCSV = Papa.unparse(mappedSurveyData);
     const url = window.URL.createObjectURL(new Blob([happeningSurveyCSV]));
     const a = document.createElement('a');
     a.href = url;

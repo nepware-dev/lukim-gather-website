@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 
 import {AuthState, UserType} from '../types/auth';
@@ -6,7 +5,7 @@ import {AuthState, UserType} from '../types/auth';
 const initialState: AuthState = {
   isAuthenticated: false,
   user: {
-    id: '', firstName: '', lastName: '', email: '', isStaff: false, phoneNumber: '',
+    id: '', firstName: '', lastName: '', email: '', isStaff: false, phoneNumber: '', hasPassword: false,
   },
   token: null,
   refreshToken: null,

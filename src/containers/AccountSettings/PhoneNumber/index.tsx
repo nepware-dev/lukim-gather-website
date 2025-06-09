@@ -1,5 +1,5 @@
 import React, {useState, useCallback} from 'react';
-import {useSelector, type RootStateOrAny} from 'react-redux';
+import {useSelector} from 'react-redux';
 import {useMutation} from '@apollo/client';
 import {BsArrowLeftShort} from 'react-icons/bs';
 
@@ -10,12 +10,13 @@ import useToast from '@hooks/useToast';
 import {PHONE_NUMBER_CHANGE, PHONE_NUMBER_CHANGE_VERIFY} from '@services/queries';
 import {dispatchLogout} from '@services/dispatch';
 
+import {RootState} from '@store/index';
 import OTPForm from '../OTPForm';
 
 import classes from './styles';
 
 const PhoneSettings:React.FC = () => {
-  const {user} = useSelector((state: RootStateOrAny) => state.auth);
+  const {user} = useSelector((state: RootState) => state.auth);
   const phoneNumber = user?.phoneNumber;
 
   const toast = useToast();

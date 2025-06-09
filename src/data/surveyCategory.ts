@@ -1,4 +1,50 @@
-/* eslint-disable global-require */
+import BoundaryIcon from '../assets/icons/category/Boundary.png';
+import CampIcon from '../assets/icons/category/Camp.png';
+import CommunityIcon from '../assets/icons/category/Community.png';
+import HouseIcon from '../assets/icons/category/House.png';
+import PathIcon from '../assets/icons/category/Path.png';
+import FactoryIcon from '../assets/icons/category/Factory.png';
+import RoadIcon from '../assets/icons/category/Road.png';
+import ConstructionIcon from '../assets/icons/category/Construction.png';
+import OilAndGasExtractionIcon from '../assets/icons/category/Oilandgasextraction.png';
+import EnergyIcon from '../assets/icons/category/Energy.png';
+import TreeIcon from '../assets/icons/category/Tree.png';
+import PlantIcon from '../assets/icons/category/Plant.png';
+import AnimalIcon from '../assets/icons/category/Animal.png';
+import RiverIcon from '../assets/icons/category/River.png';
+import LakeIcon from '../assets/icons/category/Lake.png';
+import WaterfallIcon from '../assets/icons/category/Waterfall.png';
+import InvasiveSpeciesIcon from '../assets/icons/category/Invasivespecies.png';
+import CoralReefIcon from '../assets/icons/category/Coralreef.png';
+import SeaGrassIcon from '../assets/icons/category/Seagrass.png';
+import MangroveIcon from '../assets/icons/category/Mangrove.png';
+import BeautifulSceneryIcon from '../assets/icons/category/Beautifulscenery.png';
+import FishingSiteIcon from '../assets/icons/category/Fishingsite.png';
+import HuntingSiteIcon from '../assets/icons/category/Huntingsite.png';
+import GatheringSiteIcon from '../assets/icons/category/Gatheringsite.png';
+import FarmlandIcon from '../assets/icons/category/Farmland.png';
+import AquacultureIcon from '../assets/icons/category/Aquaculture.png';
+import MedicineIcon from '../assets/icons/category/Medicine.png';
+import SacredSiteIcon from '../assets/icons/category/Sacredsite.png';
+import HistoryIcon from '../assets/icons/category/History.png';
+import EmploymentIcon from '../assets/icons/category/Employment.png';
+import TourismIcon from '../assets/icons/category/Tourism.png';
+import ArtisanalMiningIcon from '../assets/icons/category/ArtisanalMining.png';
+import CommercialMiningIcon from '../assets/icons/category/CommercialMining.png';
+import PoachingIcon from '../assets/icons/category/Poaching.png';
+import DeforestationIcon from '../assets/icons/category/Deforestation.png';
+import ConflictIcon from '../assets/icons/category/Conflict.png';
+import ThreatIcon from '../assets/icons/category/Threat.png';
+import FireIcon from '../assets/icons/category/Fire.png';
+import PollutionIcon from '../assets/icons/category/Pollution.png';
+import VolcanoIcon from '../assets/icons/category/Volcano.png';
+import EarthquakeIcon from '../assets/icons/category/Earthquake.png';
+import LandslideIcon from '../assets/icons/category/Landslide.png';
+import ErosionIcon from '../assets/icons/category/Erosion.png';
+import DroughtIcon from '../assets/icons/category/Drought.png';
+import FloodingIcon from '../assets/icons/category/Flooding.png';
+import VandalismIcon from '../assets/icons/category/Vandalism.png';
+
 const SurveyCategory = [
   {
     id: 1,
@@ -7,52 +53,52 @@ const SurveyCategory = [
       {
         id: 2,
         name: 'Boundary',
-        icon: require('../assets/icons/category/Boundary.png'),
+        icon: BoundaryIcon,
       },
       {
         id: 5,
         name: 'Camp',
-        icon: require('../assets/icons/category/Camp.png'),
+        icon: CampIcon,
       },
       {
         id: 6,
         name: 'Community',
-        icon: require('../assets/icons/category/Community.png'),
+        icon: CommunityIcon,
       },
       {
         id: 7,
         name: 'House',
-        icon: require('../assets/icons/category/House.png'),
+        icon: HouseIcon,
       },
       {
         id: 8,
         name: 'Path',
-        icon: require('../assets/icons/category/Path.png'),
+        icon: PathIcon,
       },
       {
         id: 9,
         name: 'Factory',
-        icon: require('../assets/icons/category/Factory.png'),
+        icon: FactoryIcon,
       },
       {
         id: 10,
         name: 'Road',
-        icon: require('../assets/icons/category/Road.png'),
+        icon: RoadIcon,
       },
       {
         id: 11,
         name: 'Construction',
-        icon: require('../assets/icons/category/Construction.png'),
+        icon: ConstructionIcon,
       },
       {
         id: 12,
         name: 'Oil and gas extraction',
-        icon: require('../assets/icons/category/Oilandgasextraction.png'),
+        icon: OilAndGasExtractionIcon,
       },
       {
         id: 13,
         name: 'Energy',
-        icon: require('../assets/icons/category/Energy.png'),
+        icon: EnergyIcon,
       },
     ],
   },
@@ -63,57 +109,57 @@ const SurveyCategory = [
       {
         id: 15,
         name: 'Tree',
-        icon: require('../assets/icons/category/Tree.png'),
+        icon: TreeIcon,
       },
       {
         id: 16,
         name: 'Plant',
-        icon: require('../assets/icons/category/Plant.png'),
+        icon: PlantIcon,
       },
       {
         id: 17,
         name: 'Animal',
-        icon: require('../assets/icons/category/Animal.png'),
+        icon: AnimalIcon,
       },
       {
         id: 18,
         name: 'River',
-        icon: require('../assets/icons/category/River.png'),
+        icon: RiverIcon,
       },
       {
         id: 19,
         name: 'Lake',
-        icon: require('../assets/icons/category/Lake.png'),
+        icon: LakeIcon,
       },
       {
         id: 21,
         name: 'Waterfall',
-        icon: require('../assets/icons/category/Waterfall.png'),
+        icon: WaterfallIcon,
       },
       {
         id: 22,
         name: 'Invasive species',
-        icon: require('../assets/icons/category/Invasivespecies.png'),
+        icon: InvasiveSpeciesIcon,
       },
       {
         id: 23,
         name: 'Coral reef',
-        icon: require('../assets/icons/category/Coralreef.png'),
+        icon: CoralReefIcon,
       },
       {
         id: 24,
         name: 'Sea grass',
-        icon: require('../assets/icons/category/Seagrass.png'),
+        icon: SeaGrassIcon,
       },
       {
         id: 25,
         name: 'Mangrove',
-        icon: require('../assets/icons/category/Mangrove.png'),
+        icon: MangroveIcon,
       },
       {
         id: 26,
         name: 'Beautiful scenery',
-        icon: require('../assets/icons/category/Beautifulscenery.png'),
+        icon: BeautifulSceneryIcon,
       },
     ],
   },
@@ -124,77 +170,77 @@ const SurveyCategory = [
       {
         id: 28,
         name: 'Fishing site',
-        icon: require('../assets/icons/category/Fishingsite.png'),
+        icon: FishingSiteIcon,
       },
       {
         id: 29,
         name: 'Hunting site',
-        icon: require('../assets/icons/category/Huntingsite.png'),
+        icon: HuntingSiteIcon,
       },
       {
         id: 30,
         name: 'Gathering site',
-        icon: require('../assets/icons/category/Gatheringsite.png'),
+        icon: GatheringSiteIcon,
       },
       {
         id: 31,
         name: 'Farmland',
-        icon: require('../assets/icons/category/Farmland.png'),
+        icon: FarmlandIcon,
       },
       {
         id: 32,
         name: 'Aquaculture',
-        icon: require('../assets/icons/category/Aquaculture.png'),
+        icon: AquacultureIcon,
       },
       {
         id: 33,
         name: 'Medicine',
-        icon: require('../assets/icons/category/Medicine.png'),
+        icon: MedicineIcon,
       },
       {
         id: 34,
         name: 'Sacred site ',
-        icon: require('../assets/icons/category/Sacredsite.png'),
+        icon: SacredSiteIcon,
       },
       {
         id: 35,
         name: 'History',
-        icon: require('../assets/icons/category/History.png'),
+        icon: HistoryIcon,
       },
       {
         id: 36,
         name: 'Employment',
-        icon: require('../assets/icons/category/Employment.png'),
+        icon: EmploymentIcon,
       },
       {
         id: 37,
         name: 'Tourism',
-        icon: require('../assets/icons/category/Tourism.png'),
+        icon: TourismIcon,
       },
       {
         id: 38,
         name: 'Artisanal Mining',
-        icon: require('../assets/icons/category/ArtisanalMining.png'),
+        icon: ArtisanalMiningIcon,
       },
       {
         id: 39,
         name: 'Commercial mining',
-        icon: require('../assets/icons/category/CommercialMining.png'),
+        icon: CommercialMiningIcon,
       },
       {
         id: 40,
         name: 'Poaching',
-        icon: require('../assets/icons/category/Poaching.png'),
+        icon: PoachingIcon,
       },
       {
         id: 41,
         name: 'Deforestation',
-        icon: require('../assets/icons/category/Deforestation.png'),
+        icon: DeforestationIcon,
       },
       {
         id: 42,
         name: 'Conflict',
-        icon: require('../assets/icons/category/Conflict.png'),
+        icon: ConflictIcon,
       },
     ],
   },
@@ -205,52 +251,52 @@ const SurveyCategory = [
       {
         id: 44,
         name: 'Threat',
-        icon: require('../assets/icons/category/Threat.png'),
+        icon: ThreatIcon,
       },
       {
         id: 45,
         name: 'Fire',
-        icon: require('../assets/icons/category/Fire.png'),
+        icon: FireIcon,
       },
       {
         id: 46,
         name: 'Pollution',
-        icon: require('../assets/icons/category/Pollution.png'),
+        icon: PollutionIcon,
       },
       {
         id: 47,
         name: 'Volcano',
-        icon: require('../assets/icons/category/Volcano.png'),
+        icon: VolcanoIcon,
       },
       {
         id: 48,
         name: 'Earthquake',
-        icon: require('../assets/icons/category/Earthquake.png'),
+        icon: EarthquakeIcon,
       },
       {
         id: 50,
         name: 'Landslide',
-        icon: require('../assets/icons/category/Landslide.png'),
+        icon: LandslideIcon,
       },
       {
         id: 51,
         name: 'Erosion',
-        icon: require('../assets/icons/category/Erosion.png'),
+        icon: ErosionIcon,
       },
       {
         id: 52,
         name: 'Drought',
-        icon: require('../assets/icons/category/Drought.png'),
+        icon: DroughtIcon,
       },
       {
         id: 53,
         name: 'Flooding',
-        icon: require('../assets/icons/category/Flooding.png'),
+        icon: FloodingIcon,
       },
       {
         id: 54,
         name: 'Vandalism',
-        icon: require('../assets/icons/category/Vandalism.png'),
+        icon: VandalismIcon,
       },
     ],
   },

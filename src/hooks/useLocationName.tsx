@@ -8,7 +8,7 @@ const useLocationName = (surveyData: SurveyDataType) => {
   const getLocationName = useCallback(async (survey: SurveyDataType) => {
     const response = await fetch(
       `https://api.mapbox.com/geocoding/v5/mapbox.places/${survey?.location?.coordinates[0] || 0
-      },${survey?.location?.coordinates[1] || 0}.json?types=place&access_token=${process.env.REACT_APP_MAPBOX_TOKEN
+      },${survey?.location?.coordinates[1] || 0}.json?types=place&access_token=${import.meta.env.VITE_MAPBOX_TOKEN
       }`,
     );
     const resData: {

@@ -1,4 +1,5 @@
-@import '@ra/styles/base';
+@use 'sass:meta';
+@include meta.load-css('../vendor/react-arsenal/styles/_base.scss');
 
 @font-face {
   font-family: 'Material Symbols Rounded';

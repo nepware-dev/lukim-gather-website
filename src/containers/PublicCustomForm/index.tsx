@@ -1,5 +1,5 @@
 import React, {useCallback, useMemo, useEffect} from 'react';
-import {RootStateOrAny, useSelector} from 'react-redux';
+import {useSelector} from 'react-redux';
 import {useParams, useNavigate} from 'react-router-dom';
 import {useLazyQuery, useQuery} from '@apollo/client';
 import {XMLParser} from 'fast-xml-parser';
@@ -11,13 +11,14 @@ import {FormDetails} from '@components/FormEntry';
 
 import NavLogo from '@images/lukim-nav-logo.png';
 
+import {RootState} from '@store/index';
 import classes from './styles';
 
 const PublicCustomForm: React.FC = () => {
   const {id: formId} = useParams();
   const navigate = useNavigate();
 
-  const isAuthenticated = useSelector((state: RootStateOrAny) => state.auth.isAuthenticated);
+  const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
 
   const [getSurveyData, {data, loading, error}] = useLazyQuery(GET_SURVEY);
   useEffect(() => {

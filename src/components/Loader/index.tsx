@@ -1,5 +1,3 @@
-import React from 'react';
-
 import cs from '@ra/cs';
 
 import classes from './styles';

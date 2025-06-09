@@ -1,5 +1,4 @@
-/* eslint-disable global-require */
-import {configureStore, getDefaultMiddleware} from '@reduxjs/toolkit';
+import {configureStore, Middleware} from '@reduxjs/toolkit';
 import {
   persistStore,
   persistReducer,
@@ -14,12 +13,12 @@ import storage from 'redux-persist/lib/storage';
 
 import rootReducer from './rootReducer';
 
-const middlewares = [];
+const middlewares: Middleware[] = [];
 
-if (process.env.NODE_ENV === 'development') {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const {logger} = require('redux-logger');
-  middlewares.push(logger);
+if (import.meta.env.NODE_ENV === 'development') {
+  import('redux-logger').then(({logger}) => {
+    middlewares.push(logger);
+  });
 }
 
 const persistConfig = {
@@ -32,23 +31,22 @@ const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 const store = configureStore({
   reducer: persistedReducer,
-  middleware: [
-    ...getDefaultMiddleware({
-      serializableCheck: {
-        ignoredActions: [
-          FLUSH,
-          REHYDRATE,
-          PAUSE,
-          PERSIST,
-          PURGE,
-          REGISTER,
-        ],
-      },
-    }),
-    ...middlewares,
-  ],
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware({
+    serializableCheck: {
+      ignoredActions: [
+        FLUSH,
+        REHYDRATE,
+        PAUSE,
+        PERSIST,
+        PURGE,
+        REGISTER,
+      ],
+    },
+  }).concat(middlewares),
 });
 
 const persistor = persistStore(store);
 
 export {store, persistor};
+
+export type RootState = ReturnType<typeof store.getState>;

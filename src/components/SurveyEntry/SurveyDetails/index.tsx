@@ -14,11 +14,10 @@ import Map, {
   Source,
   Layer,
   type MapRef,
-} from 'react-map-gl';
+} from 'react-map-gl/mapbox';
 import bbox from '@turf/bbox';
-import {parse} from 'json2csv';
-import {domToCanvas} from 'modern-screenshot';
 import jsPDF from 'jspdf';
+import {toCanvas} from 'html-to-image';
 
 import AudioPlayer from '@components/AudioPlayer';
 import Button from '@components/Button';
@@ -32,7 +31,7 @@ import cs from '@ra/cs';
 import {UPDATE_NUM_DAYS} from '@utils/config';
 import {formatDate} from '@utils/formatDate';
 import {formatName} from '@utils/formatName';
-import sentimentName, {sentimentIcon} from '@utils/sentimentName';
+import sentimentName, {SentimentEmoji, sentimentIcon} from '@utils/sentimentName';
 
 import {rootState} from '@store/rootReducer';
 
@@ -70,7 +69,7 @@ const Title = ({text}: {text: string}) => (
   </div>
 );
 
-const Feel = ({sentiment}: {sentiment: string}) => (
+const Feel = ({sentiment}: {sentiment: SentimentEmoji}) => (
   <div className={classes.feelWrapper}>
     {sentiment ? (
       <img src={sentimentIcon[sentiment]} alt={sentimentName[sentiment]} />
@@ -283,28 +282,27 @@ const SurveyDetails: React.FC<SurveyDetailsProps> = (props) => {
 
   const onExportPDF = useCallback(async () => {
     const element = entryRef.current;
-    await domToCanvas(element).then((canvas) => {
-      const imgData = canvas.toDataURL('img/png', {height: element.scrollHeight, width: element.scrollWidth});
-      // eslint-disable-next-line new-cap
-      const pdf = new jsPDF('p', 'mm', 'a4');
-      const width = pdf.internal.pageSize.getWidth();
-      const height = pdf.internal.pageSize.getHeight();
-      pdf.setFillColor(204, 204, 204, 0);
-      pdf.rect(0, 0, width, height, 'F');
-      const iWidth = (element.scrollWidth * height) / element.scrollHeight;
-      pdf.addImage(imgData, 'PNG', (width - iWidth) / 2, 0, iWidth, height);
-      pdf.save(`${data?.title}-${currentDate}.pdf`);
-    });
+    const canvas = await toCanvas(element, {pixelRatio: 2});
+    const imgData = canvas.toDataURL('image/png');
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    const width = pdf.internal.pageSize.getWidth();
+    const height = pdf.internal.pageSize.getHeight();
+    pdf.setFillColor(204, 204, 204, 0);
+    pdf.rect(0, 0, width, height, 'F');
+    const iWidth = (element.scrollWidth * height) / element.scrollHeight;
+    pdf.addImage(imgData, 'PNG', (width - iWidth) / 2, 0, iWidth, height);
+    pdf.save(`${data?.title}-${currentDate}.pdf`);
   }, [currentDate, data?.title]);
 
   const onExportImage = useCallback(async () => {
     const element = entryRef.current;
-    await domToCanvas(element).then((canvas) => {
-      const a = document.createElement('a');
-      a.href = canvas.toDataURL('img/png', {height: element.scrollHeight, width: element.scrollWidth});
-      a.download = `${data?.title}-${currentDate}.png`;
-      a.click();
-    });
+    if (!element) return;
+    const canvas = await toCanvas(element, {pixelRatio: 2});
+    const imgData = canvas.toDataURL('image/png');
+    const a = document.createElement('a');
+    a.href = imgData;
+    a.download = `${data?.title}-${currentDate}.png`;
+    a.click();
   }, [currentDate, data?.title]);
 
   const [getEntireHappeningSurveyHistoryData] = useLazyQuery(GET_HAPPENING_SURVEY_HISTORY_ITEM);
@@ -318,17 +316,18 @@ const SurveyDetails: React.FC<SurveyDetailsProps> = (props) => {
       Project: data?.project?.title,
       Location: data?.location?.coordinates,
       Latitude: data?.location?.coordinates?.[1],
-      Longitute: data?.location?.coordinates?.[0],
+      Longitude: data?.location?.coordinates?.[0],
       Boundary: data?.boundary?.coordinates,
       Region: data?.region?.id,
       Condition: data?.improvement,
-      Sentiment: sentimentName[data?.sentiment],
+      Sentiment: sentimentName[data?.sentiment as SentimentEmoji],
       'Created By': data?.createdBy?.id,
       'Created At': formatDate(data?.createdAt),
       Status: data?.status,
       Audio: data?.audioFile,
       Photos: data?.attachment?.map?.((a: {id: string; media: string}) => a.media).join(', '),
     };
+
     const csvArray = [];
     if (versionsData.length > 1) {
       try {
@@ -346,32 +345,63 @@ const SurveyDetails: React.FC<SurveyDetailsProps> = (props) => {
               Category: surveyHistoryItem?.serializedData?.fields?.category?.title,
               Project: surveyHistoryItem?.serializedData?.fields?.project?.title,
               Location: surveyHistoryItem?.serializedData?.fields?.location?.coordinates,
+              Latitude: surveyHistoryItem?.serializedData?.fields?.location?.coordinates?.[1],
+              Longitude: surveyHistoryItem?.serializedData?.fields?.location?.coordinates?.[0],
               Boundary: surveyHistoryItem?.serializedData?.fields?.boundary?.coordinates,
               Region: surveyHistoryItem?.serializedData?.fields?.region?.id,
               Condition: surveyHistoryItem?.serializedData?.fields?.improvement,
-              Sentiment: sentimentName[surveyHistoryItem?.serializedData?.fields?.sentiment],
+              Sentiment: sentimentName[surveyHistoryItem?.serializedData?.fields?.sentiment as SentimentEmoji],
               'Created By': surveyHistoryItem?.serializedData?.fields?.createdBy?.id,
               'Created At': formatDate(surveyHistoryItem?.serializedData?.fields?.createdAt),
               'Modified At': formatDate(surveyHistoryItem?.serializedData?.fields?.modifiedAt),
               Status: surveyHistoryItem?.serializedData?.fields?.status,
               Audio: surveyHistoryItem?.serializedData?.fields?.audioFile,
-              Photos: data?.attachment?.map?.((a: {id: string; media: string}) => a.media).join(', '),
+              Photos: surveyHistoryItem?.serializedData?.fields?.attachment?.map?.((a: {id: string; media: string}) => a.media).join(', '),
             });
           },
         );
       } catch (err) {
+        console.log(err);
         csvArray.push(csvData);
         toast('error', 'Something went wrong while exporting update history!');
       }
     } else {
       csvArray.push(csvData);
     }
-    const csv = parse(csvArray);
-    const url = window.URL.createObjectURL(new Blob([csv]));
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${data?.title}-${currentDate}.csv`;
-    a.click();
+
+    const convertToCSV = (array: any[]) => {
+      if (array.length === 0) return '';
+      const headers = Object.keys(array[0]);
+      
+      const csvContent = [
+        headers.join(','),
+        ...array.map(row => 
+          headers.map(header => {
+            const value = row[header];
+            if (value === null || value === undefined) return '';
+            const stringValue = String(value);
+            if (stringValue.includes(',') || stringValue.includes('"') || stringValue.includes('\n')) {
+              return `"${stringValue.replace(/"/g, '""')}"`;
+            }
+            return stringValue;
+          }).join(',')
+        )
+      ].join('\n');
+    
+      return csvContent;
+    };
+
+    const csv = convertToCSV(csvArray);
+    if (csv) {
+      const url = window.URL.createObjectURL(new Blob([csv], {type: 'text/csv'}));
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${data?.title}-${currentDate}.csv`;
+      a.click();
+      window.URL.revokeObjectURL(url);
+    } else {
+      toast('error', 'CSV data is null!');
+    }
   }, [data, currentDate, getEntireHappeningSurveyHistoryData, versionsData, toast]);
 
   const handleCopyLink = useCallback(async () => {
@@ -380,6 +410,7 @@ const SurveyDetails: React.FC<SurveyDetailsProps> = (props) => {
       await navigator.clipboard.writeText(link);
       toast('success', 'Public link to the survey has been successfully copied to clipboard!');
     } catch (err) {
+      console.log(err);
       toast('error', 'Something went wrong while getting the link!');
     }
   }, [toast, data]);
@@ -393,7 +424,7 @@ const SurveyDetails: React.FC<SurveyDetailsProps> = (props) => {
         zoom: 5,
       }}
       mapStyle='mapbox://styles/mapbox/outdoors-v11'
-      mapboxAccessToken={process.env.REACT_APP_MAPBOX_TOKEN}
+      mapboxAccessToken={import.meta.env.VITE_MAPBOX_TOKEN}
       onLoad={onMapLoad}
       preserveDrawingBuffer
     >
@@ -526,7 +557,7 @@ const SurveyDetails: React.FC<SurveyDetailsProps> = (props) => {
             </div>
             <Title text='feels' />
             <div>
-              <Feel sentiment={surveyData.sentiment} />
+              <Feel sentiment={surveyData.sentiment as SentimentEmoji} />
             </div>
             <Title text='Condition' />
             <div className={classes.wrapper}>

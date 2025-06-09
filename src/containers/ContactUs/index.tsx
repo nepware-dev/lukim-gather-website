@@ -1,4 +1,4 @@
-import React, {useCallback} from 'react';
+import {useCallback} from 'react';
 import {FaFacebookF, FaLinkedinIn, FaTwitter} from 'react-icons/fa';
 import {IoMdMail} from 'react-icons/io';
 import {IoLocationSharp} from 'react-icons/io5';

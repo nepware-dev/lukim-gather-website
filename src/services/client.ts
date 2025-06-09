@@ -10,7 +10,7 @@ import {
 } from '@apollo/client';
 import {setContext} from '@apollo/client/link/context';
 import {onError} from '@apollo/client/link/error';
-import {createUploadLink} from 'apollo-upload-client';
+import createUploadLink from 'apollo-upload-client/createUploadLink.mjs';
 
 import {store} from '@store/index';
 import {setLogout, setToken, setRefreshToken} from '@store/slices/auth';
@@ -23,7 +23,7 @@ const resolvePendingRequests = () => {
 };
 
 const httpLink = createUploadLink({
-  uri: process.env.REACT_APP_API_BASE_URL,
+  uri: import.meta.env.VITE_API_BASE_URL,
 });
 
 const REFRESH_TOKEN = gql`
