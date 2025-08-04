@@ -1,5 +1,4 @@
-/* eslint-disable max-len */
-import React, {
+import {
   forwardRef,
   useCallback,
   useEffect,
@@ -23,7 +22,7 @@ import Pagination from '@components/Pagination';
 import Dropdown from '@components/Dropdown';
 import FormEntry from '@components/FormEntry';
 import EditCustomSurveyModal from '@components/EditCustomSurveyModal';
-import SelectInput from '@ra/components/Form/SelectInput'; // eslint-disable-line no-eval
+import SelectInput from '@ra/components/Form/SelectInput';
 
 import {flattenObject, FlattenObjectType} from '@containers/Dashboard';
 

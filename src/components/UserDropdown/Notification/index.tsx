@@ -65,7 +65,7 @@ const icons: IconType = {
 };
 
 const NotificationCard = React.forwardRef<RefType, PropsType>(({openNotification}, ref) => {
-  const keyExtractor = useCallback((item, index) => index, []);
+  const keyExtractor = useCallback((_item, index) => index, []);
   const {data, refetch} = useQuery<NotificationType>(GET_NOTIFICATIONS);
   const [markAsRead] = useMutation(MARK_AS_READ);
 

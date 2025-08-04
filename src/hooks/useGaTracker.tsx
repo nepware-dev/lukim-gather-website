@@ -6,8 +6,8 @@ const useGaTracker = () => {
   const location = useLocation();
 
   useEffect(() => {
-    ReactGA.initialize(`${process.env.REACT_APP_GA_TRACKING_CODE}`, {
-      gtagOptions: {debug_mode: process.env.NODE_ENV === 'test'},
+    ReactGA.initialize(`${import.meta.env.VITE_GA_TRACKING_CODE}`, {
+      gtagOptions: {debug_mode: import.meta.env.NODE_ENV === 'test'},
     });
   }, []);
 

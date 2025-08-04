@@ -1,4 +1,4 @@
-import React, {useCallback, useState, useEffect} from 'react';
+import {useCallback, useState, useEffect} from 'react';
 import {useLocation, useNavigate} from 'react-router-dom';
 import {gql, useMutation} from '@apollo/client';
 import {BsArrowLeftShort} from 'react-icons/bs';

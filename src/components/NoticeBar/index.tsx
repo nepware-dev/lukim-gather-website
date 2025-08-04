@@ -1,4 +1,4 @@
-import React, {
+import {
   useState, useCallback, Fragment, useMemo, useEffect,
 } from 'react';
 import {Dialog, Transition} from '@headlessui/react';

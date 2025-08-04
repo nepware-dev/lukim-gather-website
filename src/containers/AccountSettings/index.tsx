@@ -1,4 +1,4 @@
-import React, {useCallback, useState, useMemo} from 'react';
+import {useCallback, useState, useMemo} from 'react';
 import {useSelector} from 'react-redux';
 
 import DashboardHeader from '@components/DashboardHeader';

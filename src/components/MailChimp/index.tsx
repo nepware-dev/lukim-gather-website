@@ -8,7 +8,7 @@ interface Props {
   status?: string | null;
   message?: string | Error | null;
   onValidated: {
-    (formData:any): void /* eslint-disable-line  @typescript-eslint/no-explicit-any */
+    (formData:any): void
   };
 }
 

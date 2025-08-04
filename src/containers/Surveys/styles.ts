@@ -17,5 +17,5 @@ export default {
   filterWrapper: 'mt-4 flex-none flex flex-col-reverse lg:flex-row flex-wrap',
   selectInputWrapper: 'flex-1 flex lg:flex-row flex-wrap gap-4',
   clear: 'flex items-center cursor-pointer hover:text-[#585D69] h-[42px] hover:bg-[#E7ECF2] px-3 rounded-lg w-fit mb-4',
-  analyticsButton: 'h-[44px] px-[12px] !w-fit rounded-lg',
+  analyticsButton: '!h-[40px] px-[12px] !w-fit rounded-lg',
 };

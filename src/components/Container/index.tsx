@@ -1,5 +1,3 @@
-import React from 'react';
-
 import useGaTracker from '@hooks/useGaTracker';
 
 import classes from './styles';

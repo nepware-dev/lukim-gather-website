@@ -38,7 +38,7 @@ const AudioPlayer = ({file} : {file?: File | string}) => {
         <track kind='captions' />
       </audio>
       <div className={classes.audioPlayer} onClick={setPlaying}>
-        {isPlaying ? <HiPause size={40} color='#EC6D25' /> : <HiPlay size={40} color='#0A52A1' />}
+        {isPlaying ? <HiPause size={40} color='#EC6D25' /> as React.ReactElement : <HiPlay size={40} color='#0A52A1' /> as React.ReactElement}
         <p className={classes.audioTitle}>{fileName?.substring(0, 25)}</p>
       </div>
     </div>

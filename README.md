@@ -1,1 +1,1 @@
-# Lukim Gather Landing Page
+# Lukim Gather

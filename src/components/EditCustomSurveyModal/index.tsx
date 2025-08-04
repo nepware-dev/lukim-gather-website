@@ -60,11 +60,8 @@ const EditCustomSurvey: React.FC<Props> = ({
     form = form.replace(/(<select name=.*project_name.*None<\/option>)(.*?)(<\/select>)/, `$1${projectsXML}$3`);
 
     if (iframeRef && iframeRef.current) {
-      // eslint-disable-next-line no-underscore-dangle
       iframeRef.current.contentWindow._modelStr = model;
-      // eslint-disable-next-line no-underscore-dangle
       iframeRef.current.contentWindow._formStr = form;
-      // iframeRef.current.src = '/xforms';
     }
   }, [formData, formObj.xform, projects]);
 
@@ -123,6 +120,7 @@ const EditCustomSurvey: React.FC<Props> = ({
             STORE.data = '';
             STORE.media = '';
           } catch (err) {
+            console.log(err);
             setProcessing(false);
           }
         }

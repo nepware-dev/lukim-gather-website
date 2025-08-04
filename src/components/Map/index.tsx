@@ -5,7 +5,7 @@ import React, {useEffect} from 'react';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 // eslint-disable-next-line import/no-webpack-loader-syntax
-import mapboxgl, {Map} from '!mapbox-gl';
+import mapboxgl, {Map} from 'mapbox-gl/mapbox';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
 import {useQuery} from '@apollo/client';
@@ -243,8 +243,8 @@ const SurveyMap: React.FC<Props> = ({
 }) => {
   const {data} = useQuery(GET_SURVEY_DATA);
   useEffect(() => {
-    if (process.env.REACT_APP_MAPBOX_TOKEN) {
-      mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_TOKEN;
+    if (import.meta.env.VITE_MAPBOX_TOKEN) {
+      mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN;
       if (showCluster) {
         const shape = data?.happeningSurveys
           .filter((survey) => survey.location)

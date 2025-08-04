@@ -1,4 +1,4 @@
-import React, {BrowserRouter} from 'react-router-dom';
+import {BrowserRouter} from 'react-router-dom';
 import {ApolloProvider} from '@apollo/client';
 import {Provider} from 'react-redux';
 import {PersistGate} from 'redux-persist/integration/react';

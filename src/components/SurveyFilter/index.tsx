@@ -1,4 +1,3 @@
-import React from 'react';
 import {IoFunnelOutline} from 'react-icons/io5';
 
 import cs from '@utils/cs';

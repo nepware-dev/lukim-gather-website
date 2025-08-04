@@ -1,5 +1,3 @@
-import React from 'react';
-
 import AppButton from '@components/AppButton';
 import InfoCard from '@components/InfoCard';
 import Card from '@components/Card';

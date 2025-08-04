@@ -39,7 +39,7 @@ const Button: React.FC<Props> = ({
   type = 'button',
 }) => (
   <button
-    type={type} // eslint-disable-line react/button-has-type
+    type={type}
     onClick={onClick}
     disabled={disabled || false}
     className={cs(classes.button, [classes.disabled, !!disabled], className)}

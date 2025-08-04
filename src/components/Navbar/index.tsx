@@ -2,7 +2,7 @@ import React, {
   useCallback, useState, useMemo, useLayoutEffect,
 } from 'react';
 import {NavLink, useNavigate} from 'react-router-dom';
-import {RootStateOrAny, useSelector} from 'react-redux';
+import {useSelector} from 'react-redux';
 import {HiMenuAlt1, HiOutlineX} from 'react-icons/hi';
 
 import cs from '@utils/cs';
@@ -13,6 +13,7 @@ import useSize from '@ra/hooks/useSize';
 import NavLogo from '@images/lukim-nav-logo.png';
 import NavLogoDark from '@images/lukim-logo-dark.svg';
 
+import {RootState} from '@store/index';
 import classes from './styles';
 
 interface Props {
@@ -35,7 +36,7 @@ const Navbar: React.FC<Props> = ({hideButton = false, isDark = false}) => {
   const {width} = useSize();
   const navigate = useNavigate();
 
-  const isAuthenticated = useSelector((state: RootStateOrAny) => state.auth.isAuthenticated);
+  const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
 
   const [open, setOpen] = useState(false);
 

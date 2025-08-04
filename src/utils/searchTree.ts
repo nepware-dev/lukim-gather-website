@@ -1,6 +1,5 @@
 type TreeObject = {
   childs: TreeObject[];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;
 };
 

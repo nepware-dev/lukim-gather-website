@@ -1,9 +1,9 @@
-import React, {
+import{
   useCallback, useEffect, useState, useMemo, useRef, ReactElement,
 } from 'react';
 import {useSelector} from 'react-redux';
-import Map, {Source, Layer, Popup} from 'react-map-gl';
-import type {MapRef} from 'react-map-gl';
+import Map, {Source, Layer, Popup} from 'react-map-gl/mapbox';
+import type {MapRef} from 'react-map-gl/mapbox';
 import {Link} from 'react-router-dom';
 import {useQuery} from '@apollo/client';
 
@@ -11,7 +11,7 @@ import DashboardHeader from '@components/DashboardHeader';
 import Dropdown from '@components/Dropdown';
 import SurveyTab from '@components/SurveyTab';
 
-import SelectInput from '@ra/components/Form/SelectInput'; // eslint-disable-line no-eval
+import SelectInput from '@ra/components/Form/SelectInput';
 
 import {
   GET_SURVEY_DATA as GET_HAPPENING_SURVEY_DATA,
@@ -22,10 +22,10 @@ import {
 import {getProjectNameFromFormData, GET_SURVEY_DATA} from '@containers/CustomForms';
 
 import {formatISO} from 'date-fns';
-import {Parser} from 'json2csv';
+import {Parser} from '@json2csv/plainjs';
 import JSZip from 'jszip';
 import {saveAs} from 'file-saver';
-import {domToCanvas} from 'modern-screenshot';
+import {toCanvas} from 'html-to-image';
 import jsPDF from 'jspdf';
 
 import {FormDataType} from '@components/FormTable';
@@ -34,14 +34,12 @@ import {SurveyDataType} from '@components/SurveyTable';
 import {rootState} from '@store/rootReducer';
 import {formatDate} from '@utils/formatDate';
 import {findPropertyAnywhere, type ObjectType} from '@utils/searchTree';
-import sentimentName from '@utils/sentimentName';
+import sentimentName, {SentimentEmoji} from '@utils/sentimentName';
 import {formatFormAnswers} from '@utils/formatAnswers';
 
 import pdfIcon from '@images/icons/pdf.svg';
 import csvIcon from '@images/icons/csv.svg';
 import pngIcon from '@images/icons/image.svg';
-
-import mapboxgl from 'mapbox-gl';
 
 import {
   clusterLayer,
@@ -164,7 +162,6 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (!data) return;
-    // eslint-disable-next-line no-underscore-dangle
     const _filteredData = data.happeningSurveys?.filter(
       (item: {
         createdAt: string,
@@ -336,7 +333,7 @@ const Dashboard = () => {
 
   const onClick = useCallback((event) => {
     const cluster = event.features.find(
-      (feat: mapboxgl.EventData) => feat.layer.id === 'clusters' || feat.layer.id === 'clusters-form',
+      (feat: any) => feat.layer.id === 'clusters' || feat.layer.id === 'clusters-form',
     );
     if (cluster) {
       const features: any = mapRef?.current?.queryRenderedFeatures(event.point, {
@@ -350,7 +347,7 @@ const Dashboard = () => {
 
         mapRef?.current?.easeTo({
           center: features ? features[0]?.geometry?.coordinates : [],
-          zoom,
+          zoom: zoom ?? 0,
           duration: 1500,
         });
       });
@@ -447,7 +444,7 @@ const Dashboard = () => {
 
   const onLoad = useCallback(() => {
     surveyCategory.filter((cat) => cat.childs.filter(
-      (categoryIcon) => mapRef?.current?.loadImage(categoryIcon.icon, (error, res: any) => {
+      (categoryIcon) => mapRef?.current?.loadImage(categoryIcon.icon, (_error, res: any) => {
         mapRef?.current?.addImage(categoryIcon?.id.toString(), res);
       }),
     ));
@@ -457,14 +454,14 @@ const Dashboard = () => {
     const surveyExportData = JSON.parse(JSON.stringify(filteredData));
     surveyExportData.map((surveyItem: SurveyDataType) => {
       if (surveyItem.attachment) {
-        surveyItem.attachment = surveyItem.attachment.map( // eslint-disable-line no-param-reassign
+        surveyItem.attachment = surveyItem.attachment.map(
           (_attachment: any) => _attachment.media,
         );
       }
       return {
         ...surveyItem,
         attachment: surveyItem.attachment.map((mediaUrl) => JSON.stringify(mediaUrl)).join(','),
-        sentiment: sentimentName[surveyItem.sentiment],
+        sentiment: sentimentName[surveyItem.sentiment as SentimentEmoji],
       };
     });
     const happeningSurveyCSV = happeningSurveyParser.parse(surveyExportData);
@@ -480,26 +477,31 @@ const Dashboard = () => {
   }, [currentDate, filteredData, flatCustomForms]);
 
   const onExportPDF = useCallback(async () => {
-    const element: any = contentRef.current;
-    await domToCanvas(element).then((canvas) => {
-      const height = element.scrollHeight;
-      const width = element.scrollWidth;
-      const imgData = canvas.toDataURL('img/png', {height, width});
-      // eslint-disable-next-line new-cap
-      const pdf = new jsPDF(height > width ? 'p' : 'l', 'pt', [width, height]);
-      pdf.addImage(imgData, 'PNG', 0, 0, width, height);
-      pdf.save(`Survey_report_${currentDate}.pdf`);
+    const element = contentRef.current;
+    if (!element) return;
+    const canvas = await toCanvas(element, {pixelRatio: 2});
+
+    const height = element.scrollHeight;
+    const width = element.scrollWidth;
+    const imgData = canvas.toDataURL('image/png');
+    const pdf = new jsPDF({
+      orientation: height > width ? 'p' : 'l',
+      unit: 'pt',
+      format: [width, height],
     });
+    pdf.addImage(imgData, 'PNG', 0, 0, width, height);
+    pdf.save(`Survey_report_${currentDate}.pdf`);
   }, [currentDate]);
 
   const onExportImage = useCallback(async () => {
-    const element: any = contentRef.current;
-    await domToCanvas(element).then((canvas) => {
-      const a = document.createElement('a');
-      a.href = canvas.toDataURL('img/png', {height: element.scrollHeight, width: element.scrollWidth});
-      a.download = `Survey_report_${currentDate}.png`;
-      a.click();
-    });
+    const element = contentRef.current;
+    if (!element) return;
+    const canvas = await toCanvas(element, {pixelRatio: 2});
+    const imgData = canvas.toDataURL('image/png');
+    const a = document.createElement('a');
+    a.href = imgData;
+    a.download = `Survey_report_${currentDate}.png`;
+    a.click();
   }, [currentDate]);
 
   const regionOptions = useMemo(
@@ -625,7 +627,7 @@ const Dashboard = () => {
             zoom: 5,
           }}
           mapStyle='mapbox://styles/mapbox/outdoors-v11'
-          mapboxAccessToken={process.env.REACT_APP_MAPBOX_TOKEN}
+          mapboxAccessToken={import.meta.env.VITE_MAPBOX_TOKEN}
           ref={mapRef}
           onClick={onClick}
           interactiveLayerIds={[

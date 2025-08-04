@@ -3,7 +3,7 @@ import React, {
 } from 'react';
 import {useNavigate} from 'react-router-dom';
 import {HiOutlineX} from 'react-icons/hi';
-import Map, {Marker} from 'react-map-gl';
+import Map, {Marker} from 'react-map-gl/mapbox';
 
 import {formatDate} from '@utils/formatDate';
 
@@ -163,7 +163,7 @@ const FormValueRenderer = ({
                     style={{width: 600, height: 400}}
                     mapStyle='mapbox://styles/mapbox/streets-v9'
                     mapboxAccessToken={
-                      process.env.REACT_APP_MAPBOX_TOKEN
+                      import.meta.env.VITE_MAPBOX_TOKEN
                     }
                   >
                     <Marker
@@ -257,6 +257,7 @@ export const FormDetails: React.FC<FormDetailsProps> = (props) => {
         'Public link to the METT survey has been successfully copied to clipboard!',
       );
     } catch (err) {
+      console.log(err);
       toast('error', 'Something went wrong while getting the link!');
     }
   }, [toast, data]);

@@ -1,1 +1,1 @@
-export const UPDATE_NUM_DAYS = process.env.NODE_ENV === 'development' ? -1 : 30;
+export const UPDATE_NUM_DAYS = import.meta.env.NODE_ENV === 'development' ? -1 : 30;

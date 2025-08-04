@@ -309,8 +309,7 @@ const Comments: React.FC<CommentsProps> = ({
       }
     }
   }, [likeComment, dislikeComment]);
-
-  // eslint-disable-next-line max-len
+  
   const hasNoComments = useMemo(() => !commentsData?.length || commentsData.length === 0, [commentsData]);
 
   const renderCommentItem = useCallback((listProps) => (

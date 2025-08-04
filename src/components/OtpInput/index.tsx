@@ -174,7 +174,7 @@ const OTPInputComponent = (props: OTPInputProps) => {
         .fill('')
         .map((_, index) => (
           <SingleInput
-            key={`SingleInput-${index}`} // eslint-disable-line react/no-array-index-key
+            key={`SingleInput-${index}`}
             type={isNumberInput ? 'number' : 'text'}
             focus={activeInput === index}
             value={otpValues && otpValues[index]}

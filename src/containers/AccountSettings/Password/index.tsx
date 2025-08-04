@@ -1,5 +1,5 @@
 import React, {useState, useCallback} from 'react';
-import {useSelector, useDispatch, type RootStateOrAny} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
 import {useMutation, useLazyQuery} from '@apollo/client';
 
 import InputField from '@components/InputField';
@@ -9,12 +9,13 @@ import useToast from '@hooks/useToast';
 import {CHANGE_PASSWORD, SET_PASSWORD, GET_ME} from '@services/queries';
 import {setUser} from '@store/slices/auth';
 
+import {RootState} from '@store/index';
 import classes from './styles';
 
 const PasswordSettings:React.FC = () => {
   const dispatch = useDispatch();
 
-  const {user} = useSelector((state: RootStateOrAny) => state.auth);
+  const {user} = useSelector((state: RootState) => state.auth);
   const hasPassword = user?.hasPassword;
 
   const toast = useToast();

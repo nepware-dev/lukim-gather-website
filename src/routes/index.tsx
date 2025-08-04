@@ -2,7 +2,7 @@ import React, {useEffect} from 'react';
 import {
   Navigate, Route, Routes, useLocation,
 } from 'react-router-dom';
-import {RootStateOrAny, useSelector, useDispatch} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
 import {useLazyQuery} from '@apollo/client';
 
 import AccountSettings from '@containers/AccountSettings';
@@ -36,6 +36,7 @@ import {GET_ME} from '@services/queries';
 import {setUser} from '@store/slices/auth';
 import {dispatchLogout} from '@services/dispatch';
 import Layout from '@components/Layout';
+import {RootState} from '@store/index';
 
 const PrivateRoute: React.FC<{
   isAuthenticated: boolean;
@@ -52,7 +53,7 @@ const AppRoutes = () => {
 
   const dispatch = useDispatch();
   const isAuthenticated = useSelector(
-    (state: RootStateOrAny) => state.auth.isAuthenticated,
+    (state: RootState) => state.auth.isAuthenticated,
   );
 
   useEffect(() => {

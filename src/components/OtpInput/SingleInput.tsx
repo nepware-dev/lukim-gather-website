@@ -1,4 +1,4 @@
-import React, {
+import {
   memo, useRef, useLayoutEffect, InputHTMLAttributes,
 } from 'react';
 import usePrevious from '@hooks/usePrevious';
